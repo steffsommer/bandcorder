@@ -1,0 +1,13 @@
+# binaries
+__pycache__/
+*.py[cod]
+*$py.class
+
+# virtual env
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
