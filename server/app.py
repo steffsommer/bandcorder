@@ -11,7 +11,9 @@ def get_recordings():
 @app.route("/recording/start", methods=["POST"])
 def start_recording():
     recorder.start()
+    return "started"
 
 @app.route("/recording/stop", methods=["POST"])
 def stop_recording():
-    raise "not yet implemented"
+    recorder.stop()
+    return "stopped"
