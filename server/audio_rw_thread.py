@@ -1,14 +1,12 @@
 import threading
 from queue import Queue
-import time
+import sys
 import soundfile as sf
 import sounddevice as sd
 
 """
-Read data from microphone and save it to a file
+Relay microphone audio data to a file
 """
-
-
 class AudioReadWriteThread(threading.Thread):
 
     _keep_recording = True

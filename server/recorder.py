@@ -1,13 +1,10 @@
-import logging
 from threading import Thread
 from datetime import datetime
-import queue
-import sys
 from audio_rw_thread import AudioReadWriteThread
-import sounddevice as sd
-import soundfile as sf
 
-
+"""
+Start and Stop recording
+"""
 class Recorder:
 
     _rec_thread = None
