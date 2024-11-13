@@ -1,4 +1,3 @@
-from threading import Thread
 from datetime import datetime
 from audio_rw_thread import AudioReadWriteThread
 

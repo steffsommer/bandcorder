@@ -1,3 +1,6 @@
+# IDEs
+.idea/
+
 # binaries
 __pycache__/
 *.py[cod]
