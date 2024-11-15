@@ -32,7 +32,6 @@ class AudioReadWriteThread(threading.Thread):
             callback = self._get_callback(q)
             with sd.InputStream(samplerate=sample_rate, device=mic_index, channels=1, callback=callback):
                 while self._keep_recording:
-                    print('writing data')
                     file.write(q.get())
 
     def _get_callback(self, queue):
