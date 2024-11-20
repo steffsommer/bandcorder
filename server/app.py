@@ -8,16 +8,8 @@ recorder = Recorder()
 sio = socketio.Server()
 app = socketio.WSGIApp(sio)
 
-
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
-
- #@sio.on('connect')
-#def test_connect():
-#   logger.info('Client connected')
-
-#@sio.on('disconnect')
-#def test_disconnect():
-#    logger.info('Client disconnected')
 
 @sio.on('StartRecording')
 def start_recording(event):
@@ -52,4 +44,4 @@ def query_recording_state():
     sio.emit('RecordingState', { 'isRecording': is_recording })
 
 if __name__ == '__main__':
-    eventlet.wsgi.server(eventlet.listen(('', 5000)), app)
+    eventlet.wsgi.server(eventlet.listen(('', 5000)), app, log=logger)
