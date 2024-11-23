@@ -34,7 +34,12 @@ class Recorder:
         return self._rec_thread is not None and self._rec_thread.is_alive()
 
     def _generate_target_file_path(self) -> str:
-        file_name = datetime.now().strftime("%d-%m-%Y-%H-%M-%S-%f") + ".wav"
-        return self._data_dir / file_name
+        now = datetime.now()
+        dir_name = now.strftime("%d-%m-%Y")
+        file_name = now.strftime("%H-%M-%S-%f") + ".wav"
+        target_path =  self._data_dir / dir_name / file_name
+        if not target_path.parent.exists():
+            target_path.parent.mkdir(parents = True)
+        return target_path
 
     
