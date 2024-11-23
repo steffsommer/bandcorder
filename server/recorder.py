@@ -1,4 +1,6 @@
 from datetime import datetime
+from logging import Logger
+from pathlib import Path
 
 from audio_rw_thread import AudioReadWriteThread
 
@@ -6,16 +8,18 @@ from audio_rw_thread import AudioReadWriteThread
 Start and Stop recordings
 """
 class Recorder:
-
+    
     _rec_thread = None
+    _data_dir = None
+
+    def __init__(self, data_dir: Path):
+        self._data_dir = data_dir
 
     def start(self) -> None:
         if self.get_is_recording():
             raise RuntimeError(
                 "Can't start a recording while another one is running")
-        file_name = self._generate_recording_name()
-        # TODO: Output directory?
-        file_path = file_name
+        file_path = self._generate_target_file_path()
         self._rec_thread = AudioReadWriteThread(file_path)
         self._rec_thread.start()
 
@@ -29,5 +33,8 @@ class Recorder:
     def get_is_recording(self) -> bool:
         return self._rec_thread is not None and self._rec_thread.is_alive()
 
-    def _generate_recording_name(self) -> str:
-        return datetime.now().strftime("%d-%m-%Y-%H-%M-%S-%f") + ".wav"
+    def _generate_target_file_path(self) -> str:
+        file_name = datetime.now().strftime("%d-%m-%Y-%H-%M-%S-%f") + ".wav"
+        return self._data_dir / file_name
+
+    

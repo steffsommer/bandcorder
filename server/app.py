@@ -1,15 +1,20 @@
 import logging
 import eventlet
 import socketio
-
+from config_loader import ConfigLoader, DATA_DIR_PATH
 from recorder import Recorder
 
-recorder = Recorder()
 sio = socketio.Server()
 app = socketio.WSGIApp(sio)
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+
+config_loader = ConfigLoader(logger)
+config = config_loader.load_config()
+
+data_dir = config[DATA_DIR_PATH]
+recorder = Recorder(data_dir)
 
 @sio.on('StartRecording')
 def start_recording(event):
