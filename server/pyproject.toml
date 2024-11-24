@@ -1,0 +1,15 @@
+# [build-system]
+# requires = ["hatchling"]
+# build-backend = "hatchling.build"
+
+[project]
+name = "spam-eggs"
+version = "2020.0.0"
+dependencies = [
+  "sounddevice",
+  "soundfile",
+  "numpy",
+  "eventlet",
+  "python-socketio",
+]
+requires-python = ">=3.8"
