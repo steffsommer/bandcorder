@@ -39,9 +39,13 @@ Copy `config.yml.template` to `config.yml` and specify a valid data directory.
 - python3
 - Flutter >= 3.18
 
-### Install server dependencies
-
-    pip install soundfile sounddevice numpy eventlet python-socketio
+### Server setup
+```bash
+    # (optional) Create venv
+    python -m venv .venv && source ./venv/Scripts/activate
+    # Install dependencies
+    cd server && pip install -e .
+```
 
 ## Todos for 1.0
 
