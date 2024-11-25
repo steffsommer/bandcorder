@@ -1,8 +1,0 @@
-################################################################################
-########################### BANDCORDER CONFIGURATION ###########################
-################################################################################
-
-# Root directory where recordings will be stored. Inside this directory, Bandcorder will
-# create a folder for each day recordings were in created. Inside the day/date folders,
-# the WAV files of the respective recordings will be stored
-data_dir: 'C:\Users\Steff\Music\bandcorder'
