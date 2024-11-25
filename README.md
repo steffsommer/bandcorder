@@ -42,7 +42,7 @@ Copy `config.yml.template` to `config.yml` and specify a valid data directory.
 ### Server setup
 ```bash
     # (optional) Create venv
-    python -m venv .venv && source ./venv/Scripts/activate
+    python -m venv .venv && source ./.venv/Scripts/activate
     # Install dependencies
     cd server && pip install -e .
 ```
