@@ -54,7 +54,7 @@ Copy `config.yml.template` to `config.yml` and specify a valid data directory.
   - [x] Specify recording directory
 - [ ] Desktop UI Tkinter
 - [x] Replace Flask with socket.io server
-- [ ] Create virtualenv
+- [x] Create virtualenv
 - [ ] Create Release.exe
 - [x] Put recordings in date folders
 - [ ] Create a fancy logo
