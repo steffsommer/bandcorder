@@ -1,10 +1,10 @@
 import logging
 import socketio
 import tornado
-import customtkinter
 import threading
-import functools
 from tornado.ioloop import IOLoop
+from tkinter import Label, Button, Tk, Frame, Canvas, ttk
+import tkinter as tk
 
 from config_loader import ConfigLoader, DATA_DIR_PATH
 from recorder import Recorder
@@ -56,24 +56,46 @@ async def query_recording_state():
     await sio.emit('RecordingState', {'isRecording': is_recording})
 
 
-# Modes: system (default), light, dark
-customtkinter.set_appearance_mode("System")
-# Themes: blue (default), dark-blue, green
-customtkinter.set_default_color_theme("blue")
-
-
 def createUI():
-    ui = customtkinter.CTk()  # create CTk window like you do with the Tk window
-    ui.state("zoomed")
-    button = customtkinter.CTkButton(
-        master=ui, text="CTkButton", command=functools.partial(logger.info, "button pressed"))
-    button.place(relx=0.5, rely=0.5, anchor=customtkinter.CENTER)
-    ui.mainloop()
-    logger.info("ui finished")
+    root = Tk()
+    root.state('zoomed')
+
+    # frame for the label and buttons
+    frame = Frame(root)
+    frame.place(relx=0.5, rely=0.5, anchor="c")  # put at center of window
+
+    # frame for the two buttons
+    frame = Frame(root)
+    # frame.pack(expand=True)
+    frame.pack(expand=True)
+
+    recording_state_label = Label(frame, text="Recording", font=("Arial", 100), background='green', padx=100, pady=100)
+    recordings_list_label = Label(
+        frame, text="List of recordings", font=("Arial", 40))
+
+    frame.grid_rowconfigure(0)
+
+    recording_state_label.grid(column=2, row=0, padx=150)
+    recordings_list_label.grid(row=0, column=0, sticky="SW")
+    treeview = ttk.Treeview(frame, columns=("size", "lastmod"), height=40)
+    treeview.heading("#0", text="File")
+    treeview.heading("size", text="Size")
+    treeview.heading("lastmod", text="Last modification")
+    treeview.insert(
+        "",
+        tk.END,
+        text="README.txt",
+        values=("850 bytes", "18:30")
+    )
+    treeview.grid(column=0, row=1)
+
+    print('grid-size: ', frame.grid_size())
+    root.mainloop()
     # TODO: Disconnect SocketIO clients
     server.stop()
     IOLoop.current().stop()
     logger.info("stopped")
+
 
 thread = threading.Thread(target=createUI)
 thread.start()
