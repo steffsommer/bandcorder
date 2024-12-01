@@ -1,5 +1,4 @@
 import tkinter as tk
-from recorder import Recorder
 from recording_state_notifier import RecordingStateNotifier, RecordingState
 
 ON_AIR_BACKGROUND_COLOR = 'green'

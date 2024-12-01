@@ -7,7 +7,7 @@ class RecordingsTreeView(tk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
 
-        # child components
+        # component definitions
         self._treeview = self._get_configured_treeview()
         self._recordings_list_label = tk.Label(
             self,
