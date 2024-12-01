@@ -1,5 +1,9 @@
 from dataclasses import dataclass
-from typing import Callable
+from typing import Callable, cast
+from abc import ABC, abstractmethod
+import types
+from typing import Coroutine
+import asyncio
 
 
 @dataclass
@@ -7,6 +11,15 @@ class RecordingState:
     is_recording: bool
     file_name: str
     duration: int
+
+
+class RecordingStateConsumerClass(ABC):
+    @abstractmethod
+    def on_state_change(self, state: RecordingState) -> None:
+        pass
+
+
+RecordingStateConsumer = RecordingStateConsumerClass | Coroutine[RecordingState, None, None]
 
 
 class RecordingStateNotifier():
@@ -21,7 +34,7 @@ class RecordingStateNotifier():
         """Signal subscribers that the current recording was stopped"""
         self._publish_state(False, file_name, duration)
 
-    def on_state_updates(self, callback: Callable[[RecordingState], None]):
+    def register_subscriber(self, callback: RecordingStateConsumer):
         """Register a callback that gets executed at least every second with
         the current recording state.
         """
@@ -35,6 +48,12 @@ class RecordingStateNotifier():
         )
         for cb in self._state_change_callbacks:
             try:
-                cb(state)
+                if callable(cb):
+                    cb(state)
+                else:
+                    loop = asyncio.get_event_loop()
+                    consumer = cast(RecordingStateConsumer, cb)
+                    loop.create_task(consumer.on_state_change(state))
             except BaseException as e:
-                print('[ERROR] Exception occured within state update callback')
+                print(
+                    f'[ERROR] Exception occured within state update callback: {str(e)}')

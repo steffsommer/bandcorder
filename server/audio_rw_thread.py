@@ -4,6 +4,7 @@ import sys
 import soundfile as sf
 import sounddevice as sd
 from dataclasses import dataclass
+from pathlib import Path
 
 
 @dataclass
@@ -21,7 +22,7 @@ class AudioReadWriteThread(threading.Thread):
 
     _keep_recording = True
 
-    def __init__(self, out_file):
+    def __init__(self, out_file: Path):
         threading.Thread.__init__(self)
         if out_file is None:
             raise RuntimeError(
@@ -31,8 +32,7 @@ class AudioReadWriteThread(threading.Thread):
     def stop(self) -> RecordingSummary:
         self._keep_recording = False
         self.join()
-        # TODO: Return final recording duration when thread is stopped
-        return RecordingSummary(file_name=self._out_File, duration=10)
+        return RecordingSummary(file_name=self._out_File.name, duration=10)
 
     def run(self):
         q = Queue()

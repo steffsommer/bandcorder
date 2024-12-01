@@ -21,7 +21,7 @@ class RecordingStateLabel(tk.Label):
             width=8
         )
         self._set_idle()
-        notifier.on_state_updates(self._process_status_updates)
+        notifier.register_subscriber(self._process_status_updates)
     
     def _process_status_updates(self, state: RecordingState):
         if state.is_recording:

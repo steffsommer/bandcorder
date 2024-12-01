@@ -24,7 +24,7 @@ class Recorder:
         file_path = self._generate_target_file_path()
         self._rec_thread = AudioReadWriteThread(file_path)
         self._rec_thread.start()
-        self._notifier.notifyStarted(file_path)
+        self._notifier.notifyStarted(file_path.name)
 
     def stop(self) -> None:
         if not self.get_is_recording():
@@ -38,7 +38,7 @@ class Recorder:
     def get_is_recording(self) -> bool:
         return self._rec_thread is not None and self._rec_thread.is_alive()
 
-    def _generate_target_file_path(self) -> str:
+    def _generate_target_file_path(self) -> Path:
         now = datetime.now()
         dir_name = now.strftime("%d-%m-%Y")
         file_name = now.strftime("%H-%M-%S-%f") + ".wav"
