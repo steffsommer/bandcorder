@@ -21,7 +21,7 @@ class RecordingsTreeView(tk.Frame):
 
 
     def _get_configured_treeview(self) -> ttk.Treeview:
-        rec_list = ttk.Treeview(self, columns=("size", "lastmod"), height=40)
+        rec_list = ttk.Treeview(self, columns=("size", "lastmod"), height=20)
         rec_list.heading("#0", text="File")
         rec_list.heading("size", text="Size")
         rec_list.heading("lastmod", text="Last modification")

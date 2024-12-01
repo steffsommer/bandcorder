@@ -13,7 +13,6 @@ class ActiveMicLabel(tk.Label):
             parent,
             font=("Arial", 20),
             pady=20,
-            width=38,
         )
         self.set_active_mic(microphone)
 
@@ -25,7 +24,6 @@ class ActiveMicLabel(tk.Label):
             )
             return
         self.config(
-          text = microphone,
-          background=DEFAULT_BACKGROUND_COLOR,
+            text=microphone,
+            background=DEFAULT_BACKGROUND_COLOR,
         )
-
