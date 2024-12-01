@@ -1,5 +1,6 @@
 import tkinter as tk
-from recorder import Recorder, RecordingState
+from recorder import Recorder
+from recording_state_notifier import RecordingStateNotifier, RecordingState
 
 ON_AIR_BACKGROUND_COLOR = 'green'
 ON_AIR_TEXT = 'ON AIR 🎤'
@@ -11,7 +12,7 @@ IDLE_TEXT_COLOR = 'white'
 
 
 class RecordingStateLabel(tk.Label):
-    def __init__(self, parent, recorder: Recorder):
+    def __init__(self, parent, notifier: RecordingStateNotifier):
         super().__init__(
             parent,
             font=("Arial", 100),
@@ -20,7 +21,7 @@ class RecordingStateLabel(tk.Label):
             width=8
         )
         self._set_idle()
-        recorder.on_state_updates(self._process_status_updates)
+        notifier.on_state_updates(self._process_status_updates)
     
     def _process_status_updates(self, state: RecordingState):
         if state.is_recording:

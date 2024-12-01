@@ -5,6 +5,7 @@ import threading
 from tornado.ioloop import IOLoop
 from config_loader import ConfigLoader, DATA_DIR_PATH
 from recorder import Recorder
+from recording_state_notifier import RecordingStateNotifier
 import ui
 
 sio = socketio.AsyncServer(async_mode='tornado')
@@ -15,8 +16,9 @@ logger = logging.getLogger(__name__)
 config_loader = ConfigLoader(logger)
 config = config_loader.load_config()
 
+notifier = RecordingStateNotifier()
 data_dir = config[DATA_DIR_PATH]
-recorder = Recorder(data_dir)
+recorder = Recorder(notifier, data_dir)
 
 
 @sio.on('StartRecording')
@@ -55,10 +57,11 @@ async def query_recording_state():
 
 
 def run_ui():
-    root_widget = ui.UserInterface(recorder=recorder)
+    root_widget = ui.UserInterface(recorder, notifier)
     root_widget.mainloop()
     server.stop()
     IOLoop.current().stop()
+
 
 thread = threading.Thread(target=run_ui)
 thread.start()
