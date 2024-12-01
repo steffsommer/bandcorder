@@ -10,9 +10,9 @@ IDLE_TEXT_COLOR = 'white'
 
 
 class RecordingStateLabel(tk.Label):
-    def __init__(self, master):
+    def __init__(self, parent):
         super().__init__(
-            master,
+            parent,
             font=("Arial", 100),
             padx=100,
             pady=100,
