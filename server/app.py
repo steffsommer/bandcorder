@@ -55,7 +55,7 @@ async def query_recording_state():
 
 
 def run_ui():
-    root_widget = ui.UserInterface()
+    root_widget = ui.UserInterface(recorder=recorder)
     root_widget.mainloop()
     server.stop()
     IOLoop.current().stop()

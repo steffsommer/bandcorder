@@ -3,6 +3,7 @@ from recording_state_label import RecordingStateLabel
 from recordings_treeview import RecordingsTreeView
 from active_mic_label import ActiveMicLabel
 from active_recording_info import ActiveRecordingInfo, RecordingState
+from recorder import Recorder
 
 
 class UserInterface(tk.Tk):
@@ -12,13 +13,13 @@ class UserInterface(tk.Tk):
      of the current day and the current recording state
     """
 
-    def __init__(self):
+    def __init__(self, recorder: Recorder):
         super().__init__()
         self.state('zoomed')
         self._root_frame = tk.Frame(self)
         # component definitions
         self._active_mic_label = ActiveMicLabel(self._root_frame, "DUMMY MIC")
-        self._recording_label = RecordingStateLabel(self._root_frame)
+        self._recording_label = RecordingStateLabel(self._root_frame, recorder)
         self._recordings_tree_view = RecordingsTreeView(self._root_frame)
         self._active_recording_info = ActiveRecordingInfo(self._root_frame)
 
