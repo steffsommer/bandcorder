@@ -7,9 +7,9 @@ from config_loader import ConfigLoader, DATA_DIR_PATH
 from recorder import Recorder
 from recording_state_notifier import RecordingStateNotifier
 from websocket_notifier import WebSocketClientNotifier
+from recording_controller import RecordingController
 import ui
 
-sio = socketio.AsyncServer(async_mode='tornado')
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
@@ -19,36 +19,15 @@ logger = logging.getLogger(__name__)
 config_loader = ConfigLoader(logger)
 config = config_loader.load_config()
 
+sio = socketio.AsyncServer(async_mode='tornado')
 notifier = RecordingStateNotifier()
 notifier.register_subscriber(WebSocketClientNotifier(sio))
 
 data_dir = config[DATA_DIR_PATH]
 recorder = Recorder(notifier, data_dir)
 
-
-@sio.on('StartRecording')
-async def start_recording(event) -> None:
-    logger.info('Received request to start recording')
-    try:
-        recorder.start()
-        logger.info('Recording was started successfully')
-    except Exception as e:
-        logger.error('Failed to start recording')
-
-
-@sio.on('StopRecording')
-async def stop_recording(event) -> None:
-    try:
-        recorder.stop()
-        logger.info('Recording was stopped successfully')
-    except Exception as e:
-        logger.error('Failed to stop recording')
-
-
-@sio.on('QueryRecordingState')
-async def query_recording_state():
-    is_recording = recorder.get_is_recording()
-    await sio.emit('RecordingState', {'isRecording': is_recording})
+recording_controller = RecordingController(recorder, logger)
+sio.register_namespace(recording_controller)
 
 
 def run_ui():
