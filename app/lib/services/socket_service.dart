@@ -1,14 +1,15 @@
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import '../models/connection_status.dart';
 
 class SocketService {
   late IO.Socket socket;
-  Function(String)? onConnectionStatusChanged;
+  Function(ConnectionStatus)? onConnectionStatusChanged;
   Function(bool)? onRecordingStatusChanged;
+  Function(bool)? onErrorCallback;
 
   SocketService({this.onConnectionStatusChanged, this.onRecordingStatusChanged});
 
   void connect(String url) {
-
 
     if(url == '') {
       print('Bitte zuerst eine Url eingeben!');
@@ -23,21 +24,23 @@ class SocketService {
     socket.on('connect', (_) {
       print('connected');
       if (onConnectionStatusChanged != null) {
-        onConnectionStatusChanged!('connected');
+        onConnectionStatusChanged!(ConnectionStatus(success: true, message: 'Erfolgreich verbunden!'));
       }
     });
 
     socket.on('connect_error', (error) {
       print('Connection Error: $error');
       if (onConnectionStatusChanged != null) {
-        onConnectionStatusChanged!('connection error');
+        onConnectionStatusChanged!(ConnectionStatus(success: false, message: 'Fehler beim Verbinden: $error'));
       }
+      socket.close();
+
     });
 
     socket.on('disconnect', (_) {
       print('disconnected');
       if (onConnectionStatusChanged != null) {
-        onConnectionStatusChanged!('disconnected');
+        onConnectionStatusChanged!(ConnectionStatus(success: true, message: 'Erfolgreich getrennt!'));
       }
     });
 
@@ -46,8 +49,14 @@ class SocketService {
       print('RecordingStateChanged');
       print(onRecordingStatusChanged != null);
       if(onRecordingStatusChanged != null) {
-        print(data['recording']);
-        onRecordingStatusChanged!(data['recording']);
+        print(data['isRecording']);
+        try {
+          onRecordingStatusChanged!(data['Recording']);
+          // onRecordingStatusChanged!(data['isRecording']);
+        } catch(error) {
+          print('Key not found');
+        }
+        
       }
     });
 
