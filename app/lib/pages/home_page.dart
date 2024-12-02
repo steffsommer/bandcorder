@@ -12,24 +12,55 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final SocketService _socketService = SocketService();
-  String _textFieldValue = 'http://10.0.0.2:5000'; // DefaultWert
-  String _connectionStatus = 'disconnected';
-  String _recordingStatus = 'stopped';
 
+  String _connectionStatus = 'disconnected';
+  bool _connectionEstablished = false;
+  String _recordingStatus = 'stopped';
+  String _ipDefaultValue = 'http://10.0.0.2:5000';
+  String _textFieldValue = '';
   @override
   void initState() {
+    _textFieldValue = _ipDefaultValue;
     super.initState();
     _socketService.onConnectionStatusChanged = (status) {
+
+
+      if(status.success == false && status.message != '') {
+
+        final String errorMessage = 'Beim Verbinden zum Server kam es zu einem Fehler: ${status.message}';
+        // showDialog<String>(context: context, 
+        // builder: (BuildContext context) => AlertDialog(
+        //     title: const Text('Fehler beim Verbinden'),
+        //     content: Text(errorMessage),
+        //     actions: <Widget>[
+        //       TextButton(
+        //         onPressed: () => Navigator.pop(context, 'OK'),
+        //         child: const Text('OK'),
+        //       ),
+        //     ],
+        //   ),
+        
+        // );
+
+        }
+
+
       setState(() {
-        _connectionStatus = status;
-        _textFieldValue = 'http://10.0.0.2:5000';
+        print('Set State');
+        _connectionStatus = status.message;
+        if(status.success) {
+          _connectionEstablished = true;
+        } else {
+          _connectionEstablished = false;
+        }
+
+        print(_connectionEstablished);
       });
 
     _socketService.onRecordingStatusChanged = (status) {
+
       setState(() {
-        print(status);
         _recordingStatus = status  ? 'started' : 'stopped';
-        print(_recordingStatus);
       });
     };
 
@@ -47,6 +78,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           children: [
             CustomTextField(
+              defaultValue: _ipDefaultValue,
               labelText: 'Bitte IP und Port des Servers eingeben:',
               onChanged: (value) {
                 setState(() {
@@ -54,23 +86,23 @@ class _HomePageState extends State<HomePage> {
                 });
               },
             ),
-            SizedBox(height: 30),
-            Text('Connection Status: $_connectionStatus'),
-            SizedBox(height: 30),
-            if(_connectionStatus == 'disconnected')
+            const SizedBox(height: 30),
+            Text('Verbindungsstatus: $_connectionStatus'),
+            const SizedBox(height: 30),
+            if(_connectionEstablished == false)
             CustomButton(
-              text: 'Connect to Server',
+              text: 'Zum Server verbinden',
               onPressed: () {
                 _socketService.connect(_textFieldValue);
               },
             ),
-            if(_connectionStatus == 'connected')
-            CustomButton(text: 'DisconnectFromServer', 
+            if(_connectionEstablished == true)
+            CustomButton(text: 'Verbindung trennen', 
             onPressed: () {
               _socketService.disconnect();
             }),
 
-            if(_recordingStatus == 'stopped')
+            if(_recordingStatus == 'stopped' && _connectionEstablished) 
             CustomButton(
               text: 'Starte aufnahme',
               onPressed: () {

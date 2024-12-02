@@ -4,11 +4,13 @@ class CustomTextField extends StatelessWidget {
   final Function(String) onChanged;
   final String labelText;
 
-  const CustomTextField({super.key, required this.onChanged, required this.labelText});
+  final String? defaultValue; 
+  const CustomTextField({super.key, required this.onChanged, required this.labelText, this.defaultValue});
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
+      initialValue: defaultValue,
       onChanged: onChanged,
       decoration: InputDecoration(
         border: const OutlineInputBorder(),

@@ -1,8 +1,9 @@
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import '../models/connection_status.dart';
 
 class SocketService {
   late IO.Socket socket;
-  Function(String)? onConnectionStatusChanged;
+  Function(ConnectionStatus)? onConnectionStatusChanged;
   Function(bool)? onRecordingStatusChanged;
 
   SocketService({this.onConnectionStatusChanged, this.onRecordingStatusChanged});
@@ -23,21 +24,23 @@ class SocketService {
     socket.on('connect', (_) {
       print('connected');
       if (onConnectionStatusChanged != null) {
-        onConnectionStatusChanged!('connected');
+        onConnectionStatusChanged!(ConnectionStatus(success: true, message: 'Erfolgreich verbunden!'));
       }
     });
 
     socket.on('connect_error', (error) {
       print('Connection Error: $error');
       if (onConnectionStatusChanged != null) {
-        onConnectionStatusChanged!('connection error');
+        onConnectionStatusChanged!(ConnectionStatus(success: false, message: 'Fehler beim Verbinden: $error'));
       }
+      socket.close();
+
     });
 
     socket.on('disconnect', (_) {
       print('disconnected');
       if (onConnectionStatusChanged != null) {
-        onConnectionStatusChanged!('disconnected');
+        onConnectionStatusChanged!(ConnectionStatus(success: true, message: 'Erfolgreich getrennt!'));
       }
     });
 
