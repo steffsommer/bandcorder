@@ -1,15 +1,23 @@
 import socketio
 from recorder import Recorder
 from logging import Logger
+from recording_state_notifier import RecordingStateNotifier
 
 NAMESPACE = '/'
 
+
 class RecordingController(socketio.AsyncNamespace):
 
-    def __init__(self, recorder: Recorder, logger: Logger):
+    def __init__(
+            self,
+            recorder: Recorder,
+            logger: Logger,
+            notifier: RecordingStateNotifier,
+    ):
         super().__init__(NAMESPACE)
         self._recorder = recorder
         self._logger = logger
+        self._notifier = notifier
 
     def on_StartRecording(self, _sid) -> None:
         self._logger.info('Received request to start recording')
@@ -26,6 +34,7 @@ class RecordingController(socketio.AsyncNamespace):
         except Exception as e:
             self._logger.error('Failed to stop recording')
 
-    async def on_QueryRecordingState(self, _sid):
-        is_recording = self._recorder.get_is_recording()
-        await self.emit('RecordingState', {'isRecording': is_recording})
+    async def on_QueryRecordingState(self, sid) -> None:
+        state = self._notifier.get_current_state()
+        dto = state.toSerializableDict()
+        await self.emit('RecordingState', dto, to=sid)

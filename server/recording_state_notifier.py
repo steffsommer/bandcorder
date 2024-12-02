@@ -1,8 +1,7 @@
 from dataclasses import dataclass
-from typing import Callable, cast
+from typing import Callable, cast, Dict
 from abc import ABC, abstractmethod
-from typing import Coroutine
-import asyncio
+import copy
 
 
 @dataclass
@@ -11,6 +10,13 @@ class RecordingState:
     file_name: str
     duration: int
 
+    def toSerializableDict(self) -> Dict:
+        return {
+            'isRecording': self.is_recording,
+            'fileName': self.file_name,
+            'duration': self.duration,
+        }
+
 
 class RecordingStateConsumerClass(ABC):
     @abstractmethod
@@ -18,12 +24,14 @@ class RecordingStateConsumerClass(ABC):
         pass
 
 
-RecordingStateConsumer = RecordingStateConsumerClass | Callable[[RecordingState], None]
+RecordingStateConsumer = RecordingStateConsumerClass | Callable[[
+    RecordingState], None]
 
 
 class RecordingStateNotifier():
 
-    _consumers = []
+    _subscribers = []
+    _state = RecordingState(is_recording=False, duration=0, file_name='')
 
     def notifyStarted(self, file_name: str) -> None:
         """Signal subscribers that a new recording was started"""
@@ -37,7 +45,10 @@ class RecordingStateNotifier():
         """Register a callback that gets executed at least every second with
         the current recording state.
         """
-        self._consumers.append(callback)
+        self._subscribers.append(callback)
+
+    def get_current_state(self) -> RecordingState:
+        return copy.deepcopy(self._state)
 
     def _publish_state(self, is_recording: bool, file_name: str, duration: int):
         state = RecordingState(
@@ -45,7 +56,8 @@ class RecordingStateNotifier():
             duration=duration,
             file_name=file_name
         )
-        for cb in self._consumers:
+        self._state = copy.deepcopy(state)
+        for cb in self._subscribers:
             try:
                 if callable(cb):
                     cb(state)

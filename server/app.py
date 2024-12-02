@@ -19,15 +19,15 @@ logger = logging.getLogger(__name__)
 config_loader = ConfigLoader(logger)
 config = config_loader.load_config()
 
-sio = socketio.AsyncServer(async_mode='tornado')
+socketio_server = socketio.AsyncServer(async_mode='tornado')
 notifier = RecordingStateNotifier()
-notifier.register_subscriber(WebSocketClientNotifier(sio))
+notifier.register_subscriber(WebSocketClientNotifier(socketio_server))
 
 data_dir = config[DATA_DIR_PATH]
 recorder = Recorder(notifier, data_dir)
 
-recording_controller = RecordingController(recorder, logger)
-sio.register_namespace(recording_controller)
+recording_controller = RecordingController(recorder, logger, notifier)
+socketio_server.register_namespace(recording_controller)
 
 
 def run_ui():
@@ -42,7 +42,7 @@ thread.start()
 
 app = tornado.web.Application(
     [
-        (r"/socket.io/", socketio.get_tornado_handler(sio)),
+        (r"/socket.io/", socketio.get_tornado_handler(socketio_server)),
     ],
 )
 server = app.listen(5000)
