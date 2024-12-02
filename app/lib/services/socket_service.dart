@@ -5,11 +5,11 @@ class SocketService {
   late IO.Socket socket;
   Function(ConnectionStatus)? onConnectionStatusChanged;
   Function(bool)? onRecordingStatusChanged;
+  Function(bool)? onErrorCallback;
 
   SocketService({this.onConnectionStatusChanged, this.onRecordingStatusChanged});
 
   void connect(String url) {
-
 
     if(url == '') {
       print('Bitte zuerst eine Url eingeben!');
@@ -49,8 +49,14 @@ class SocketService {
       print('RecordingStateChanged');
       print(onRecordingStatusChanged != null);
       if(onRecordingStatusChanged != null) {
-        print(data['recording']);
-        onRecordingStatusChanged!(data['recording']);
+        print(data['isRecording']);
+        try {
+          onRecordingStatusChanged!(data['Recording']);
+          // onRecordingStatusChanged!(data['isRecording']);
+        } catch(error) {
+          print('Key not found');
+        }
+        
       }
     });
 

@@ -16,34 +16,13 @@ class _HomePageState extends State<HomePage> {
   String _connectionStatus = 'disconnected';
   bool _connectionEstablished = false;
   String _recordingStatus = 'stopped';
-  String _ipDefaultValue = 'http://10.0.0.2:5000';
+  String _ipDefaultValue = 'http://10.0.2.2:5000';
   String _textFieldValue = '';
   @override
   void initState() {
     _textFieldValue = _ipDefaultValue;
     super.initState();
     _socketService.onConnectionStatusChanged = (status) {
-
-
-      if(status.success == false && status.message != '') {
-
-        final String errorMessage = 'Beim Verbinden zum Server kam es zu einem Fehler: ${status.message}';
-        // showDialog<String>(context: context, 
-        // builder: (BuildContext context) => AlertDialog(
-        //     title: const Text('Fehler beim Verbinden'),
-        //     content: Text(errorMessage),
-        //     actions: <Widget>[
-        //       TextButton(
-        //         onPressed: () => Navigator.pop(context, 'OK'),
-        //         child: const Text('OK'),
-        //       ),
-        //     ],
-        //   ),
-        
-        // );
-
-        }
-
 
       setState(() {
         print('Set State');
@@ -59,6 +38,7 @@ class _HomePageState extends State<HomePage> {
 
     _socketService.onRecordingStatusChanged = (status) {
 
+      print(status);
       setState(() {
         _recordingStatus = status  ? 'started' : 'stopped';
       });
@@ -89,6 +69,7 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 30),
             Text('Verbindungsstatus: $_connectionStatus'),
             const SizedBox(height: 30),
+
             if(_connectionEstablished == false)
             CustomButton(
               text: 'Zum Server verbinden',
@@ -96,9 +77,15 @@ class _HomePageState extends State<HomePage> {
                 _socketService.connect(_textFieldValue);
               },
             ),
+
             if(_connectionEstablished == true)
             CustomButton(text: 'Verbindung trennen', 
             onPressed: () {
+
+              // To prevent data loss
+              if(_recordingStatus == 'started') {
+                _socketService.SendStopRecordingEvent();
+              }
               _socketService.disconnect();
             }),
 
@@ -110,7 +97,7 @@ class _HomePageState extends State<HomePage> {
               },
             ),
 
-            if(_recordingStatus == 'started')
+            if(_recordingStatus == 'started' && _connectionEstablished)
             CustomButton(
               text: 'Beende Aufnahme',
               onPressed: () {
