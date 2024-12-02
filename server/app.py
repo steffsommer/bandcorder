@@ -27,34 +27,22 @@ recorder = Recorder(notifier, data_dir)
 
 
 @sio.on('StartRecording')
-async def start_recording(event):
+async def start_recording(event) -> None:
     logger.info('Received request to start recording')
     try:
         recorder.start()
         logger.info('Recording was started successfully')
     except Exception as e:
         logger.error('Failed to start recording')
-        # return {
-        #     'RecordingStateChangeFailed', {
-        #         'requestedState': True,
-        #         'reason': str(e)
-        #     }
-        # }
 
 
 @sio.on('StopRecording')
-async def stop_recording(event):
+async def stop_recording(event) -> None:
     try:
         recorder.stop()
         logger.info('Recording was stopped successfully')
     except Exception as e:
         logger.error('Failed to stop recording')
-        # return {
-        #     'RecordingStateChangeFailed', {
-        #         'requestedState': False,
-        #         'reason': str(e)
-        #     }
-        # }
 
 
 @sio.on('QueryRecordingState')
