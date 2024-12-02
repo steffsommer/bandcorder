@@ -5,18 +5,25 @@ import threading
 from tornado.ioloop import IOLoop
 from config_loader import ConfigLoader, DATA_DIR_PATH
 from recorder import Recorder
+from recording_state_notifier import RecordingStateNotifier
+from websocket_notifier import WebSocketClientNotifier
 import ui
 
 sio = socketio.AsyncServer(async_mode='tornado')
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
 logger = logging.getLogger(__name__)
 
 config_loader = ConfigLoader(logger)
 config = config_loader.load_config()
 
+notifier = RecordingStateNotifier()
+notifier.register_subscriber(WebSocketClientNotifier(sio))
+
 data_dir = config[DATA_DIR_PATH]
-recorder = Recorder(data_dir)
+recorder = Recorder(notifier, data_dir)
 
 
 @sio.on('StartRecording')
@@ -24,28 +31,30 @@ async def start_recording(event):
     logger.info('Received request to start recording')
     try:
         recorder.start()
-        await sio.emit('RecordingStateChange', {'recording': True})
         logger.info('Recording was started successfully')
     except Exception as e:
         logger.error('Failed to start recording')
-        await sio.emit('RecordingStateChangeFailed', {
-            'requestedState': True,
-            'reason': str(e)
-        })
+        # return {
+        #     'RecordingStateChangeFailed', {
+        #         'requestedState': True,
+        #         'reason': str(e)
+        #     }
+        # }
 
 
 @sio.on('StopRecording')
 async def stop_recording(event):
     try:
         recorder.stop()
-        await sio.emit('RecordingStateChange', {'recording': False})
         logger.info('Recording was stopped successfully')
     except Exception as e:
         logger.error('Failed to stop recording')
-        await sio.emit('RecordingStateChangeFailed', {
-            'requestedState': False,
-            'reason': str(e)
-        })
+        # return {
+        #     'RecordingStateChangeFailed', {
+        #         'requestedState': False,
+        #         'reason': str(e)
+        #     }
+        # }
 
 
 @sio.on('QueryRecordingState')
@@ -55,10 +64,11 @@ async def query_recording_state():
 
 
 def run_ui():
-    root_widget = ui.UserInterface()
+    root_widget = ui.UserInterface(recorder, notifier)
     root_widget.mainloop()
     server.stop()
     IOLoop.current().stop()
+
 
 thread = threading.Thread(target=run_ui)
 thread.start()

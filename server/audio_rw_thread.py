@@ -3,24 +3,36 @@ from queue import Queue
 import sys
 import soundfile as sf
 import sounddevice as sd
+from dataclasses import dataclass
+from pathlib import Path
+
+
+@dataclass
+class RecordingSummary:
+    file_name: str
+    duration: int
+
 
 """
 Relay microphone audio data to a file
 """
+
+
 class AudioReadWriteThread(threading.Thread):
 
     _keep_recording = True
 
-    def __init__(self, out_file):
+    def __init__(self, out_file: Path):
         threading.Thread.__init__(self)
         if out_file is None:
             raise RuntimeError(
                 "Can't create thread without valid output_file path set")
-        self.out_file = out_file
+        self._out_File = out_file
 
-    def stop(self):
+    def stop(self) -> RecordingSummary:
         self._keep_recording = False
         self.join()
+        return RecordingSummary(file_name=self._out_File.name, duration=10)
 
     def run(self):
         q = Queue()
@@ -28,7 +40,7 @@ class AudioReadWriteThread(threading.Thread):
         default_mic = sd.query_devices()[mic_index]
         sample_rate = default_mic['default_samplerate']
         sample_rate_int = int(sample_rate)
-        with sf.SoundFile(self.out_file, mode='x', samplerate=sample_rate_int, channels=1, format="WAVEX", subtype=None) as file:
+        with sf.SoundFile(self._out_File, mode='x', samplerate=sample_rate_int, channels=1, format="WAVEX", subtype=None) as file:
             callback = self._get_callback(q)
             with sd.InputStream(samplerate=sample_rate, device=mic_index, channels=1, callback=callback):
                 while self._keep_recording:

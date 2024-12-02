@@ -1,45 +1,43 @@
 import tkinter as tk
-from tkinter import ttk
-import recording_state_label
-
-# Tkinter top level widget implementation
-# Displays some information like a list of the previous recordings
-# of the current day and the current recording state
+from recording_state_label import RecordingStateLabel
+from recordings_treeview import RecordingsTreeView
+from active_mic_label import ActiveMicLabel
+from active_recording_info import ActiveRecordingInfo, RecordingState
+from recorder import Recorder
+from recording_state_notifier import RecordingStateNotifier
 
 
 class UserInterface(tk.Tk):
-    def __init__(self):
+    """ Tkinter User interface root
+
+     Displays some information like a list of the previous recordings
+     of the current day and the current recording state
+    """
+
+    def __init__(
+            self,
+            recorder: Recorder,
+            notifier: RecordingState
+    ):
         super().__init__()
         self.state('zoomed')
+        self._root_frame = tk.Frame(self)
+        # component definitions
+        self._active_mic_label = ActiveMicLabel(self._root_frame, "DUMMY MIC")
+        self._recording_label = RecordingStateLabel(self._root_frame, notifier)
+        self._recordings_tree_view = RecordingsTreeView(self._root_frame)
+        self._active_recording_info = ActiveRecordingInfo(self._root_frame)
 
-        # frame for the label and buttons
-        frame = tk.Frame(self)
-        frame.place(relx=0.5, rely=0.5, anchor="c")  # put at center of window
+        # layout
+        self._root_frame.grid_rowconfigure(0)
 
-        # frame for the two buttons
-        frame = tk.Frame(self)
-        # frame.pack(expand=True)
-        frame.pack(expand=True)
-        
-        recording_label = recording_state_label.RecordingStateLabel(frame)
+        # component placement
+        self._root_frame.place(relx=0.5, rely=0.5, anchor="c")
+        self._active_mic_label.grid(row=0, column=0, sticky='NW')
+        self._recording_label.grid(row=0, column=1, padx=150)
+        self._recordings_tree_view.grid(row=1, column=0)
+        self._active_recording_info.grid(row=1, column=1, padx=150, pady=40, sticky='NW')
 
-        # recording_state_label = tk.Label(frame, text="Recording", font=(
-        #     "Arial", 100), background='green', padx=100, pady=100)
-        recordings_list_label = tk.Label(
-            frame, text="List of recordings", font=("Arial", 40))
-
-        frame.grid_rowconfigure(0)
-
-        recording_label.grid(column=2, row=0, padx=150)
-        recordings_list_label.grid(row=0, column=0, sticky="SW")
-        treeview = ttk.Treeview(frame, columns=("size", "lastmod"), height=40)
-        treeview.heading("#0", text="File")
-        treeview.heading("size", text="Size")
-        treeview.heading("lastmod", text="Last modification")
-        treeview.insert(
-            "",
-            tk.END,
-            text="README.txt",
-            values=("850 bytes", "18:30")
-        )
-        treeview.grid(column=0, row=1)
+        # debug/test code
+        state = RecordingState(file_name="dummy_file.wav", seconds=14)
+        self._active_recording_info.update(state)
