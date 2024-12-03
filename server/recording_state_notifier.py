@@ -31,7 +31,6 @@ RecordingStateConsumer = RecordingStateConsumerClass | Callable[[
 class RecordingStateNotifier():
 
     _subscribers = []
-    _state = RecordingState(is_recording=False, duration=0, file_name='')
 
     def notifyStarted(self, file_name: str) -> None:
         """Signal subscribers that a new recording was started"""
@@ -47,16 +46,12 @@ class RecordingStateNotifier():
         """
         self._subscribers.append(callback)
 
-    def get_current_state(self) -> RecordingState:
-        return copy.deepcopy(self._state)
-
     def _publish_state(self, is_recording: bool, file_name: str, duration: int):
         state = RecordingState(
             is_recording=is_recording,
             duration=duration,
             file_name=file_name
         )
-        self._state = copy.deepcopy(state)
         for cb in self._subscribers:
             try:
                 if callable(cb):

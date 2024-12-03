@@ -21,12 +21,14 @@ config = config_loader.load_config()
 
 socketio_server = socketio.AsyncServer(async_mode='tornado')
 notifier = RecordingStateNotifier()
-notifier.register_subscriber(WebSocketClientNotifier(socketio_server))
+client_notifier = WebSocketClientNotifier(logger, socketio_server)
+notifier.register_subscriber(client_notifier)
+
 
 data_dir = config[DATA_DIR_PATH]
 recorder = Recorder(notifier, data_dir)
 
-recording_controller = RecordingController(recorder, logger, notifier)
+recording_controller = RecordingController(recorder, logger)
 socketio_server.register_namespace(recording_controller)
 
 
@@ -50,3 +52,5 @@ server = app.listen(5000)
 eventLoopThread = threading.Thread(target=IOLoop.current().start)
 eventLoopThread.daemon = True
 eventLoopThread.start()
+
+client_notifier.start()
