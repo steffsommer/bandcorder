@@ -1,11 +1,19 @@
 import tkinter as tk
 from tkinter import ttk
+from file_storage_service import FileStorageService, Recording
+from recording_state_notifier import RecordingStateNotifier, RecordingState
 
 
 class RecordingsTreeView(tk.Frame):
-  
-    def __init__(self, parent):
+
+    def __init__(
+            self,
+            parent,
+            notifier: RecordingStateNotifier,
+            storage_service: FileStorageService
+    ):
         super().__init__(parent)
+        self._storage_service = storage_service
 
         # component definitions
         self._treeview = self._get_configured_treeview()
@@ -19,16 +27,23 @@ class RecordingsTreeView(tk.Frame):
         self._treeview.grid(row=1, column=0)
         self._recordings_list_label.grid(row=0, column=0)
 
+        notifier.register_subscriber(self._set_recordings)
+        self._update_list()
+
+    def _set_recordings(self, recording_state: RecordingState) -> None:
+        if recording_state.is_recording:
+            return
+        self._update_list()
 
     def _get_configured_treeview(self) -> ttk.Treeview:
-        rec_list = ttk.Treeview(self, columns=("size", "lastmod"), height=20)
-        rec_list.heading("#0", text="File")
-        rec_list.heading("size", text="Size")
-        rec_list.heading("lastmod", text="Last modification")
-        rec_list.insert(
-            "",
-            tk.END,
-            text="README.txt",
-            values=("850 bytes", "18:30")
-        )
-        return rec_list
+        treeview = ttk.Treeview(self, columns=("size", "lastmod"), height=20)
+        treeview.heading("#0", text="File")
+        return treeview
+
+    def _update_list(self):
+        recordings = self._storage_service.get_todays_recordings()
+        for item in self._treeview.get_children():
+            self._treeview.delete(item)
+        for recording in recordings:
+            print('inserting recording', recording.name)
+            self._treeview.insert("", tk.END, text=recording.name)

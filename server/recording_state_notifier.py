@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from typing import Callable, cast, Dict
 from abc import ABC, abstractmethod
-import copy
 
 
 @dataclass

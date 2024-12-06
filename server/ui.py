@@ -3,8 +3,8 @@ from recording_state_label import RecordingStateLabel
 from recordings_treeview import RecordingsTreeView
 from active_mic_label import ActiveMicLabel
 from active_recording_info import ActiveRecordingInfo, RecordingState
-from recorder import Recorder
 from recording_state_notifier import RecordingStateNotifier
+from file_storage_service import FileStorageService
 
 
 class UserInterface(tk.Tk):
@@ -16,7 +16,7 @@ class UserInterface(tk.Tk):
 
     def __init__(
             self,
-            recorder: Recorder,
+            storage_service: FileStorageService,
             notifier: RecordingState
     ):
         super().__init__()
@@ -25,7 +25,7 @@ class UserInterface(tk.Tk):
         # component definitions
         self._active_mic_label = ActiveMicLabel(self._root_frame, "DUMMY MIC")
         self._recording_label = RecordingStateLabel(self._root_frame, notifier)
-        self._recordings_tree_view = RecordingsTreeView(self._root_frame)
+        self._recordings_tree_view = RecordingsTreeView(self._root_frame, notifier, storage_service)
         self._active_recording_info = ActiveRecordingInfo(self._root_frame)
 
         # layout

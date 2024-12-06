@@ -8,6 +8,7 @@ from recorder import Recorder
 from recording_state_notifier import RecordingStateNotifier
 from websocket_notifier import WebSocketClientNotifier
 from recording_controller import RecordingController
+from file_storage_service import FileStorageService
 import ui
 
 logging.basicConfig(
@@ -24,12 +25,14 @@ notifier = RecordingStateNotifier()
 client_notifier = WebSocketClientNotifier(logger, socketio_server)
 notifier.register_subscriber(client_notifier)
 
-
 data_dir = config[DATA_DIR_PATH]
-recorder = Recorder(notifier, data_dir)
+storage_service = FileStorageService(data_dir)
 
+recorder = Recorder(notifier, storage_service)
 recording_controller = RecordingController(recorder, logger)
+
 socketio_server.register_namespace(recording_controller)
+
 
 def shutdown():
     client_notifier.stop()
@@ -38,7 +41,7 @@ def shutdown():
 
 
 def run_ui():
-    root_widget = ui.UserInterface(recorder, notifier)
+    root_widget = ui.UserInterface(storage_service, notifier)
     root_widget.mainloop()
     shutdown()
 
@@ -56,5 +59,4 @@ server = app.listen(5000)
 eventLoopThread = threading.Thread(target=IOLoop.current().start)
 eventLoopThread.daemon = True
 eventLoopThread.start()
-
 client_notifier.start()

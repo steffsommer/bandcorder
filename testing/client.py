@@ -11,20 +11,22 @@ sio = socketio.SimpleClient()
 sio.connect('http://localhost:5000')
 print("connected")
 
-running = True
-def receive():
-    while running:
-        try:
-            received_event = sio.receive(1)
-            print('Received received_event: ', received_event)
-        except TimeoutError:
-            pass
-        except Exception as e:
-            print(str(e))
-            sys.exit()
+# TODO: Re-enable receiver thread. Deactivated so the new state update
+# that gets sent 1x per second does not pollute stdout
+# running = True
+# def receive():
+#     while running:
+#         try:
+#             received_event = sio.receive(1)
+#             print('Received received_event: ', received_event)
+#         except TimeoutError:
+#             pass
+#         except Exception as e:
+#             print(str(e))
+#             sys.exit()
 
-receiver_thread = threading.Thread(target=receive)
-receiver_thread.start()
+# receiver_thread = threading.Thread(target=receive)
+# receiver_thread.start()
 
 print('messages are received through a background thread')
 print(f'To send enter "s{CMD_SEPARATOR}<event>{CMD_SEPARATOR}<payload>". Enter "q" to quit.\n')

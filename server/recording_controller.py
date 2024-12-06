@@ -23,7 +23,7 @@ class RecordingController(socketio.AsyncNamespace):
             self._recorder.start()
             self._logger.info('Recording was started successfully')
         except Exception as e:
-            self._logger.error('Failed to start recording')
+            self._logger.error(f'Failed to start recording, reason: {str(e)}')
 
     def on_StopRecording(self, _sid) -> None:
         self._logger.info('Received request to stop recording')

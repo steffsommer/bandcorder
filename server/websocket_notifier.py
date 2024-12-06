@@ -22,7 +22,7 @@ class WebSocketClientNotifier(RecordingStateNotifier):
     async def _send_periodically(self) -> None:
         while True:
             self.on_state_change(self._state)
-            self._logger.info(f'Published state to client {self._state}')
+            self._logger.debug(f'Published state to client {self._state}')
             await asyncio.sleep(INTERVAL_SECONDS)
 
     def stop(self):
