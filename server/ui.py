@@ -23,7 +23,7 @@ class UserInterface(tk.Tk):
         self.state('zoomed')
         self._root_frame = tk.Frame(self)
         # component definitions
-        self._active_mic_label = ActiveMicLabel(self._root_frame, "DUMMY MIC")
+        self._active_mic_label = ActiveMicLabel(self._root_frame)
         self._recording_label = RecordingStateLabel(self._root_frame, notifier)
         self._recordings_tree_view = RecordingsTreeView(self._root_frame, notifier, storage_service)
         self._active_recording_info = ActiveRecordingInfo(self._root_frame)

@@ -14,13 +14,15 @@ class RecordingSummary:
 
 
 """
-Relay microphone audio data to a file
+Relay microphone audio data to a file. Uses the microphone set as the
+operating systems default microphone at object creation time.
 """
-
-
 class AudioReadWriteThread(threading.Thread):
 
     _keep_recording = True
+    mic_name: str
+    mic_index: int
+    sample_rate: int
 
     def __init__(self, out_file: Path):
         threading.Thread.__init__(self)
@@ -28,6 +30,10 @@ class AudioReadWriteThread(threading.Thread):
             raise RuntimeError(
                 "Can't create thread without valid output_file path set")
         self._out_File = out_file
+        self.mic_index = sd.default.device[0]
+        default_mic = sd.query_devices()[self.mic_index]
+        self.mic_name = default_mic['name']
+        self.sample_rate = int(default_mic['default_samplerate'])
 
     def stop(self) -> RecordingSummary:
         self._keep_recording = False
@@ -36,13 +42,9 @@ class AudioReadWriteThread(threading.Thread):
 
     def run(self):
         q = Queue()
-        mic_index = sd.default.device[0]
-        default_mic = sd.query_devices()[mic_index]
-        sample_rate = default_mic['default_samplerate']
-        sample_rate_int = int(sample_rate)
-        with sf.SoundFile(self._out_File, mode='x', samplerate=sample_rate_int, channels=1, format="WAVEX", subtype=None) as file:
+        with sf.SoundFile(self._out_File, mode='x', samplerate=self.sample_rate, channels=1, format="WAVEX", subtype=None) as file:
             callback = self._get_callback(q)
-            with sd.InputStream(samplerate=sample_rate, device=mic_index, channels=1, callback=callback):
+            with sd.InputStream(samplerate=self.sample_rate, device=self.mic_index, channels=1, callback=callback):
                 while self._keep_recording:
                     file.write(q.get())
 

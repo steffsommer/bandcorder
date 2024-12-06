@@ -45,5 +45,4 @@ class RecordingsTreeView(tk.Frame):
         for item in self._treeview.get_children():
             self._treeview.delete(item)
         for recording in recordings:
-            print('inserting recording', recording.name)
             self._treeview.insert("", tk.END, text=recording.name)
