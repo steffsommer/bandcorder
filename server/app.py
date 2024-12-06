@@ -31,12 +31,16 @@ recorder = Recorder(notifier, data_dir)
 recording_controller = RecordingController(recorder, logger)
 socketio_server.register_namespace(recording_controller)
 
+def shutdown():
+    client_notifier.stop()
+    server.stop()
+    IOLoop.current().stop()
+
 
 def run_ui():
     root_widget = ui.UserInterface(recorder, notifier)
     root_widget.mainloop()
-    server.stop()
-    IOLoop.current().stop()
+    shutdown()
 
 
 thread = threading.Thread(target=run_ui)

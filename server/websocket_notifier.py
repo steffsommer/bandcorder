@@ -2,9 +2,8 @@ from recording_state_notifier import RecordingStateNotifier, RecordingState
 import socketio
 import asyncio
 import logging
-import time
 
-INTERAL_SECONDS = 1
+INTERVAL_SECONDS = 1
 
 
 class WebSocketClientNotifier(RecordingStateNotifier):
@@ -14,21 +13,20 @@ class WebSocketClientNotifier(RecordingStateNotifier):
         self._logger = logger
         self._state = RecordingState(
             is_recording=False, duration=0, file_name='')
-        self._running = True
-        
+        self.loop_send_task = None
+
     def start(self) -> None:
         loop = asyncio.get_event_loop()
-        loop.create_task(self._send_periodically())
+        self.loop_send_task = loop.create_task(self._send_periodically())
 
-    def _send_periodically(self) -> None:
-        while self._running:
-            time.sleep(INTERAL_SECONDS)
+    async def _send_periodically(self) -> None:
+        while True:
             self.on_state_change(self._state)
             self._logger.info(f'Published state to client {self._state}')
-            
+            await asyncio.sleep(INTERVAL_SECONDS)
 
     def stop(self):
-        self._running = False
+        self.loop_send_task.cancel()
 
     def on_state_change(self, state: RecordingState) -> None:
         self._state = state
