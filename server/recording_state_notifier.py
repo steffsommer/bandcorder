@@ -1,7 +1,9 @@
 from dataclasses import dataclass
 from typing import Callable, cast, Dict
 from abc import ABC, abstractmethod
+import asyncio
 
+INTERVAL_SECONDS = 1
 
 @dataclass
 class RecordingState:
@@ -30,34 +32,51 @@ RecordingStateConsumer = RecordingStateConsumerClass | Callable[[
 class RecordingStateNotifier():
 
     _subscribers = []
+    _state = RecordingState(is_recording=False, duration=0, file_name='')
 
     def notifyStarted(self, file_name: str) -> None:
         """Signal subscribers that a new recording was started"""
-        self._publish_state(True, file_name, 0)
+        state = RecordingState(
+            is_recording=True,
+            duration=0,
+            file_name=file_name
+        )
+        self.publish(state)
 
     def notifyStopped(self, file_name: str, duration: int) -> None:
         """Signal subscribers that the current recording was stopped"""
-        self._publish_state(False, file_name, duration)
+        state = RecordingState(
+            is_recording=False,
+            duration=duration,
+            file_name=file_name
+        )
+        self.publish(state)
 
     def register_subscriber(self, callback: RecordingStateConsumer):
         """Register a callback that gets executed at least every second with
         the current recording state.
         """
         self._subscribers.append(callback)
+    
+    def start(self) -> None:
+        loop = asyncio.get_event_loop()
+        self.loop_send_task = loop.create_task(self._send_periodically())
 
-    def _publish_state(self, is_recording: bool, file_name: str, duration: int):
-        state = RecordingState(
-            is_recording=is_recording,
-            duration=duration,
-            file_name=file_name
-        )
+    async def _send_periodically(self) -> None:
+        while True:
+            self.on_state_change(self._state)
+            self._logger.debug(f'Published state to client {self._state}')
+            await asyncio.sleep(INTERVAL_SECONDS)
+
+
+    def publish(self, event: RecordingState):
         for cb in self._subscribers:
             try:
                 if callable(cb):
-                    cb(state)
+                    cb(event)
                 else:
                     consumer = cast(RecordingStateConsumer, cb)
-                    consumer.on_state_change(state)
+                    consumer.on_state_change(event)
             except BaseException as e:
                 print(
                     f'[ERROR] Exception occured within state update callback: {str(e)}')

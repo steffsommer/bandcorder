@@ -26,7 +26,7 @@ class UserInterface(tk.Tk):
         self._active_mic_label = ActiveMicLabel(self._root_frame)
         self._recording_label = RecordingStateLabel(self._root_frame, notifier)
         self._recordings_tree_view = RecordingsTreeView(self._root_frame, notifier, storage_service)
-        self._active_recording_info = ActiveRecordingInfo(self._root_frame)
+        self._active_recording_info = ActiveRecordingInfo(self._root_frame, notifier)
 
         # layout
         self._root_frame.grid_rowconfigure(0)
@@ -37,7 +37,3 @@ class UserInterface(tk.Tk):
         self._recording_label.grid(row=0, column=1, padx=150)
         self._recordings_tree_view.grid(row=1, column=0)
         self._active_recording_info.grid(row=1, column=1, padx=150, pady=40, sticky='NW')
-
-        # debug/test code
-        state = RecordingState(file_name="dummy_file.wav", seconds=14)
-        self._active_recording_info.update(state)

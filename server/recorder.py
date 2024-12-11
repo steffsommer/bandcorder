@@ -1,6 +1,3 @@
-from datetime import datetime
-from logging import Logger
-from pathlib import Path
 from audio_rw_thread import AudioReadWriteThread
 from recording_state_notifier import RecordingStateNotifier
 from file_storage_service import FileStorageService
@@ -27,7 +24,7 @@ class Recorder:
             raise RuntimeError(
                 "Can't start a recording while another one is running")
         file_path = self._storage_service.create_writable_wav_file()
-        self._rec_thread = AudioReadWriteThread(file_path)
+        self._rec_thread = AudioReadWriteThread(file_path, self._notifier.publish)
         self._rec_thread.start()
         self._notifier.notifyStarted(file_path.name)
 
