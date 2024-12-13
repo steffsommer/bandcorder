@@ -23,7 +23,7 @@ config = config_loader.load_config()
 socketio_server = socketio.AsyncServer(async_mode='tornado')
 notifier = RecordingStateNotifier()
 client_notifier = WebSocketClientNotifier(logger, socketio_server)
-notifier.register_subscriber(client_notifier) # TODO: This causes exceptions
+notifier.register_subscriber(client_notifier)
 
 data_dir = config[DATA_DIR_PATH]
 storage_service = FileStorageService(data_dir)

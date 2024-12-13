@@ -5,6 +5,7 @@ import asyncio
 
 INTERVAL_SECONDS = 1
 
+
 @dataclass
 class RecordingState:
     is_recording: bool
@@ -57,7 +58,7 @@ class RecordingStateNotifier():
         the current recording state.
         """
         self._subscribers.append(callback)
-    
+
     def start(self) -> None:
         loop = asyncio.get_event_loop()
         self.loop_send_task = loop.create_task(self._send_periodically())
@@ -67,7 +68,6 @@ class RecordingStateNotifier():
             self.on_state_change(self._state)
             self._logger.debug(f'Published state to client {self._state}')
             await asyncio.sleep(INTERVAL_SECONDS)
-
 
     def publish(self, event: RecordingState):
         for cb in self._subscribers:

@@ -14,5 +14,4 @@ class WebSocketClientNotifier(RecordingStateNotifier):
         self._state = state
         if state is not None:
             dto = state.toSerializableDict()
-            loop = asyncio.get_event_loop()
-            loop.create_task(self._sio.emit('RecordingStateChange', dto))
+            asyncio.create_task(self._sio.emit('RecordingStateChange', dto))
