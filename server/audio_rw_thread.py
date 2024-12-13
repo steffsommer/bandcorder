@@ -37,7 +37,8 @@ class AudioReadWriteThread(threading.Thread):
     def __init__(
             self,
             out_file: Path,
-            state_update_callback: Callable[[RecordingState], None]
+            state_update_callback: Callable[[
+                RecordingState], None] = lambda *args, **kwargs: None
 
     ):
         threading.Thread.__init__(self)
