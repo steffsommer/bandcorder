@@ -1,12 +1,11 @@
 import tkinter as tk
-import threading
 from audio_rw_thread import AudioReadWriteThread
-import time
 from pathlib import Path
 
 NO_MIC_TEXT = 'NO ACTIVE MIC'
 NO_MIC_BACKGROUND_COLOR = 'red'
 DEFAULT_BACKGROUND_COLOR = 'white'
+UPDATE_PERIOD_MS = 1000
 
 
 class ActiveMicLabel(tk.Label):
@@ -17,25 +16,23 @@ class ActiveMicLabel(tk.Label):
             font=("Arial", 20),
             pady=20,
         )
-        update_thread = threading.Thread(target=self.update_active_mic)
-        update_thread.start()
+        self.update_active_mic()
 
     def update_active_mic(self) -> None:
-        while True:
-            mic_name = None
-            try:
-                rw_thread = AudioReadWriteThread(Path())
-                mic_name = rw_thread.mic_name
-            except Exception as e:
-                print(e)
-            if mic_name is None or mic_name == '':
-                self.config(
-                    text=NO_MIC_TEXT,
-                    background=NO_MIC_BACKGROUND_COLOR,
-                )
-                return
+        mic_name = None
+        try:
+            rw_thread = AudioReadWriteThread(Path())
+            mic_name = rw_thread.mic_name
+        except Exception as e:
+            print(e)
+        if mic_name is None or mic_name == '':
             self.config(
-                text=mic_name,
-                background=DEFAULT_BACKGROUND_COLOR,
+                text=NO_MIC_TEXT,
+                background=NO_MIC_BACKGROUND_COLOR,
             )
-            time.sleep(1)
+            return
+        self.config(
+            text=mic_name,
+            background=DEFAULT_BACKGROUND_COLOR,
+        )
+        self.after(UPDATE_PERIOD_MS, self.update_active_mic)

@@ -9,10 +9,6 @@ class WebSocketClientNotifier(RecordingStateNotifier):
     def __init__(self, logger: logging.Logger, sio: socketio.AsyncServer):
         self._sio = sio
         self._logger = logger
-        self.loop_send_task = None
-
-    def stop(self) -> None:
-        self.loop_send_task.cancel()
 
     def on_state_change(self, state: RecordingState) -> None:
         self._state = state

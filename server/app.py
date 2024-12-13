@@ -35,7 +35,8 @@ socketio_server.register_namespace(recording_controller)
 
 
 def shutdown():
-    client_notifier.stop()
+    if recorder.is_recording():
+        recorder.stop()
     server.stop()
     IOLoop.current().stop()
 

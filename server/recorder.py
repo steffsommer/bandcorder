@@ -20,7 +20,7 @@ class Recorder:
         self._storage_service = storage_service
 
     def start(self) -> None:
-        if self.get_is_recording():
+        if self.is_recording():
             raise RuntimeError(
                 "Can't start a recording while another one is running")
         file_path = self._storage_service.create_writable_wav_file()
@@ -29,12 +29,12 @@ class Recorder:
         self._notifier.notifyStarted(file_path.name)
 
     def stop(self) -> None:
-        if not self.get_is_recording():
+        if not self.is_recording():
             raise RuntimeError("No recording is running")
         else:
             summary = self._rec_thread.stop()
             self._rec_thread = None
             self._notifier.notifyStopped(summary.file_name, summary.duration)
 
-    def get_is_recording(self) -> bool:
+    def is_recording(self) -> bool:
         return self._rec_thread is not None and self._rec_thread.is_alive()
