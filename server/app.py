@@ -21,7 +21,7 @@ config_loader = ConfigLoader(logger)
 config = config_loader.load_config()
 
 socketio_server = socketio.AsyncServer(async_mode='tornado')
-notifier = RecordingStateNotifier()
+notifier = RecordingStateNotifier(logger)
 client_notifier = WebSocketClientNotifier(logger, socketio_server)
 notifier.register_subscriber(client_notifier)
 

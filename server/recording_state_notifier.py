@@ -1,11 +1,16 @@
 from dataclasses import dataclass
 from typing import Callable, cast, Dict
 from abc import ABC, abstractmethod
-import asyncio
+from interval_task import IntervalTask
+from datetime import datetime
+from logging import Logger
 
 INTERVAL_SECONDS = 1
 
 
+# Note: the duration property was chosen in favor of a start_time,
+# to support future addition of Embedded devices that do not necessarily
+# have synchronized time
 @dataclass
 class RecordingState:
     is_recording: bool
@@ -30,28 +35,34 @@ RecordingStateConsumer = RecordingStateConsumerClass | Callable[[
     RecordingState], None]
 
 
-class RecordingStateNotifier():
+class RecordingStateNotifier:
 
     _subscribers = []
     _state = RecordingState(is_recording=False, duration=0, file_name='')
+    _start_time: datetime = None
+    
+    def __init__(self, logger: Logger):
+        self._logger = logger
 
     def notifyStarted(self, file_name: str) -> None:
         """Signal subscribers that a new recording was started"""
-        state = RecordingState(
+        self._state = RecordingState(
             is_recording=True,
             duration=0,
             file_name=file_name
         )
-        self.publish(state)
+        self._start_time = datetime.now()
+        self._publish()
 
     def notifyStopped(self, file_name: str, duration: int) -> None:
         """Signal subscribers that the current recording was stopped"""
-        state = RecordingState(
+        self._state = RecordingState(
             is_recording=False,
             duration=duration,
             file_name=file_name
         )
-        self.publish(state)
+        self._start_time = None
+        self._publish()
 
     def register_subscriber(self, callback: RecordingStateConsumer):
         """Register a callback that gets executed at least every second with
@@ -60,23 +71,27 @@ class RecordingStateNotifier():
         self._subscribers.append(callback)
 
     def start(self) -> None:
-        loop = asyncio.get_event_loop()
-        self.loop_send_task = loop.create_task(self._send_periodically())
+        task = IntervalTask(INTERVAL_SECONDS, self._publish_current_state)
+        task.start()
 
-    async def _send_periodically(self) -> None:
-        while True:
-            self.on_state_change(self._state)
-            self._logger.debug(f'Published state to client {self._state}')
-            await asyncio.sleep(INTERVAL_SECONDS)
+    def _publish_current_state(self) -> None:
+        self._state.duration = self._calculate_duration()
+        self._publish()
+        self._logger.debug(f'Published state to client {self._state}')
 
-    def publish(self, event: RecordingState):
+    def _calculate_duration(self):
+        if self._start_time is None:
+            return 0
+        return (datetime.now() - self._start_time).seconds
+
+    def _publish(self):
         for cb in self._subscribers:
             try:
                 if callable(cb):
-                    cb(event)
+                    cb(self._state)
                 else:
                     consumer = cast(RecordingStateConsumer, cb)
-                    consumer.on_state_change(event)
+                    consumer.on_state_change(self._state)
             except BaseException as e:
                 print(
                     f'[ERROR] Exception occured within state update callback: {str(e)}')
