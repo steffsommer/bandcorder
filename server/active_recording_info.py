@@ -1,9 +1,10 @@
 from dataclasses import dataclass
 import tkinter as tk
+import customtkinter as ctk
 from recording_state_notifier import RecordingStateNotifier, RecordingState
 
 
-class ActiveRecordingInfo(tk.Frame):
+class ActiveRecordingInfo(ctk.CTkFrame):
 
     def __init__(
             self,
@@ -27,14 +28,14 @@ class ActiveRecordingInfo(tk.Frame):
         self.file_label.grid(row=0, column=1)
         self.time_label.grid(row=1, column=1)
 
-    def _get_label(self, icon: str) -> tk.Label:
-        return tk.Label(self, font=("Arial", 20), text=icon, justify='left')
+    def _get_label(self, icon: str) -> ctk.CTkLabel:
+        return ctk.CTkLabel(self, font=("Arial", 20), text=icon, justify='left')
 
     def update(self, state: RecordingState):
         if state.is_recording:
             self.grid()
         else:
             self.grid_remove()
-        self.file_label.config(text = state.file_name)
-        self.time_label.config(text = f'{state.duration}s')
+        self.file_label.configure(text = state.file_name)
+        self.time_label.configure(text = f'{state.duration}s')
         

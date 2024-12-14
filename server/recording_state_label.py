@@ -1,4 +1,5 @@
 import tkinter as tk
+import customtkinter as ctk
 from recording_state_notifier import RecordingStateNotifier, RecordingState
 
 ON_AIR_BACKGROUND_COLOR = 'green'
@@ -10,7 +11,7 @@ IDLE_TEXT = 'IDLE'
 IDLE_TEXT_COLOR = 'white'
 
 
-class RecordingStateLabel(tk.Label):
+class RecordingStateLabel(ctk.CTkLabel):
     def __init__(self, parent, notifier: RecordingStateNotifier):
         super().__init__(
             parent,
@@ -29,15 +30,16 @@ class RecordingStateLabel(tk.Label):
             self._set_idle()
 
     def _set_idle(self) -> None:
-        self.config(
+        self.configure(
             text=IDLE_TEXT,
-            background=IDLE_BACKGROUND_COLOR,
-            fg=IDLE_TEXT_COLOR
+            bg_color=IDLE_BACKGROUND_COLOR,
+            text_color=IDLE_TEXT_COLOR
         )
 
     def _set_on_air(self) -> None:
-        self.config(
+        self.configure(
             text=ON_AIR_TEXT,
-            background=ON_AIR_BACKGROUND_COLOR,
-            fg=ON_AIR_TEXT_COLOR
+            bg_color=ON_AIR_BACKGROUND_COLOR,
+            text_color=ON_AIR_TEXT_COLOR
+
         )

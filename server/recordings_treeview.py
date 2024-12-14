@@ -1,10 +1,11 @@
 import tkinter as tk
+import customtkinter as ctk
 from tkinter import ttk
-from file_storage_service import FileStorageService, Recording
+from file_storage_service import FileStorageService
 from recording_state_notifier import RecordingStateNotifier, RecordingState
 
 
-class RecordingsTreeView(tk.Frame):
+class RecordingsTreeView(ctk.CTkFrame):
 
     def __init__(
             self,
@@ -17,10 +18,10 @@ class RecordingsTreeView(tk.Frame):
 
         # component definitions
         self._treeview = self._get_configured_treeview()
-        self._recordings_list_label = tk.Label(
+        self._recordings_list_label = ctk.CTkLabel(
             self,
             text="List of recordings",
-            font=("Arial", 40)
+            font=("Arial", 40),
         )
 
         # placement
