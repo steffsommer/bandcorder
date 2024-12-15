@@ -7,6 +7,8 @@ from recording_state_notifier import RecordingStateNotifier, RecordingState
 
 class RecordingsTreeView(ctk.CTkFrame):
 
+    _last_state: RecordingState = None
+
     def __init__(
             self,
             parent,
@@ -32,9 +34,9 @@ class RecordingsTreeView(ctk.CTkFrame):
         self._update_list()
 
     def _set_recordings(self, recording_state: RecordingState) -> None:
-        if recording_state.is_recording:
-            return
-        self._update_list()
+        if self._last_state is not None and self._last_state.is_recording and not recording_state.is_recording:
+            self._update_list()
+        self._last_state = recording_state
 
     def _get_configured_treeview(self) -> ttk.Treeview:
         treeview = ttk.Treeview(self, columns=("size", "lastmod"), height=20)
