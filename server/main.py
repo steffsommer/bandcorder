@@ -11,6 +11,18 @@ from recording_controller import RecordingController
 from file_storage_service import FileStorageService
 import ui
 
+###############################################################################
+# application entry point
+# high level design:
+# - tornado webserver acts as a SocketIO server in its own thread and drives state
+#   changes
+# - SocketIO handlers manage the creation/start/stop the AudioReadWriteThread
+# - TKinter UI runs in its own thread, which is the main thread (which is
+#   a TKinter requirement)
+# It is imperative to use asyncio only within SocketIO/Tornado handlers.
+# TKinter has its own event system, which is sufficient for this codebase.
+###############################################################################
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'

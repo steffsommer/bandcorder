@@ -47,15 +47,22 @@ Copy `config.yml.template` to `config.yml` and specify a valid data directory.
     cd server && pip install -e .
 ```
 
+### Building the server
+
+        cd server && python -m PyInstaller --clean --name Bandcorder --add-data config.yml.template:. main.py
+
+Afterwards `dist/Bandcorder.exe` is generated and ready for release. To install the executable on a system,
+the user has to copy `dist/_internal/config.yml.template` to `dist/_internal/config.yml` and specify a valid data directory.
+
 ## Todos for 1.0
 
 - [ ] Mobile UI (Flutter)
 - [x] Reconfiguration as yml file
   - [x] Specify recording directory
-- [ ] Desktop UI Tkinter
+- [x] Desktop UI Tkinter
 - [x] Replace Flask with socket.io server
 - [x] Create virtualenv
-- [ ] Create Release.exe
+- [x] Create Release.exe
 - [x] Put recordings in date folders
 - [ ] Create a fancy logo
 

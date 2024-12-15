@@ -8,7 +8,7 @@
       "name": "Python Debugger: Current File",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/server/app.py",
+      "program": "${workspaceFolder}/server/main.py",
       "console": "integratedTerminal"
     }
   ]
