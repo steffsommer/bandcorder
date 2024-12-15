@@ -3,6 +3,8 @@ import customtkinter as ctk
 from tkinter import ttk
 from file_storage_service import FileStorageService
 from recording_state_notifier import RecordingStateNotifier, RecordingState
+import time
+import datetime
 
 
 class RecordingsTreeView(ctk.CTkFrame):
@@ -39,8 +41,11 @@ class RecordingsTreeView(ctk.CTkFrame):
         self._last_state = recording_state
 
     def _get_configured_treeview(self) -> ttk.Treeview:
-        treeview = ttk.Treeview(self, columns=("size", "lastmod"), height=20)
+        treeview = ttk.Treeview(self, columns=("duration"), height=20)
         treeview.heading("#0", text="File")
+        treeview.column("#0", width=300)
+        treeview.heading("#1", text="Duration")
+        treeview.column("#1", width=150, anchor=tk.CENTER)
         return treeview
 
     def _update_list(self):
@@ -48,4 +53,6 @@ class RecordingsTreeView(ctk.CTkFrame):
         for item in self._treeview.get_children():
             self._treeview.delete(item)
         for recording in recordings:
-            self._treeview.insert("", tk.END, text=recording.name)
+            # duration_str = time.strftime("%H:%M:%S", time.gmtime())
+            duration_str = str(datetime.timedelta(seconds=int(recording.duration)))
+            self._treeview.insert("", tk.END, text=f'📼{recording.name}', values=(duration_str))

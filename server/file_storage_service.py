@@ -1,15 +1,15 @@
 from pathlib import Path
-from typing import Callable
 from datetime import datetime
-from os import listdir
+import os
 from os.path import isfile, join
-from logging import Logger
 from dataclasses import dataclass
+import soundfile as sf
 
 
 @dataclass
 class Recording:
     name: str
+    duration: float
 
 # Obtain writable file handles for files based on current time
 # Notify subscribers when new recordings have been started
@@ -39,5 +39,13 @@ class FileStorageService:
         todays_dir = self._data_dir.joinpath(dir_name)
         if not todays_dir.exists():
             return []
-        return [Recording(file) for file in listdir(todays_dir)
-                if isfile(join(todays_dir, file))]
+
+        recording_files = [os.path.join(todays_dir, file) for file in os.listdir(todays_dir)]
+        soundfiles = [sf.SoundFile(file) for file in recording_files]
+        recordings = []
+        for soundfile in soundfiles:
+            duration = soundfile.frames / soundfile.samplerate
+            filename = os.path.basename(soundfile.name)
+            recording = Recording(filename, duration)
+            recordings.append(recording)
+        return recordings

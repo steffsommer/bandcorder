@@ -56,8 +56,9 @@ class UserInterface(ctk.CTk):
             ctk.ThemeManager.theme["CTkButton"]["fg_color"])
         treestyle = ttk.Style()
         treestyle.theme_use('default')
+        treestyle.configure("Treeview.Heading", background='gray20', foreground=text_color)
         treestyle.configure("Treeview", background=bg_color,
-                            foreground=text_color, fieldbackground=bg_color, borderwidth=0)
+                            foreground=text_color, fieldbackground=bg_color, borderwidth=0, font=('Arial', 16))
         treestyle.map('Treeview', background=[('selected', bg_color)], foreground=[
                       ('selected', selected_color)])
         self.bind("<<TreeviewSelect>>", lambda event: self.focus_set())
