@@ -25,26 +25,27 @@ class UserInterface(ctk.CTk):
         # hack to start the UI maximized: https://github.com/TomSchimansky/CustomTkinter/discussions/1500
         self._state_before_windows_set_titlebar_color = 'zoomed'
         self._root_frame = ctk.CTkFrame(self)
+
         # component definitions
         self._active_mic_label = ActiveMicLabel(self._root_frame)
-        self._recording_label = RecordingStateLabel(self._root_frame, notifier)
+        self._recording_state_label = RecordingStateLabel(self._root_frame, notifier)
         self._recordings_tree_view = RecordingsTreeView(
             self._root_frame, notifier, storage_service)
         self._active_recording_info = ActiveRecordingInfo(
             self._root_frame, notifier)
 
         # layout
-        self._root_frame.grid_rowconfigure(0)
-        self._root_frame.columnconfigure(0, weight=1)
-        self._root_frame.columnconfigure(1, weight=1)
+        self._root_frame.grid_rowconfigure(0, weight=1)
+        self._root_frame.grid_rowconfigure(1, weight=1)
+        self._root_frame.grid_columnconfigure(0, weight=1)
+        self._root_frame.grid_columnconfigure(1, weight=1)
 
         # component placement
         self._root_frame.place(relx=0.5, rely=0.5, anchor="c")
-        self._active_mic_label.grid(row=0, column=0, sticky='NW')
-        self._recording_label.grid(row=0, column=1, padx=150)
+        self._active_mic_label.grid(row=0, column=0)
+        self._recording_state_label.grid(row=0, column=1)
         self._recordings_tree_view.grid(row=1, column=0)
-        self._active_recording_info.grid(
-            row=1, column=1, padx=150, pady=40, sticky='NW')
+        self._active_recording_info.grid(row=1, column=1)
 
     def _customize_styles(self):
         bg_color = self._apply_appearance_mode(

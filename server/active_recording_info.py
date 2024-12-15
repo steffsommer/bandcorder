@@ -25,11 +25,11 @@ class ActiveRecordingInfo(ctk.CTkFrame):
         # component placement
         self.file_icon_label.grid(row=0, column=0)
         self.time_icon_label.grid(row=1, column=0)
-        self.file_label.grid(row=0, column=1)
-        self.time_label.grid(row=1, column=1)
+        self.file_label.grid(row=0, column=1, sticky='W')
+        self.time_label.grid(row=1, column=1, sticky='W')
 
     def _get_label(self, icon: str) -> ctk.CTkLabel:
-        return ctk.CTkLabel(self, font=("Arial", 20), text=icon, justify='left')
+        return ctk.CTkLabel(self, font=("Arial", 30), text=icon, justify='left', padx=20, pady=20)
 
     def update(self, state: RecordingState):
         if state.is_recording:

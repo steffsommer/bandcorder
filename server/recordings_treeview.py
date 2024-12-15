@@ -20,7 +20,7 @@ class RecordingsTreeView(ctk.CTkFrame):
         self._treeview = self._get_configured_treeview()
         self._recordings_list_label = ctk.CTkLabel(
             self,
-            text="List of recordings",
+            text="Todays recording",
             font=("Arial", 40),
         )
 

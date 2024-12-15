@@ -12,7 +12,7 @@ UPDATE_PERIOD_MS = 1000
 class ActiveMicLabel(ctk.CTkLabel):
 
     def __init__(self, parent: tk.Widget):
-        super().__init__(parent, font=("Arial", 20), pady=20)
+        super().__init__(parent, font=("Arial", 20), width=400)
         self.update_active_mic()
 
     def update_active_mic(self) -> None:
@@ -25,5 +25,5 @@ class ActiveMicLabel(ctk.CTkLabel):
         if mic_name is None or mic_name == '':
             self.configure(text=NO_MIC_TEXT, bg_color=NO_MIC_BACKGROUND_COLOR)
             return
-        self.configure(text=mic_name, bg_color=DEFAULT_BACKGROUND_COLOR)
+        self.configure(text=f'🎤{mic_name}', bg_color=DEFAULT_BACKGROUND_COLOR)
         self.after(UPDATE_PERIOD_MS, self.update_active_mic)

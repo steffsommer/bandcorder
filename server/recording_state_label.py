@@ -3,7 +3,7 @@ import customtkinter as ctk
 from recording_state_notifier import RecordingStateNotifier, RecordingState
 
 ON_AIR_BACKGROUND_COLOR = 'green'
-ON_AIR_TEXT = 'ON AIR 🎤'
+ON_AIR_TEXT = 'ON AIR'
 ON_AIR_TEXT_COLOR = 'black'
 
 IDLE_BACKGROUND_COLOR = 'red'
@@ -16,9 +16,7 @@ class RecordingStateLabel(ctk.CTkLabel):
         super().__init__(
             parent,
             font=("Arial", 100),
-            padx=100,
-            pady=100,
-            width=8
+            width=800
         )
         self._set_idle()
         notifier.register_subscriber(self._process_status_updates)
@@ -41,5 +39,4 @@ class RecordingStateLabel(ctk.CTkLabel):
             text=ON_AIR_TEXT,
             bg_color=ON_AIR_BACKGROUND_COLOR,
             text_color=ON_AIR_TEXT_COLOR
-
         )
