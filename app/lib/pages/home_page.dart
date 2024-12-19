@@ -23,11 +23,10 @@ class _HomePageState extends State<HomePage> {
     _textFieldValue = _ipDefaultValue;
     super.initState();
     _socketService.onConnectionStatusChanged = (status) {
-
       setState(() {
         print('Set State');
         _connectionStatus = status.message;
-        if(status.success) {
+        if (status.success) {
           _connectionEstablished = true;
         } else {
           _connectionEstablished = false;
@@ -36,14 +35,12 @@ class _HomePageState extends State<HomePage> {
         print(_connectionEstablished);
       });
 
-    _socketService.onRecordingStatusChanged = (status) {
-
-      print(status);
-      setState(() {
-        _recordingStatus = status  ? 'started' : 'stopped';
-      });
-    };
-
+      _socketService.onRecordingStatusChanged = (status) {
+        print(status);
+        setState(() {
+          _recordingStatus = status ? 'started' : 'stopped';
+        });
+      };
     };
   }
 
@@ -69,41 +66,37 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 30),
             Text('Verbindungsstatus: $_connectionStatus'),
             const SizedBox(height: 30),
-
-            if(_connectionEstablished == false)
-            CustomButton(
-              text: 'Zum Server verbinden',
-              onPressed: () {
-                _socketService.connect(_textFieldValue);
-              },
-            ),
-
-            if(_connectionEstablished == true)
-            CustomButton(text: 'Verbindung trennen', 
-            onPressed: () {
-
-              // To prevent data loss
-              if(_recordingStatus == 'started') {
-                _socketService.SendStopRecordingEvent();
-              }
-              _socketService.disconnect();
-            }),
-
-            if(_recordingStatus == 'stopped' && _connectionEstablished) 
-            CustomButton(
-              text: 'Starte aufnahme',
-              onPressed: () {
-                _socketService.SendStartRecordingEvent();
-              },
-            ),
-
-            if(_recordingStatus == 'started' && _connectionEstablished)
-            CustomButton(
-              text: 'Beende Aufnahme',
-              onPressed: () {
-                _socketService.SendStopRecordingEvent();
-              },
-            ),
+            if (_connectionEstablished == false)
+              CustomButton(
+                text: 'Zum Server verbinden',
+                onPressed: () {
+                  _socketService.connect(_textFieldValue);
+                },
+              ),
+            if (_connectionEstablished == true)
+              CustomButton(
+                  text: 'Verbindung trennen',
+                  onPressed: () {
+                    // To prevent data loss
+                    if (_recordingStatus == 'started') {
+                      _socketService.sendStopRecordingEvent();
+                    }
+                    _socketService.disconnect();
+                  }),
+            if (_recordingStatus == 'stopped' && _connectionEstablished)
+              CustomButton(
+                text: 'Starte aufnahme',
+                onPressed: () {
+                  _socketService.sendStartRecordingEvent();
+                },
+              ),
+            if (_recordingStatus == 'started' && _connectionEstablished)
+              CustomButton(
+                text: 'Beende Aufnahme',
+                onPressed: () {
+                  _socketService.sendStopRecordingEvent();
+                },
+              ),
           ],
         ),
       ),

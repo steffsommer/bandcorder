@@ -7,11 +7,11 @@ class SocketService {
   Function(bool)? onRecordingStatusChanged;
   Function(bool)? onErrorCallback;
 
-  SocketService({this.onConnectionStatusChanged, this.onRecordingStatusChanged});
+  SocketService(
+      {this.onConnectionStatusChanged, this.onRecordingStatusChanged});
 
   void connect(String url) {
-
-    if(url == '') {
+    if (url == '') {
       print('Bitte zuerst eine Url eingeben!');
       return;
     }
@@ -24,23 +24,25 @@ class SocketService {
     socket.on('connect', (_) {
       print('connected');
       if (onConnectionStatusChanged != null) {
-        onConnectionStatusChanged!(ConnectionStatus(success: true, message: 'Erfolgreich verbunden!'));
+        onConnectionStatusChanged!(
+            ConnectionStatus(success: true, message: 'Erfolgreich verbunden!'));
       }
     });
 
     socket.on('connect_error', (error) {
       print('Connection Error: $error');
       if (onConnectionStatusChanged != null) {
-        onConnectionStatusChanged!(ConnectionStatus(success: false, message: 'Fehler beim Verbinden: $error'));
+        onConnectionStatusChanged!(ConnectionStatus(
+            success: false, message: 'Fehler beim Verbinden: $error'));
       }
       socket.close();
-
     });
 
     socket.on('disconnect', (_) {
       print('disconnected');
       if (onConnectionStatusChanged != null) {
-        onConnectionStatusChanged!(ConnectionStatus(success: true, message: 'Erfolgreich getrennt!'));
+        onConnectionStatusChanged!(
+            ConnectionStatus(success: true, message: 'Erfolgreich getrennt!'));
       }
     });
 
@@ -48,34 +50,27 @@ class SocketService {
       print(data);
       print('RecordingStateChanged');
       print(onRecordingStatusChanged != null);
-      if(onRecordingStatusChanged != null) {
+      if (onRecordingStatusChanged != null) {
         print(data['isRecording']);
         try {
-          onRecordingStatusChanged!(data['Recording']);
+          onRecordingStatusChanged!(data['isRecording']);
           // onRecordingStatusChanged!(data['isRecording']);
-        } catch(error) {
+        } catch (error) {
           print('Key not found');
         }
-        
       }
     });
-
-
   }
 
-    void disconnect() {
+  void disconnect() {
     socket.disconnect();
   }
 
-  void SendStartRecordingEvent() {
+  void sendStartRecordingEvent() {
     socket.emit('StartRecording');
   }
 
-  void SendStopRecordingEvent() {
+  void sendStopRecordingEvent() {
     socket.emit('StopRecording');
   }
-
-
 }
-
-
