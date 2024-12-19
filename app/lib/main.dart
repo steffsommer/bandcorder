@@ -1,5 +1,5 @@
+import 'package:bandcorder/pages/homev2_page.dart';
 import 'package:flutter/material.dart';
-import 'pages/home_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +15,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const HomePage(),
+      // home: const HomePage(),
+      home: const HomeV2Page(),
     );
   }
 }
