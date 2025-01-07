@@ -25,7 +25,7 @@ class _ConnectState extends State<Connect> {
         padding: const EdgeInsets.all(30.0),
         decoration: const BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(20)),
-            color: Color.fromRGBO(100, 200, 100, 1),
+            color: Colors.green,
             shape: BoxShape.rectangle),
         // child: const Text("Container child"),
         child: Form(

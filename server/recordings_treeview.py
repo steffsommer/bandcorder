@@ -52,7 +52,9 @@ class RecordingsTreeView(ctk.CTkFrame):
         recordings = self._storage_service.get_todays_recordings()
         for item in self._treeview.get_children():
             self._treeview.delete(item)
+        recordings.reverse()
         for recording in recordings:
-            # duration_str = time.strftime("%H:%M:%S", time.gmtime())
-            duration_str = str(datetime.timedelta(seconds=int(recording.duration)))
-            self._treeview.insert("", tk.END, text=f'📼{recording.name}', values=(duration_str))
+            duration_str = str(datetime.timedelta(
+                seconds=int(recording.duration)))
+            self._treeview.insert(
+                "", tk.END, text=f'📼{recording.name}', values=(duration_str))

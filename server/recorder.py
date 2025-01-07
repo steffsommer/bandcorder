@@ -34,7 +34,7 @@ class Recorder:
         else:
             summary = self._rec_thread.stop()
             self._rec_thread = None
-            self._notifier.notifyStopped(summary.file_name, summary.duration)
+            self._notifier.notifyStopped(summary.duration)
 
     def is_recording(self) -> bool:
         return self._rec_thread is not None and self._rec_thread.is_alive()

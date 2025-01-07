@@ -1,6 +1,7 @@
 import 'package:bandcorder/models/recording_status.dart';
 import 'package:bandcorder/services/socket_service.dart';
 import 'package:bandcorder/widgets/recording_button.dart';
+import 'package:bandcorder/widgets/recording_state_info.dart';
 import 'package:flutter/material.dart';
 
 class RecordingControlPage extends StatefulWidget {
@@ -32,7 +33,9 @@ class _RecordingControlPageState extends State<RecordingControlPage> {
       appBar: AppBar(
         title: const Text(
           'Recording Session',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+            color: Colors.white,
+          ),
         ),
         backgroundColor: Colors.black,
       ),
@@ -40,6 +43,7 @@ class _RecordingControlPageState extends State<RecordingControlPage> {
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
+              RecordingStateInfo(recordingState: _state!),
               if (_state == null)
                 const CircularProgressIndicator()
               else if (!_state!.isRecording)
