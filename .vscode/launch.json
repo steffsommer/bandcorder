@@ -5,7 +5,21 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Python Debugger: Current File",
+      "name": "Debug mobile app",
+      "cwd": "app",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "debug"
+    },
+    {
+      "name": "Run mobile app",
+      "cwd": "app",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "release"
+    },
+    {
+      "name": "Debug Server/Desktop App",
       "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}/server/main.py",

@@ -1,8 +1,13 @@
 import 'package:bandcorder/pages/homev2_page.dart';
+import 'package:bandcorder/shared/constants.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MaterialApp(
+    navigatorKey: navigatorKey,
+    home: const HomeV2Page(),
+    theme: ThemeData(scaffoldBackgroundColor: backgroundColor),
+  ));
 }
 
 class MyApp extends StatelessWidget {
