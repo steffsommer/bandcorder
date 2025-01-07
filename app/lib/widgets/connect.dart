@@ -74,7 +74,7 @@ class _ConnectState extends State<Connect> {
       setState(() {
         _isConnecting = false;
       });
-    }).catchError((e) {
+    }).catchError((_) {
       setState(() {
         _isConnecting = false;
       });
