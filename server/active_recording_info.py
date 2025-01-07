@@ -2,6 +2,7 @@ from dataclasses import dataclass
 import tkinter as tk
 import customtkinter as ctk
 from recording_state_notifier import RecordingStateNotifier, RecordingState
+import datetime
 
 
 class ActiveRecordingInfo(ctk.CTkFrame):
@@ -15,7 +16,7 @@ class ActiveRecordingInfo(ctk.CTkFrame):
         self._setup_layout()
         notifier.register_subscriber(self.update)
         self.grid_remove()
-        
+
     def _setup_layout(self):
         # component definitions
         self.file_icon_label = self._get_label('📼')
@@ -36,6 +37,7 @@ class ActiveRecordingInfo(ctk.CTkFrame):
             self.grid()
         else:
             self.grid_remove()
-        self.file_label.configure(text = state.file_name)
-        self.time_label.configure(text = f'{state.duration}s')
-        
+        self.file_label.configure(text=state.file_name)
+        duration_str = str(datetime.timedelta(
+            seconds=int(state.duration)))
+        self.time_label.configure(text=duration_str)

@@ -1,16 +1,19 @@
 import 'package:bandcorder/models/recording_status.dart';
+import 'package:bandcorder/shared/time_utils.dart';
 import 'package:flutter/material.dart';
 
 class RecordingStateInfo extends StatelessWidget {
   final RecordingState? _recordingState;
 
-  RecordingStateInfo({
+  const RecordingStateInfo({
     super.key,
     required RecordingState? recordingState,
   }) : _recordingState = recordingState;
 
   @override
   Widget build(BuildContext context) {
+    final duration = Duration(seconds: _recordingState?.duration ?? 0);
+    final formattedDuration = formatDuration(duration);
     if (_recordingState != null) {
       return GridView.count(
         crossAxisCount: 1,
@@ -18,11 +21,11 @@ class RecordingStateInfo extends StatelessWidget {
         childAspectRatio: 4.0,
         children: [
           _buildInfoTile('💾 File name', _recordingState.fileName),
-          _buildInfoTile('🕒 Duration', _recordingState.duration.toString()),
+          _buildInfoTile('🕒 Duration', formattedDuration),
         ],
       );
     } else {
-      return const Text('');
+      return const Text('No Recording state received');
     }
   }
 
