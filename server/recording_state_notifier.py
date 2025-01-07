@@ -38,7 +38,7 @@ RecordingStateConsumer = RecordingStateConsumerClass | Callable[[
 class RecordingStateNotifier:
 
     _subscribers = []
-    _state = RecordingState(is_recording=False, duration=0, file_name='')
+    _state = RecordingState(is_recording=False, duration=0, file_name='-')
     _start_time: datetime = None
 
     def __init__(self, logger: Logger):
@@ -54,8 +54,9 @@ class RecordingStateNotifier:
         self._start_time = datetime.now()
         self._publish()
 
-    def notifyStopped(self, duration: int) -> None:
+    def notifyStopped(self) -> None:
         """Signal subscribers that the current recording was stopped"""
+        duration = self._calculate_duration()
         self._state = RecordingState(
             is_recording=False,
             duration=duration,

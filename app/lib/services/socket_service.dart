@@ -49,7 +49,8 @@ class SocketService {
     });
 
     socket.on('connect_error', (error) {
-      _toastService.toastError("Failed to establish connection");
+      _toastService.toastError(
+          "Failed to establish connection. Verify that the IP is correct and that the server is running");
       if (!completer.isCompleted) {
         completer.completeError(error);
       }

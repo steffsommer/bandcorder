@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class RecordingStateInfo extends StatelessWidget {
   final RecordingState? _recordingState;
 
-  const RecordingStateInfo({
+  RecordingStateInfo({
     super.key,
     required RecordingState? recordingState,
   }) : _recordingState = recordingState;

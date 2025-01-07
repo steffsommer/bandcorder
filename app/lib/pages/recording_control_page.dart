@@ -43,7 +43,7 @@ class _RecordingControlPageState extends State<RecordingControlPage> {
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              RecordingStateInfo(recordingState: _state!),
+              RecordingStateInfo(recordingState: _state),
               if (_state == null)
                 const CircularProgressIndicator()
               else if (!_state!.isRecording)

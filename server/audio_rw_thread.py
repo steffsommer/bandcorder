@@ -5,15 +5,8 @@ import soundfile as sf
 import sounddevice as sd
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable
 
 NOTIFICATION_DELAY_SECONDS = 1
-
-
-@dataclass
-class RecordingSummary:
-    file_name: str
-    duration: int
 
 
 # Relay microphone audio data to a file. Uses the microphone set as the
@@ -36,10 +29,9 @@ class AudioReadWriteThread(threading.Thread):
         self.mic_name = default_mic['name']
         self.sample_rate = int(default_mic['default_samplerate'])
 
-    def stop(self) -> RecordingSummary:
+    def stop(self) -> None:
         self._keep_recording = False
         self.join()
-        return RecordingSummary(file_name=self._out_File.name, duration=10)
 
     def run(self):
         q = Queue()
