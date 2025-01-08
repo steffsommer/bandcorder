@@ -13,7 +13,7 @@ class ToastService {
   _toast(String message, Color textColor, Color backgroundColor, Toast length) {
     Fluttertoast.showToast(
       msg: message,
-      toastLength: Toast.LENGTH_SHORT,
+      toastLength: length,
       gravity: ToastGravity.TOP,
       backgroundColor: backgroundColor,
       textColor: textColor,

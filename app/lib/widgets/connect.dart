@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:bandcorder/services/server_cache_service.dart';
 import 'package:bandcorder/services/socket_service.dart';
 import 'package:bandcorder/shared/validators.dart';
 import 'package:flutter/material.dart';
@@ -11,11 +14,25 @@ class Connect extends StatefulWidget {
 
 class _ConnectState extends State<Connect> {
   final SocketService _socketService = SocketService();
+  final _serverCacheService = ServerCacheService();
 
   final _formKey = GlobalKey<FormState>();
   bool _isConnecting = false;
-  // String _serverAddress = 'http://10.0.2.2:5000';
-  String _serverIP = '10.0.2.2';
+  String _serverIP = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _serverCacheService.queryServerIP().then((address) {
+      if (address != null) {
+        log("Found server address in cache. Connecting right away.");
+        setState(() {
+          _serverIP = address;
+        });
+        connectToServer();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

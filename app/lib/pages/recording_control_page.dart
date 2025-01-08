@@ -44,6 +44,7 @@ class _RecordingControlPageState extends State<RecordingControlPage> {
           child: Column(
             children: [
               RecordingStateInfo(recordingState: _state),
+              const SizedBox(height: 50),
               if (_state == null)
                 const CircularProgressIndicator()
               else if (!_state!.isRecording)

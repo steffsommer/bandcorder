@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:bandcorder/pages/home_page.dart';
 import 'package:bandcorder/pages/recording_control_page.dart';
+import 'package:bandcorder/services/server_cache_service.dart';
 import 'package:bandcorder/services/toast_service.dart';
 import 'package:bandcorder/shared/constants.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ class SocketService {
   final _toastService = ToastService();
   static final SocketService _singleton = SocketService._internal();
   SocketService._internal();
+  final _serverCacheService = ServerCacheService();
 
   factory SocketService() {
     return _singleton;
@@ -38,10 +40,12 @@ class SocketService {
 
     socket.on('connect', (_) {
       _toastService.toastSuccess("Connected to server");
+      _serverCacheService.cacheServerIP(ipv4);
 
       if (!completer.isCompleted) {
         completer.complete();
       }
+
       log('connected');
       navigatorKey.currentState?.push(MaterialPageRoute(
         builder: (context) => const RecordingControlPage(),
