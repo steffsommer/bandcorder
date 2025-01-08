@@ -1,6 +1,6 @@
 # Bandcorder
 
-Disclaimer: This is early stage software
+![image info](./img/ui_screenshot.png)
 
 ## About
 
