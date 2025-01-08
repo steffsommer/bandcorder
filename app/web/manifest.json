@@ -1,6 +1,6 @@
 {
-    "name": "bandcorder",
-    "short_name": "bandcorder",
+    "name": "Bandcorder",
+    "short_name": "Bandcorder",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

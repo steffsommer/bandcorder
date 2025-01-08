@@ -40,6 +40,7 @@ Copy `config.yml.template` to `config.yml` and specify a valid data directory.
 - Flutter >= 3.18
 
 ### Server setup
+
 ```bash
     # (optional) Create venv
     python -m venv .venv && source ./.venv/Scripts/activate
@@ -54,20 +55,8 @@ Copy `config.yml.template` to `config.yml` and specify a valid data directory.
 Afterwards `dist/Bandcorder.exe` is generated and ready for release. To install the executable on a system,
 the user has to copy `dist/_internal/config.yml.template` to `dist/_internal/config.yml` and specify a valid data directory.
 
-## Todos for 1.0
-
-- [ ] Mobile UI (Flutter)
-- [x] Reconfiguration as yml file
-  - [x] Specify recording directory
-- [x] Desktop UI Tkinter
-- [x] Replace Flask with socket.io server
-- [x] Create virtualenv
-- [x] Create Release.exe
-- [x] Put recordings in date folders
-- [ ] Create a fancy logo
-
-## Accepted Limitations for 1.0
+## Accepted Limitations for 1.0 (done)
 
 - Only one server instance per Wifi network
 - Plaintext communication (no secrets are transmitted though)
-- Only tested on Windows 11
+- Support for Android + Windows 11
