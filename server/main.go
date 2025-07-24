@@ -1,11 +1,8 @@
 package main
 
 import (
-	recorder "bandcorder/internal/pkg"
 	"embed"
-	"time"
 
-	"github.com/sirupsen/logrus"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
@@ -18,23 +15,11 @@ func main() {
 	// Create an instance of the app structure
 	app := NewApp()
 
-	logrus.Info("Starting bandcorder")
-	recorder, err := recorder.NewRecorder()
-	if err != nil {
-		logrus.Errorf("Failed to create recorder instance: %s", err.Error())
-	}
-	if err := recorder.Start(); err != nil {
-		logrus.Errorf("Failed to start recording: %s", err.Error())
-	}
-	time.Sleep(5 * time.Second)
-	if err := recorder.Stop(); err != nil {
-		logrus.Errorf("Failed to stop recording: %s", err.Error())
-	}
-
 	// Create application with options
-	err = wails.Run(&options.App{
-		Title:      "bandcorder",
-		Fullscreen: true,
+	err := wails.Run(&options.App{
+		Title:  "server",
+		Width:  1024,
+		Height: 768,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
