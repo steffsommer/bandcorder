@@ -1,5 +1,6 @@
 :root {
-  --color-base: #5eb3f5;
+  --color-surface-1: #5eb3f5;
+  --color-surface-2: white;
   box-sizing: border-box;
   --spacing: 1rem;
   --spacing-big: 4rem;
@@ -7,16 +8,14 @@
 }
 
 html {
-  background-color: var(--color-base);
+  background-color: var(--color-surface-1);
   text-align: center;
-  color: white;
   height: 100vh;
 }
 
 body {
   height: 100%;
   margin: 0;
-  color: white;
   font-family:
     "Nunito",
     -apple-system,
@@ -76,4 +75,12 @@ select {
 
 address {
   font-style: normal;
+}
+
+.shadow {
+  box-shadow: 5px 5px 0 black;
+}
+
+.rounded {
+  border-radius: 10px;
 }

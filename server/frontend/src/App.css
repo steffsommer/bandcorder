@@ -1,7 +1,7 @@
 #app {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-max);
+  gap: var(--spacing-big);
   height: 100vh;
   text-align: center;
 }
@@ -12,7 +12,7 @@
   height: 100%;
   border: 1px solid red;
   margin-inline: var(--spacing-max);
-  margin-bottom: var(--spacing-max);
+  margin-bottom: var(--spacing-big);
   gap: var(--spacing-max);
 }
 

@@ -1,4 +1,26 @@
 header {
+  display: flex;
+  justify-content: space-between;
   height: 120px;
-  border-bottom: 1px solid black;
+  margin-inline: var(--spacing-max);
+  margin-top: var(--spacing);
+}
+
+.logo {
+  width: max-content;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spacing);
+  gap: var(--spacing);
+}
+
+.logo-img {
+  height: 2rem;
+}
+
+.centered {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1/1;
 }
