@@ -1,14 +1,58 @@
 import "./App.css";
 import { Card } from "./components/card/card";
 import { Header } from "./components/header/header";
+import { RecordingsList } from "./components/recordings-list/recordings-list";
+import { Recording } from "./components/recordings-list/recordings-list-entry/recordings-list-entry";
 
 function App() {
+  const recordings: Recording[] = [
+    {
+      name: "recording-1",
+      duration: "100s",
+    },
+    {
+      name: "recording-1",
+      duration: "100s",
+    },
+    {
+      name: "recording-1",
+      duration: "100s",
+    },
+    {
+      name: "recording-1",
+      duration: "100s",
+    },
+    {
+      name: "recording-1",
+      duration: "100s",
+    },
+    {
+      name: "recording-1",
+      duration: "100s",
+    },
+    {
+      name: "recording-1",
+      duration: "100s",
+    },
+    {
+      name: "recording-1",
+      duration: "100s",
+    },
+    {
+      name: "recording-1",
+      duration: "100s",
+    },
+    {
+      name: "recording-1",
+      duration: "100s",
+    },
+  ];
   return (
     <div id="app">
       <Header />
       <div className="container">
         <Card>
-          <span>Recording list</span>
+          <RecordingsList recordings={recordings} />
         </Card>
         <Card>
           <span>Recorder</span>

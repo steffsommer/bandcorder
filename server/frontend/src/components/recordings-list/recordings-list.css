@@ -1,0 +1,25 @@
+.recordings-list {
+  display: grid;
+  grid-template-rows: max-content 1fr;
+  padding: var(--spacing);
+  height: 100%;
+}
+
+.recordings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing);
+  overflow-y: scroll;
+  padding-right: var(--spacing);
+  height: 100%;
+  min-height: 0;
+  padding-bottom: var(--spacing);
+}
+
+.list-btn {
+  padding: 14px;
+}
+
+.edit-btn>* {
+  transform: translateX(2px);
+}

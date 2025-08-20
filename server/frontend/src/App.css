@@ -1,7 +1,7 @@
 #app {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-big);
+  gap: var(--spacing);
   height: 100vh;
   text-align: center;
 }
@@ -10,10 +10,10 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   height: 100%;
-  border: 1px solid red;
   margin-inline: var(--spacing-max);
   margin-bottom: var(--spacing-big);
   gap: var(--spacing-max);
+  min-height: 0;
 }
 
 .container>* {

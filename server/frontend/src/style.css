@@ -1,16 +1,22 @@
 :root {
   --color-surface-1: #5eb3f5;
   --color-surface-2: white;
-  box-sizing: border-box;
+  --color-font: black;
   --spacing: 1rem;
   --spacing-big: 4rem;
   --spacing-max: 8rem;
+  --border-radius: 10px;
+  box-sizing: border-box;
+  font-size: 18px;
+  color: var(--color-font);
+  scrollbar-color: var(--color-font) var(--color-surface-2);
 }
 
 html {
   background-color: var(--color-surface-1);
   text-align: center;
-  height: 100vh;
+  height: 100%;
+  max-height: 100%;
 }
 
 body {
@@ -78,9 +84,14 @@ address {
 }
 
 .shadow {
-  box-shadow: 5px 5px 0 black;
+  box-shadow: 3px 3px 0 black;
 }
 
 .rounded {
-  border-radius: 10px;
+  border-radius: var(--border-radius);
+}
+
+.descriptive-header {
+  text-align: left;
+  margin-bottom: var(--spacing);
 }
