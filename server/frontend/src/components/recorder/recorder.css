@@ -1,3 +1,39 @@
 .recorder {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: min-content repeat(4, 1fr);
+  gap: var(--spacing);
+  grid-template-areas:
+    "heading spinner"
+    "current-file spinner"
+    "frequency frequency"
+    "volume volume"
+    "controls controls";
   padding: var(--spacing);
+  height: 100%;
+}
+
+.recorder>* {
+  border: 1px solid red;
+}
+
+.spinner {
+  grid-area: spinner;
+  margin: auto;
+}
+
+.current-file {
+  grid-area: current-file;
+}
+
+.frequency-card {
+  grid-area: frequency;
+}
+
+.volume-card {
+  grid-area: volume;
+}
+
+.controls {
+  grid-area: controls;
 }
