@@ -1,0 +1,41 @@
+.spinner {
+  --diameter: 12rem;
+  --center-diameter: 70%;
+  --color-running: #a0ff92;
+  height: var(--diameter);
+  width: var(--diameter);
+  box-sizing: border-box;
+  background: red;
+  border-radius: 47%;
+  border: 0.2rem solid black;
+  position: relative;
+}
+
+.spinner.active {
+  animation: 1s rotate infinite linear;
+  background: conic-gradient(from 90deg at 50% 50%,
+      rgba(39, 174, 96, 0) 0deg,
+      var(--color-running) 360deg);
+}
+
+.spinner::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  height: var(--center-diameter);
+  width: var(--center-diameter);
+  background: #fff;
+  border-radius: 50%;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}

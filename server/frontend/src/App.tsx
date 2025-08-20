@@ -1,6 +1,7 @@
 import "./App.css";
 import { Card } from "./components/card/card";
 import { Header } from "./components/header/header";
+import { Recorder } from "./components/recorder/recorder";
 import { RecordingsList } from "./components/recordings-list/recordings-list";
 import { Recording } from "./components/recordings-list/recordings-list-entry/recordings-list-entry";
 
@@ -55,7 +56,7 @@ function App() {
           <RecordingsList recordings={recordings} />
         </Card>
         <Card>
-          <span>Recorder</span>
+          <Recorder />
         </Card>
       </div>
     </div>
