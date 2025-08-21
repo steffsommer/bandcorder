@@ -4,8 +4,8 @@
   grid-template-rows: min-content repeat(4, 1fr);
   gap: var(--spacing);
   grid-template-areas:
-    "heading spinner"
-    "current-file spinner"
+    "heading timer"
+    "current-file timer"
     "frequency frequency"
     "volume volume"
     "controls controls";
@@ -13,27 +13,40 @@
   height: 100%;
 }
 
+.heading {
+  grid-area: heading;
+}
+
 .recorder>* {
   border: 1px solid red;
 }
 
-.spinner {
-  grid-area: spinner;
+.timer-widget {
+  grid-area: timer;
   margin: auto;
 }
 
 .current-file {
   grid-area: current-file;
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
 }
 
 .frequency-card {
   grid-area: frequency;
+  display: grid;
+  place-items: center;
 }
 
 .volume-card {
   grid-area: volume;
+  display: grid;
+  place-items: center;
 }
 
 .controls {
   grid-area: controls;
+  display: grid;
+  place-items: center;
 }

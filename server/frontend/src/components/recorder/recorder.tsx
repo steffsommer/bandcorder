@@ -1,14 +1,16 @@
 import { Card } from "../card/card";
 import "./recorder.css";
-import { Spinner } from "./spinner/spinner";
+import { Timer } from "./timer/timer";
+import { FaFile } from "react-icons/fa";
 
 export const Recorder: React.FC = () => {
   return (
     <div className="recorder">
-      <h2 className="descriptive-header">Recorder</h2>
-      <Spinner isRecording={true} className="spinner" />
+      <h2 className="heading">Recorder</h2>
+      <Timer isRecording={true} className="timer-widget" onStop={() => { }} />
       <div className="current-file">
-        <span>current file info</span>
+        <FaFile />
+        <h3>2025-08-21--19-45-00.wav</h3>
       </div>
       <Card className="frequency-card">
         <span>frequency info</span>

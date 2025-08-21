@@ -1,4 +1,17 @@
-.spinner {
+.timer-container {
+  position: relative;
+}
+
+.time-label {
+  position: absolute;
+  font-size: 2rem;
+  font-weight: bold;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+}
+
+.timer {
   --diameter: 12rem;
   --center-diameter: 70%;
   --color-running: #a0ff92;
@@ -11,14 +24,14 @@
   position: relative;
 }
 
-.spinner.active {
+.timer.active {
   animation: 1s rotate infinite linear;
   background: conic-gradient(from 90deg at 50% 50%,
       rgba(39, 174, 96, 0) 0deg,
       var(--color-running) 360deg);
 }
 
-.spinner::after {
+.timer::after {
   content: "";
   position: absolute;
   left: 50%;
