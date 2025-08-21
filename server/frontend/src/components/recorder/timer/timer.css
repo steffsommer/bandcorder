@@ -1,10 +1,14 @@
 .timer-container {
   position: relative;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
 }
 
 .time-label {
   position: absolute;
-  font-size: 2rem;
+  font-size: 2.5rem;
   font-weight: bold;
   top: 50%;
   left: 50%;
@@ -12,16 +16,14 @@
 }
 
 .timer {
-  --diameter: 12rem;
   --center-diameter: 70%;
   --color-running: #a0ff92;
-  height: var(--diameter);
-  width: var(--diameter);
+  aspect-ratio: 1/1;
+  height: 90%;
   box-sizing: border-box;
   background: red;
   border-radius: 47%;
   border: 0.2rem solid black;
-  position: relative;
 }
 
 .timer.active {

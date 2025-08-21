@@ -1,0 +1,7 @@
+.recorder-btn {
+  --len: 4rem;
+  width: var(--len);
+  height: var(--len);
+  display: grid;
+  place-items: center;
+}
