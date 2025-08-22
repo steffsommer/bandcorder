@@ -1,5 +1,5 @@
 import { Card } from "../card/card";
-import { RecorderButton } from "./recorder-button/recorder-button";
+import { Button } from "../button/button";
 import "./recorder.css";
 import { Timer } from "./timer/timer";
 import { FaFile, FaPause, FaPlay, FaSquareFull } from "react-icons/fa";
@@ -20,15 +20,15 @@ export const Recorder: React.FC = () => {
         <span>volume info</span>
       </Card>
       <div className="controls">
-        <RecorderButton  className="recorder-btn icon-large play-btn">
+        <Button  className="recorder-btn icon-large play-btn">
           <FaPlay />
-        </RecorderButton>
-        <RecorderButton  className="recorder-btn icon-large pause-btn">
+        </Button>
+        <Button  className="recorder-btn icon-large pause-btn">
           <FaPause />
-        </RecorderButton>
-        <RecorderButton  className="recorder-btn icon-large abort-btn">
+        </Button>
+        <Button  className="recorder-btn icon-large abort-btn">
           <FaSquareFull />
-        </RecorderButton>
+        </Button>
       </div>
     </div>
   );
