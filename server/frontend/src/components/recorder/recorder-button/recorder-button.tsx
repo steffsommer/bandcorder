@@ -1,11 +1,8 @@
 import { ComponentProps } from "react";
 import "./recorder-button.css";
 
-export const RecorderButton: React.FC<ComponentProps<"button">> = ({
-  className,
-  children,
-}) => {
-  return (
-    <button className={"recorder-btn shadow " + (className ?? "")}>{children}</button>
-  );
+interface Props extends ComponentProps<"button"> {}
+
+export const RecorderButton: React.FC<Props> = ({ className, children }) => {
+  return <button className={"button shadow " + (className ?? "")}>{children}</button>;
 };

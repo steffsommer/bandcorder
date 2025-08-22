@@ -10,7 +10,7 @@ export const Recorder: React.FC = () => {
       <h2 className="heading">Recorder</h2>
       <Timer isRecording={true} className="timer-widget" onStop={() => { }} />
       <div className="current-file">
-        <FaFile />
+        <FaFile size="1.2em" className="file-icon" />
         <h3>2025-08-21--19-45-00.wav</h3>
       </div>
       <Card className="frequency-card">
@@ -20,13 +20,13 @@ export const Recorder: React.FC = () => {
         <span>volume info</span>
       </Card>
       <div className="controls">
-        <RecorderButton className="play-btn">
+        <RecorderButton  className="recorder-btn icon-large play-btn">
           <FaPlay />
         </RecorderButton>
-        <RecorderButton className="play-btn">
+        <RecorderButton  className="recorder-btn icon-large pause-btn">
           <FaPause />
         </RecorderButton>
-        <RecorderButton className="play-btn">
+        <RecorderButton  className="recorder-btn icon-large abort-btn">
           <FaSquareFull />
         </RecorderButton>
       </div>

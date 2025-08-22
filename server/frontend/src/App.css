@@ -3,7 +3,6 @@
   flex-direction: column;
   gap: var(--spacing);
   height: 100vh;
-  text-align: center;
 }
 
 .container {

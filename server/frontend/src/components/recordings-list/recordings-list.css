@@ -15,11 +15,3 @@
   min-height: 0;
   padding-bottom: var(--spacing);
 }
-
-.list-btn {
-  padding: 14px;
-}
-
-.edit-btn>* {
-  transform: translateX(2px);
-}

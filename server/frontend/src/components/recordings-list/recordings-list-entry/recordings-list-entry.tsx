@@ -4,6 +4,7 @@ import "./recordings-list-entry.css";
 import { FaMusic } from "react-icons/fa";
 import { MdOutlineAccessTimeFilled } from "react-icons/md";
 import { FaEdit, FaTrash } from "react-icons/fa";
+import { RecorderButton } from "../../recorder/recorder-button/recorder-button";
 
 export interface Recording {
   name: string;
@@ -26,12 +27,12 @@ export const RecordingsListEntry: React.FC<Props> = ({ recording }) => {
           <MdOutlineAccessTimeFilled size="2em" />
           <span>{recording.duration}</span>
         </span>
-        <Btn className="list-btn edit-btn">
+        <RecorderButton bg="red" className="list-btn edit-btn">
           <FaEdit />
-        </Btn>
-        <Btn className="list-btn">
+        </RecorderButton>
+        <RecorderButton className="list-btn">
           <FaTrash />
-        </Btn>
+        </RecorderButton>
       </div>
     </Card>
   );

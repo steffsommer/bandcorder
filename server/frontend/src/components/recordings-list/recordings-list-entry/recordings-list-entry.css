@@ -23,3 +23,12 @@
 .entry-card {
   height: unset;
 }
+
+.list-btn {
+  width: 2rem;
+  height: 2rem;
+}
+
+.edit-btn>* {
+  transform: translateX(2px);
+}

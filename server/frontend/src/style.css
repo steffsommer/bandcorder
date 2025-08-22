@@ -1,12 +1,14 @@
 :root {
   --color-surface-1: #5eb3f5;
   --color-surface-2: white;
+  --color-1: #a0ff92;
+  --color-2: #f8cb46;
+  --color-3: #fe90e9;
   --color-font: black;
   --spacing: 1rem;
   --spacing-big: 4rem;
   --spacing-max: 8rem;
   --border-radius: 10px;
-  box-sizing: border-box;
   font-size: 18px;
   color: var(--color-font);
   scrollbar-color: var(--color-font) var(--color-surface-2);
@@ -14,7 +16,6 @@
 
 html {
   background-color: var(--color-surface-1);
-  text-align: center;
   height: 100%;
   max-height: 100%;
 }
@@ -53,7 +54,6 @@ body {
 
 #app {
   height: 100vh;
-  text-align: center;
 }
 
 *,

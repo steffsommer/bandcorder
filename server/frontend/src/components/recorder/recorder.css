@@ -14,11 +14,8 @@
 }
 
 .heading {
+  text-align: left;
   grid-area: heading;
-}
-
-.recorder>* {
-  border: 1px solid red;
 }
 
 .timer-widget {
@@ -27,10 +24,19 @@
 }
 
 .current-file {
+  font-size: 1.7rem;
   grid-area: current-file;
   display: flex;
   align-items: center;
   gap: 0.2rem;
+  height: max-content;
+  margin-block: auto;
+  gap: 0.7rem;
+}
+
+.file-icon {
+  margin-top: 0.1em;
+  margin-bottom: auto;
 }
 
 .frequency-card {
@@ -49,4 +55,25 @@
   grid-area: controls;
   gap: 10px;
   display: flex;
+}
+
+.icon-large {
+  font-size: 1.7rem;
+}
+
+.recorder-btn {
+  width: 4rem;
+  height: 4rem;
+}
+
+.play-btn {
+  background: #a0ff92;
+}
+
+.pause-btn {
+  background: #f8cb46;
+}
+
+.abort-btn {
+  background: #fe90e9;
 }
