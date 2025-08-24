@@ -12,9 +12,9 @@
   will-change: transform;
   background: transparent;
   cursor: pointer;
-  outline-offset: 4px;
   transition: scale 250ms;
   border-radius: 12px;
+  outline: none;
 }
 
 .button:hover {
@@ -29,8 +29,4 @@
 .button:active {
   scale: 0.95;
   transition: scale 250ms;
-}
-
-.button:focus:not(:focus-visible) {
-  outline: none;
 }
