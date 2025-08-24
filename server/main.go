@@ -22,7 +22,6 @@ var assets embed.FS
 func main() {
 
 	// Set up Web UI / wails app
-
 	app := NewApp()
 	err := wails.Run(&options.App{
 		Title:  "server",

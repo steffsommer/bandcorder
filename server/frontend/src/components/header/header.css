@@ -24,3 +24,8 @@ header {
   place-items: center;
   aspect-ratio: 1/1;
 }
+
+.settings-btn {
+  background: white !important;
+  width: max-content !important;
+}

@@ -2,6 +2,7 @@ import { Card } from "../card/card";
 import "./header.css";
 import logo from "../../assets/images/logo.svg";
 import { FiSettings } from "react-icons/fi";
+import { Button } from "../button/button";
 
 export function Header() {
   return (
@@ -10,9 +11,9 @@ export function Header() {
         <img className="logo-img" src={logo} />
         <h1>BANDCORDER</h1>
       </Card>
-      <Card className="centered">
+      <Button className="settings-btn">
         <FiSettings size="2em" />
-      </Card>
+      </Button>
     </header>
   );
 }
