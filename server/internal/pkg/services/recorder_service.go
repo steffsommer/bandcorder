@@ -2,8 +2,10 @@ package services
 
 import (
 	"encoding/binary"
+	"errors"
 	"fmt"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/gordonklaus/portaudio"
@@ -21,13 +23,13 @@ const (
 // TODOs:
 // - handle microphone selection
 // - flush buffers on stop/abort
-// - introduce mutex to control access
 type RecorderService struct {
 	stream      *portaudio.Stream
 	inputBuffer []float32
 	recording   []float32
 	isRunning   bool
 	done        chan bool
+	mutex       sync.Mutex
 }
 
 func NewRecorderService() *RecorderService {
@@ -40,6 +42,10 @@ func NewRecorderService() *RecorderService {
 // Start starts a new recording
 func (r *RecorderService) Start() error {
 	logrus.Info("Starting recording")
+	r.mutex.Lock()
+	if r.isRunning {
+		return errors.New("Recording is already running")
+	}
 	if err := portaudio.Initialize(); err != nil {
 		logrus.Fatalf("Failed to initialize PortAudio: %v", err)
 	}
@@ -81,18 +87,20 @@ func (r *RecorderService) Start() error {
 					logrus.Printf("Error reading from stream: %v", err)
 					continue
 				}
-
 				r.recording = append(r.recording, r.inputBuffer...)
 			}
 		}
 	}()
 
 	logrus.Info("Recording started")
+	r.isRunning = true
+	r.mutex.Unlock()
 	return nil
 }
 
 // Stop finishes the current recording
 func (r *RecorderService) Stop() error {
+	r.mutex.Lock()
 	logrus.Info("Stopping recording")
 	if err := r.stream.Stop(); err != nil {
 		logrus.Printf("Error stopping stream: %v", err)
@@ -110,15 +118,19 @@ func (r *RecorderService) Stop() error {
 
 	defer r.stream.Close()
 	logrus.Info("Recording stopped")
+	r.isRunning = false
+	r.mutex.Unlock()
 	return nil
 }
 
 // Abort aborts the current recording without saving it
 func (r *RecorderService) Abort() error {
-	r.done <- true
+	r.mutex.Lock()
 	r.stream.Stop()
 	r.stream.Close()
+	r.done <- true
 	r.isRunning = false
+	r.mutex.Unlock()
 	return nil
 }
 
