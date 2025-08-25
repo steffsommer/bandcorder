@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/gordonklaus/portaudio"
+	"github.com/labstack/gommon/log"
 	"github.com/sirupsen/logrus"
 )
 
@@ -39,15 +40,17 @@ func NewRecorderService() *RecorderService {
 	}
 }
 
+func (r *RecorderService) Init() error {
+	return portaudio.Initialize()
+}
+
 // Start starts a new recording
 func (r *RecorderService) Start() error {
 	logrus.Info("Starting recording")
 	r.mutex.Lock()
+	defer r.mutex.Unlock()
 	if r.isRunning {
 		return errors.New("Recording is already running")
-	}
-	if err := portaudio.Initialize(); err != nil {
-		logrus.Fatalf("Failed to initialize PortAudio: %v", err)
 	}
 
 	inputDevice, err := portaudio.DefaultInputDevice()
@@ -73,6 +76,7 @@ func (r *RecorderService) Start() error {
 	}
 	r.stream = stream
 
+	log.Info("Starting stream")
 	if err := r.stream.Start(); err != nil {
 		logrus.Fatalf("Failed to start stream: %v", err)
 	}
@@ -83,10 +87,12 @@ func (r *RecorderService) Start() error {
 			case <-r.done:
 				return
 			default:
+				// log.Info("reading from stream")
 				if err := r.stream.Read(); err != nil {
 					logrus.Printf("Error reading from stream: %v", err)
 					continue
 				}
+				// log.Info("done reading from stream")
 				r.recording = append(r.recording, r.inputBuffer...)
 			}
 		}
@@ -94,18 +100,24 @@ func (r *RecorderService) Start() error {
 
 	logrus.Info("Recording started")
 	r.isRunning = true
-	r.mutex.Unlock()
 	return nil
 }
 
 // Stop finishes the current recording
 func (r *RecorderService) Stop() error {
 	r.mutex.Lock()
-	logrus.Info("Stopping recording")
-	if err := r.stream.Stop(); err != nil {
-		logrus.Printf("Error stopping stream: %v", err)
-	}
+	defer r.mutex.Unlock()
+	    
+	logrus.Info("Stopping the stream")
+	// if err := r.stream.Stop(); err != nil {
+	// 	logrus.Printf("Error stopping stream: %v", err)
+	// }
 	r.done <- true
+
+	logrus.Info("Closing the stream")
+	if err := r.stream.Close(); err != nil {
+		logrus.Printf("Error closing stream: %v", err)
+	}
 
 	filename := fmt.Sprintf("recording_%d.raw", time.Now().Unix())
 	if err := saveWavFile(r.recording, "test_file.wav"); err != nil {
@@ -116,21 +128,20 @@ func (r *RecorderService) Stop() error {
 	fmt.Printf("Recorded %d samples (%.2f seconds)\n",
 		len(r.recording), float64(len(r.recording))/float64(sampleRate))
 
-	defer r.stream.Close()
 	logrus.Info("Recording stopped")
 	r.isRunning = false
-	r.mutex.Unlock()
+	r.recording = nil
 	return nil
 }
 
 // Abort aborts the current recording without saving it
 func (r *RecorderService) Abort() error {
 	r.mutex.Lock()
+	defer r.mutex.Unlock()
 	r.stream.Stop()
-	r.stream.Close()
 	r.done <- true
+	r.stream.Close()
 	r.isRunning = false
-	r.mutex.Unlock()
 	return nil
 }
 

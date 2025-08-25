@@ -30,6 +30,9 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	recorder := services.NewRecorderService()
+	if err := recorder.Init(); err != nil {
+		panic("Failed to init recorder service: " + err.Error())
+	}
 	recordingController := controllers.NewRecordingController(recorder)
 
 	//set up REST API + websockets
