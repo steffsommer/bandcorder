@@ -3,6 +3,11 @@ import { Button } from "../button/button";
 import "./recorder.css";
 import { Timer } from "./timer/timer";
 import { FaFile, FaPause, FaPlay, FaSquareFull } from "react-icons/fa";
+import {
+  AbortRecording,
+  StartRecording,
+  StopRecording,
+} from "../../../wailsjs/go/main/App.js";
 
 export const Recorder: React.FC = () => {
   return (
@@ -14,19 +19,28 @@ export const Recorder: React.FC = () => {
         <h3>2025-08-21--19-45-00.wav</h3>
       </div>
       <Card className="frequency-card">
-        <span>frequency info</span>
+        <span>🚧 frequency info 🚧</span>
       </Card>
       <Card className="volume-card">
-        <span>volume info</span>
+        <span>🚧 volume info 🚧</span>
       </Card>
       <div className="controls">
-        <Button  className="recorder-btn icon-large play-btn">
+        <Button
+          onClick={StartRecording}
+          className="recorder-btn icon-large play-btn"
+        >
           <FaPlay />
         </Button>
-        <Button  className="recorder-btn icon-large pause-btn">
+        <Button
+          onClick={StopRecording}
+          className="recorder-btn icon-large pause-btn"
+        >
           <FaPause />
         </Button>
-        <Button  className="recorder-btn icon-large abort-btn">
+        <Button
+          onClick={AbortRecording}
+          className="recorder-btn icon-large abort-btn"
+        >
           <FaSquareFull />
         </Button>
       </div>

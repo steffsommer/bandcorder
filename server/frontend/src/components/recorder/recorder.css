@@ -1,7 +1,7 @@
 .recorder {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: min-content repeat(3, 1fr) max-content;
+  grid-template-rows: min-content 2fr 2fr 1fr max-content;
   gap: var(--spacing);
   grid-template-areas:
     "heading timer"

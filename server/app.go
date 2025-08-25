@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"server/internal/pkg/controllers"
+	"server/internal/pkg/interfaces"
 	"server/internal/pkg/services"
 	"strconv"
 
@@ -15,18 +15,20 @@ const API_PORT = 6000
 
 // App struct
 type App struct {
-	ctx context.Context
+	ctx      context.Context
+	recorder interfaces.Recorder
 }
 
 // NewApp creates a new App application struct
 func NewApp() *App {
-	return &App{}
+	return &App{
+		recorder: services.NewRecorderService(),
+	}
 }
 
 // startup is called when the app starts. The context is saved
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
-	fmt.Println("Startup handler running")
 	recorder := services.NewRecorderService()
 	recordingController := controllers.NewRecordingController(recorder)
 
@@ -48,7 +50,15 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 }
 
-// Greet returns a greeting for the given name
-func (a *App) Greet(name string) string {
-	return fmt.Sprintf("Hello %s, It's show time!", name)
+func (a *App) StartRecording() error {
+	log.Println("Starting recording")
+	return a.recorder.Start()
+}
+
+func (a *App) StopRecording() error {
+	return a.recorder.Stop()
+}
+
+func (a *App) AbortRecording() error {
+	return a.recorder.Abort()
 }
