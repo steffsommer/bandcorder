@@ -40,11 +40,14 @@ func NewRecorderService() *RecorderService {
 	}
 }
 
+// Init should be called once to initialize the underlying audio system
+// for example, init scans for available audio devices
 func (r *RecorderService) Init() error {
 	return portaudio.Initialize()
 }
 
-// Start starts a new recording
+// Start starts a new recording. The recording will fill an in-memory buffer
+// until either Stop() or Abort() are called
 func (r *RecorderService) Start() error {
 	logrus.Info("Starting recording")
 	r.mutex.Lock()
@@ -103,15 +106,12 @@ func (r *RecorderService) Start() error {
 	return nil
 }
 
-// Stop finishes the current recording
+// Stop stops the current recording and writes the recorded audio to a
+// wav file
 func (r *RecorderService) Stop() error {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
-	    
-	logrus.Info("Stopping the stream")
-	// if err := r.stream.Stop(); err != nil {
-	// 	logrus.Printf("Error stopping stream: %v", err)
-	// }
+
 	r.done <- true
 
 	logrus.Info("Closing the stream")
