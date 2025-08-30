@@ -6,7 +6,9 @@ import (
 	"server/internal/pkg/controllers"
 	"server/internal/pkg/interfaces"
 	"server/internal/pkg/services"
+	"server/internal/pkg/services/notifier"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,6 +19,7 @@ const API_PORT = 6000
 type App struct {
 	ctx      context.Context
 	recorder interfaces.Recorder
+	notifier *notifier.Notifier
 }
 
 // NewApp creates a new App application struct
@@ -33,14 +36,27 @@ func (a *App) startup(ctx context.Context) {
 	if err := recorder.Init(); err != nil {
 		panic("Failed to init recorder service: " + err.Error())
 	}
-	recordingController := controllers.NewRecordingController(recorder)
+
+	websocketController := controllers.NewWebsocketController()
+	uiSender := services.NewUiSenderService(ctx)
+	broadcastSender := services.NewBroadcastSender(
+		[]interfaces.Sender{
+			websocketController,
+			uiSender,
+		},
+	)
+	a.notifier = notifier.NewNotifier(broadcastSender)
+
+	recordingController := controllers.NewRecordingController(recorder, a.notifier)
 
 	//set up REST API + websockets
 	go func() {
 		r := gin.Default()
 
-		r.GET("/recording/start", recordingController.HandleStart)
-		r.GET("/recording/stop", recordingController.HandleStop)
+		r.POST("/recording/start", recordingController.HandleStart)
+		r.POST("/recording/stop", recordingController.HandleStop)
+		r.POST("/recording/abort", recordingController.HandleAbort)
+		r.POST("/ws", websocketController.HandleWebsocketUpgrade)
 
 		log.Printf("Server starting on localhost:%d\n", API_PORT)
 
@@ -53,9 +69,15 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 }
 
+func (a *App) domReady(_ context.Context) {
+	time.Sleep(500 * time.Millisecond)
+	a.notifier.StartSendingPeriodicUpdates()
+}
+
 func (a *App) StartRecording() error {
 	log.Println("Starting recording")
-	return a.recorder.Start()
+	err := a.recorder.Start()
+	return err
 }
 
 func (a *App) StopRecording() error {

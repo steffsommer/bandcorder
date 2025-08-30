@@ -23,7 +23,6 @@ const (
 //
 // TODOs:
 // - handle microphone selection
-// - flush buffers on stop/abort
 type RecorderService struct {
 	stream      *portaudio.Stream
 	inputBuffer []float32

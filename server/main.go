@@ -24,7 +24,7 @@ func main() {
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
 		Fullscreen:       true,
 		OnStartup:        app.startup,
-		// delay webserver startup for now to work around
+		OnDomReady:       app.domReady,
 		Bind: []interface{}{
 			app,
 		},

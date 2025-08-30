@@ -9,11 +9,16 @@ import (
 
 type RecordingController struct {
 	recorder interfaces.Recorder
+	notifier interfaces.RecordingStateNotifier
 }
 
-func NewRecordingController(recorder interfaces.Recorder) RecordingController {
+func NewRecordingController(
+	recorder interfaces.Recorder,
+	notifier interfaces.RecordingStateNotifier,
+) RecordingController {
 	return RecordingController{
 		recorder: recorder,
+		notifier: notifier,
 	}
 }
 
@@ -29,6 +34,16 @@ func (r RecordingController) HandleStart(c *gin.Context) {
 
 // HandleStop stops the current recording
 func (r RecordingController) HandleStop(c *gin.Context) {
+	err := r.recorder.Stop()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.Writer.WriteHeader(http.StatusOK)
+}
+
+// HandleAbort stops the current recording
+func (r RecordingController) HandleAbort(c *gin.Context) {
 	err := r.recorder.Stop()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())

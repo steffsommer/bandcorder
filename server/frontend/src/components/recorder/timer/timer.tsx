@@ -1,5 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import "./timer.css";
+import "../../../../wailsjs/runtime/runtime";
+import { RecordingID as RecordingEvent } from "../../contants";
+import { EventsOn } from "../../../../wailsjs/runtime/runtime";
 
 interface Props {
   isRecording: boolean;
@@ -9,6 +12,13 @@ interface Props {
 
 export const Timer: React.FC<Props> = ({ isRecording, className, onStop }) => {
   const [durationStr, setDurationStr] = useState("");
+
+  useEffect(() => {
+    return EventsOn(RecordingEvent.RUNNING, (data) => {
+      console.log('Received RUNNING event data!!!!')
+      console.log(data)
+    })
+  });
 
   useEffect(() => {
     let intervalID: number;
