@@ -5,15 +5,10 @@ import (
 	"time"
 )
 
-const (
-	runningEventID = "RUNNING"
-	idleEventID    = "IDLE"
-)
-
 type Notifier struct {
 	sender    interfaces.Sender
 	lastEvent struct {
-		id   string
+		id   interfaces.EventID
 		data any
 	}
 }
@@ -29,6 +24,11 @@ func NewNotifier(sender interfaces.Sender) *Notifier {
 
 func (n *Notifier) StartSendingPeriodicUpdates() {
 	go func() {
+		n.lastEvent.id = interfaces.RunningEvent
+		n.lastEvent.data = recordingRunningEvent{
+			FileName: "test-file-name.wav",
+			Started:  time.Now(),
+		}
 		for {
 			n.send()
 			time.Sleep(interval)
@@ -37,7 +37,7 @@ func (n *Notifier) StartSendingPeriodicUpdates() {
 }
 
 func (n *Notifier) NotifyStarted() {
-	n.lastEvent.id = runningEventID
+	n.lastEvent.id = interfaces.RunningEvent
 	n.lastEvent.data = recordingRunningEvent{
 		FileName: "TODO",
 		Started:  time.Now(),
@@ -46,7 +46,7 @@ func (n *Notifier) NotifyStarted() {
 }
 
 func (n *Notifier) NotifyStopped() {
-	n.lastEvent.id = runningEventID
+	n.lastEvent.id = interfaces.IdleEvent
 }
 
 func (n *Notifier) send() {

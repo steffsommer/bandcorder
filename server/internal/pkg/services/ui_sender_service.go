@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"server/internal/pkg/interfaces"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -16,6 +17,6 @@ func NewUiSenderService(appCtx context.Context) *UiSenderService {
 	}
 }
 
-func (u *UiSenderService) Send(event string, data any) {
-	runtime.EventsEmit(u.appCtx, event, data)
+func (u *UiSenderService) Send(event interfaces.EventID, data any) {
+	runtime.EventsEmit(u.appCtx, string(event), data)
 }

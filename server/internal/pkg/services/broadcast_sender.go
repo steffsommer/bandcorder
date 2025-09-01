@@ -12,7 +12,7 @@ func NewBroadcastSender(senders []interfaces.Sender) *BroadcastSender {
 	}
 }
 
-func (b *BroadcastSender) Send(event string, data any) {
+func (b *BroadcastSender) Send(event interfaces.EventID, data any) {
 	for _, sender := range b.senders {
 		sender.Send(event, data)
 	}

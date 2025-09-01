@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"maps"
+	"server/internal/pkg/interfaces"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -10,7 +11,7 @@ import (
 )
 
 type WebsocketEvent struct {
-	name string
+	name interfaces.EventID
 	data any
 }
 
@@ -51,7 +52,7 @@ func (r *WebsocketController) HandleWebsocketUpgrade(c *gin.Context) {
 	}
 }
 
-func (r *WebsocketController) Send(event string, data any) {
+func (r *WebsocketController) Send(event interfaces.EventID, data any) {
 	ev := WebsocketEvent{
 		name: event,
 		data: data,

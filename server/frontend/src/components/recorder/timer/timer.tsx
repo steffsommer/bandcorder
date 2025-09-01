@@ -3,43 +3,30 @@ import "./timer.css";
 import "../../../../wailsjs/runtime/runtime";
 import { RecordingID as RecordingEvent } from "../../contants";
 import { EventsOn } from "../../../../wailsjs/runtime/runtime";
+import { TimeUtils } from "../../../utils/time";
 
 interface Props {
-  isRecording: boolean;
   className: string;
-  onStop: (seconds: number) => void;
 }
 
-export const Timer: React.FC<Props> = ({ isRecording, className, onStop }) => {
+interface RecordingRunningEvent {
+  FileName: string;
+  Started: string;
+}
+
+export const Timer: React.FC<Props> = ({ className }) => {
   const [durationStr, setDurationStr] = useState("");
 
   useEffect(() => {
-    return EventsOn(RecordingEvent.RUNNING, (data) => {
-      console.log('Received RUNNING event data!!!!')
-      console.log(data)
-    })
+    return EventsOn(RecordingEvent.RUNNING, (data: RecordingRunningEvent) => {
+      const str = TimeUtils.SinceStr(data.Started);
+      setDurationStr(str);
+    });
   });
 
-  useEffect(() => {
-    let intervalID: number;
-
-    if (isRecording) {
-      const start = Date.now(); // Local variable - immediate value
-      const durationStr = getDurationString(start);
-      setDurationStr(durationStr);
-      intervalID = setInterval(() => {
-        const durationStr = getDurationString(start);
-        setDurationStr(durationStr);
-      }, 1000);
-    } else {
-      setDurationStr("");
-    }
-
-    return () => clearInterval(intervalID);
-  }, [isRecording]);
   return (
     <div className={"timer-container " + (className ? " " + className : "")}>
-      <div className={"timer " + (isRecording ? "active" : "")}></div>
+      <div className={"timer " + (durationStr !== "" ? "active" : "")}></div>
       <span className="time-label">{durationStr}</span>
     </div>
   );
