@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 const API_PORT = 6000
@@ -18,22 +19,26 @@ const API_PORT = 6000
 // App struct
 type App struct {
 	ctx      context.Context
-	recorder interfaces.Recorder
+	recorder *services.RecorderService
 	notifier *notifier.Notifier
 }
 
 // NewApp creates a new App application struct
 func NewApp() *App {
+	settings, err := services.NewSettingsService().Load()
+	if err != nil {
+		logrus.Fatalf("Failed to load settings: %w", err)
+	}
+	storageService := services.NewFileSystemStorageService(settings.RecordingsDirectory)
 	return &App{
-		recorder: services.NewRecorderService(),
+		recorder: services.NewRecorderService(storageService),
 	}
 }
 
 // startup is called when the app starts. The context is saved
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
-	recorder := services.NewRecorderService()
-	if err := recorder.Init(); err != nil {
+	if err := a.recorder.Init(); err != nil {
 		panic("Failed to init recorder service: " + err.Error())
 	}
 
@@ -47,7 +52,7 @@ func (a *App) startup(ctx context.Context) {
 	)
 	a.notifier = notifier.NewNotifier(broadcastSender)
 
-	recordingController := controllers.NewRecordingController(recorder, a.notifier)
+	recordingController := controllers.NewRecordingController(a.recorder, a.notifier)
 
 	//set up REST API + websockets
 	go func() {
