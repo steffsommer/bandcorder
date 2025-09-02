@@ -58,7 +58,7 @@ func (r *RecorderService) Start() error {
 
 	inputDevice, err := portaudio.DefaultInputDevice()
 	if err != nil {
-		logrus.Fatalf("Failed to get default input device: %v", err)
+		logrus.Errorf("Failed to get default input device: %w", err)
 	}
 	logrus.Infof("Recording from: %s\n", inputDevice.Name)
 
@@ -75,13 +75,13 @@ func (r *RecorderService) Start() error {
 
 	stream, err := portaudio.OpenStream(inputParams, r.inputBuffer)
 	if err != nil {
-		logrus.Fatalf("Failed to open stream: %v", err)
+		logrus.Errorf("Failed to open stream: %w", err)
 	}
 	r.stream = stream
 
 	log.Info("Starting stream")
 	if err := r.stream.Start(); err != nil {
-		logrus.Fatalf("Failed to start stream: %v", err)
+		logrus.Errorf("Failed to start stream: %v", err)
 	}
 
 	go func() {
@@ -90,12 +90,10 @@ func (r *RecorderService) Start() error {
 			case <-r.done:
 				return
 			default:
-				// log.Info("reading from stream")
 				if err := r.stream.Read(); err != nil {
-					logrus.Printf("Error reading from stream: %v", err)
+					logrus.Errorf("Error reading from stream: %v", err)
 					continue
 				}
-				// log.Info("done reading from stream")
 				r.recording = append(r.recording, r.inputBuffer...)
 			}
 		}
@@ -106,8 +104,7 @@ func (r *RecorderService) Start() error {
 	return nil
 }
 
-// Stop stops the current recording and writes the recorded audio to a
-// wav file
+// Stop stops the current recording and writes the recorded audio to a wav file
 func (r *RecorderService) Stop() error {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
@@ -117,15 +114,17 @@ func (r *RecorderService) Stop() error {
 	logrus.Info("Closing the stream")
 	if err := r.stream.Close(); err != nil {
 		logrus.Printf("Error closing stream: %v", err)
+		return err
 	}
 
 	filename := fmt.Sprintf("recording_%d.raw", time.Now().Unix())
 	if err := r.storageSerivce.Save(filename, r.recording); err != nil {
-		logrus.Fatalf("Failed to save audio to file: %v", err)
+		logrus.Errorf("Failed to save audio to file: %v", err)
+		return err
 	}
 
-	fmt.Printf("Recording saved to %s\n", filename)
-	fmt.Printf("Recorded %d samples (%.2f seconds)\n",
+	logrus.Info("Recording saved to %s\n", filename)
+	logrus.Info("Recorded %d samples (%.2f seconds)\n",
 		len(r.recording), float64(len(r.recording))/float64(sampleRate))
 
 	logrus.Info("Recording stopped")

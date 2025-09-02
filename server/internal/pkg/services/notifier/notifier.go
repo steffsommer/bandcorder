@@ -24,11 +24,11 @@ func NewNotifier(sender interfaces.Sender) *Notifier {
 
 func (n *Notifier) StartSendingPeriodicUpdates() {
 	go func() {
-		n.lastEvent.id = interfaces.RunningEvent
-		n.lastEvent.data = recordingRunningEvent{
-			FileName: "test-file-name.wav",
-			Started:  time.Now(),
-		}
+		// n.lastEvent.id = interfaces.RunningEvent
+		// n.lastEvent.data = recordingRunningEvent{
+		// 	FileName: "test-file-name.wav",
+		// 	Started:  time.Now(),
+		// }
 		for {
 			n.send()
 			time.Sleep(interval)
