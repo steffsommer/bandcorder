@@ -111,7 +111,6 @@ func (r *RecorderService) Stop() error {
 
 	r.done <- true
 
-	logrus.Info("Closing the stream")
 	if err := r.stream.Close(); err != nil {
 		logrus.Printf("Error closing stream: %v", err)
 		return err
@@ -123,8 +122,7 @@ func (r *RecorderService) Stop() error {
 		return err
 	}
 
-	logrus.Info("Recording saved to %s\n", filename)
-	logrus.Info("Recorded %d samples (%.2f seconds)\n",
+	logrus.Infof("Recorded %d samples (%.2f seconds)\n",
 		len(r.recording), float64(len(r.recording))/float64(sampleRate))
 
 	logrus.Info("Recording stopped")
@@ -137,7 +135,6 @@ func (r *RecorderService) Stop() error {
 func (r *RecorderService) Abort() error {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
-	r.stream.Stop()
 	r.done <- true
 	r.stream.Close()
 	r.isRunning = false

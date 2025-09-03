@@ -44,7 +44,7 @@ func (r RecordingController) HandleStop(c *gin.Context) {
 
 // HandleAbort stops the current recording
 func (r RecordingController) HandleAbort(c *gin.Context) {
-	err := r.recorder.Stop()
+	err := r.recorder.Abort()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return

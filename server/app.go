@@ -15,6 +15,8 @@ import (
 )
 
 const API_PORT = 6000
+const AUDIO_CHANNEL_COUNT = 1 // Mono
+const SAMPLE_RATE_HZ = 44100
 
 // App struct
 type App struct {
@@ -29,7 +31,8 @@ func NewApp() *App {
 	if err != nil {
 		logrus.Fatalf("Failed to load settings: %w", err)
 	}
-	storageService := services.NewFileSystemStorageService(settings.RecordingsDirectory)
+	storageService := services.NewFileSystemStorageService(
+		settings.RecordingsDirectory, AUDIO_CHANNEL_COUNT, SAMPLE_RATE_HZ)
 	return &App{
 		recorder: services.NewRecorderService(storageService),
 	}
