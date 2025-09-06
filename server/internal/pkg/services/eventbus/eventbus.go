@@ -23,12 +23,8 @@ func NewEventBus(sender interfaces.Sender) *EventBus {
 }
 
 func (n *EventBus) StartSendingPeriodicUpdates() {
+	n.NotifyStopped()
 	go func() {
-		// n.lastEvent.id = interfaces.RunningEvent
-		// n.lastEvent.data = recordingRunningEvent{
-		// 	FileName: "test-file-name.wav",
-		// 	Started:  time.Now(),
-		// }
 		for {
 			n.send()
 			time.Sleep(interval)
@@ -36,12 +32,12 @@ func (n *EventBus) StartSendingPeriodicUpdates() {
 	}()
 }
 
-func (n *EventBus) NotifyStarted() {
+func (n *EventBus) NotifyStarted(res interfaces.StartedResponse) {
 	n.lastEvent.id = interfaces.RecordingStateEvent
 	n.lastEvent.data = recordingRunningEvent{
 		State:    RUNNING,
-		FileName: "TODO",
-		Started:  time.Now(),
+		FileName: res.FileName,
+		Started:  res.Started,
 	}
 	n.send()
 }
@@ -51,11 +47,9 @@ func (n *EventBus) NotifyStopped() {
 	n.lastEvent.data = recordingRunningEvent{
 		State: IDLE,
 	}
+	n.send()
 }
 
 func (n *EventBus) send() {
-	if n.lastEvent.id == "" {
-		return
-	}
 	n.sender.Send(n.lastEvent.id, n.lastEvent.data)
 }

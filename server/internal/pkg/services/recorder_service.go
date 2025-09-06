@@ -26,7 +26,7 @@ type RecorderService struct {
 	stream         *portaudio.Stream
 	inputBuffer    []float32
 	recording      []float32
-	isRunning      bool
+	fileName       string
 	done           chan bool
 	mutex          sync.Mutex
 }
@@ -47,11 +47,12 @@ func (r *RecorderService) Init() error {
 
 // Start starts a new recording. The recording will fill an in-memory buffer
 // until either Stop() or Abort() are called
-func (r *RecorderService) Start() error {
+func (r *RecorderService) Start() (interfaces.StartedResponse, error) {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
-	if r.isRunning {
-		return errors.New("Recording is already running")
+
+	if r.isRunning() {
+		return interfaces.StartedResponse{}, errors.New("Recording is already running")
 	}
 
 	inputDevice, err := portaudio.DefaultInputDevice()
@@ -72,12 +73,12 @@ func (r *RecorderService) Start() error {
 
 	stream, err := portaudio.OpenStream(inputParams, r.inputBuffer)
 	if err != nil {
-		return fmt.Errorf("Failed to open stream: %w", err)
+		return interfaces.StartedResponse{}, fmt.Errorf("Failed to open stream: %w", err)
 	}
 	r.stream = stream
 
 	if err := r.stream.Start(); err != nil {
-		return fmt.Errorf("Failed to start stream: %v")
+		return interfaces.StartedResponse{}, fmt.Errorf("Failed to start stream: %v")
 	}
 
 	go func() {
@@ -95,17 +96,21 @@ func (r *RecorderService) Start() error {
 		}
 	}()
 
-	r.isRunning = true
-	return nil
+	r.fileName = fmt.Sprintf("recording_%d.wav", time.Now().Unix())
+	return interfaces.StartedResponse{
+		FileName: r.fileName,
+		Started:  time.Now(),
+	}, nil
 }
 
 // Stop stops the current recording and writes the recorded audio to a wav file
 func (r *RecorderService) Stop() error {
-	if !r.isRunning {
-		return errors.New("No recording is running")
-	}
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
+
+	if !r.isRunning() {
+		return errors.New("No recording is running")
+	}
 
 	r.done <- true
 
@@ -113,28 +118,41 @@ func (r *RecorderService) Stop() error {
 		return err
 	}
 
-	filename := fmt.Sprintf("recording_%d.raw", time.Now().Unix())
-	if err := r.storageSerivce.Save(filename, r.recording); err != nil {
+	if err := r.storageSerivce.Save(r.fileName, r.recording); err != nil {
 		return err
 	}
 
 	logrus.Infof("Recorded %d samples (%.2f seconds)\n",
 		len(r.recording), float64(len(r.recording))/float64(sampleRate))
 
-	r.isRunning = false
-	r.recording = nil
+	r.reset()
 	return nil
 }
 
 // Abort aborts the current recording without saving it
 func (r *RecorderService) Abort() error {
-	if !r.isRunning {
-		return errors.New("No recording is running")
-	}
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
+
+	if !r.isRunning() {
+		return errors.New("No recording is running")
+	}
+
 	r.done <- true
-	r.stream.Close()
-	r.isRunning = false
+	err := r.stream.Close()
+	if err != nil {
+		return err
+	}
+	r.reset()
+
 	return nil
+}
+
+func (r *RecorderService) reset() {
+	r.fileName = ""
+	r.recording = nil
+}
+
+func (r *RecorderService) isRunning() bool {
+	return r.fileName != ""
 }

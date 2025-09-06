@@ -21,15 +21,15 @@ func NewRecordingFacade(
 	}
 }
 
-func (r *RecordingFacade) Start() error {
-	err := r.recorder.Start()
+func (r *RecordingFacade) Start() (interfaces.StartedResponse, error) {
+	res, err := r.recorder.Start()
 	if err != nil {
 		logrus.Errorf("Failed to start recording: %s", err.Error())
-		return err
+		return res, err
 	}
-	r.eventbus.NotifyStarted()
+	r.eventbus.NotifyStarted(res)
 	logrus.Info("Recording started successfully")
-	return err
+	return res, nil
 }
 
 func (r *RecordingFacade) Stop() error {

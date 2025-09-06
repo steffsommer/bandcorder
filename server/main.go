@@ -10,7 +10,6 @@ import (
 	"server/internal/pkg/services"
 	"server/internal/pkg/services/eventbus"
 	"strconv"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -66,7 +65,7 @@ func main() {
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
-		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
+		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 0},
 		Fullscreen:       true,
 		OnStartup: func(ctx context.Context) {
 			if err := recorder.Init(); err != nil {
@@ -83,7 +82,6 @@ func main() {
 			}()
 		},
 		OnDomReady: func(_ context.Context) {
-			time.Sleep(500 * time.Millisecond)
 			eventbus.StartSendingPeriodicUpdates()
 		},
 		Bind: []interface{}{

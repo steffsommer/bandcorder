@@ -13,6 +13,11 @@
   height: 100%;
 }
 
+.recorder > * {
+  min-height: 0;
+  min-width: 0;
+}
+
 .heading {
   text-align: left;
   grid-area: heading;
@@ -24,6 +29,7 @@
 }
 
 .current-file {
+  overflow-wrap: anywhere;
   font-size: 1.7rem;
   grid-area: current-file;
   display: flex;
@@ -35,7 +41,7 @@
 }
 
 .file-icon {
-  margin-top: 0.1em;
+  margin-top: 0.2em;
   margin-bottom: auto;
 }
 

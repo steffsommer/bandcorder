@@ -21,7 +21,7 @@ func NewRecordingController(
 
 // HandleStart starts a new recording
 func (r RecordingController) HandleStart(c *gin.Context) {
-	err := r.recorder.Start()
+	_, err := r.recorder.Start()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
