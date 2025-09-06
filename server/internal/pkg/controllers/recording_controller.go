@@ -13,8 +13,8 @@ type RecordingController struct {
 
 func NewRecordingController(
 	recorder interfaces.Recorder,
-) RecordingController {
-	return RecordingController{
+) *RecordingController {
+	return &RecordingController{
 		recorder: recorder,
 	}
 }

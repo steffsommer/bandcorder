@@ -4,10 +4,10 @@ import "./recorder.css";
 import { Timer } from "./timer/timer";
 import { FaFile, FaPause, FaPlay, FaSquareFull } from "react-icons/fa";
 import {
-  AbortRecording,
-  StartRecording,
-  StopRecording,
-} from "../../../wailsjs/go/main/App.js";
+  Abort,
+  Start,
+  Stop,
+} from "../../../wailsjs/go/facades/RecordingFacade.js";
 
 export const Recorder: React.FC = () => {
   return (
@@ -25,22 +25,13 @@ export const Recorder: React.FC = () => {
         <span>🚧 volume info 🚧</span>
       </Card>
       <div className="controls">
-        <Button
-          onClick={StartRecording}
-          className="recorder-btn icon-large play-btn"
-        >
+        <Button onClick={Start} className="recorder-btn icon-large play-btn">
           <FaPlay />
         </Button>
-        <Button
-          onClick={StopRecording}
-          className="recorder-btn icon-large pause-btn"
-        >
+        <Button onClick={Stop} className="recorder-btn icon-large pause-btn">
           <FaPause />
         </Button>
-        <Button
-          onClick={AbortRecording}
-          className="recorder-btn icon-large abort-btn"
-        >
+        <Button onClick={Abort} className="recorder-btn icon-large abort-btn">
           <FaSquareFull />
         </Button>
       </div>

@@ -8,15 +8,20 @@ import (
 )
 
 type UiSenderService struct {
-	appCtx context.Context
+	wailsCtx context.Context
 }
 
-func NewUiSenderService(appCtx context.Context) *UiSenderService {
-	return &UiSenderService{
-		appCtx: appCtx,
-	}
+func NewUiSenderService() *UiSenderService {
+	return &UiSenderService{}
+}
+
+func (u *UiSenderService) Init(appCtx context.Context) {
+	u.wailsCtx = appCtx
 }
 
 func (u *UiSenderService) Send(event interfaces.EventID, data any) {
-	runtime.EventsEmit(u.appCtx, string(event), data)
+	if u.wailsCtx == nil {
+		panic("Wails Context has not been set")
+	}
+	runtime.EventsEmit(u.wailsCtx, string(event), data)
 }
