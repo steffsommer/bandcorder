@@ -37,8 +37,9 @@ func (n *EventBus) StartSendingPeriodicUpdates() {
 }
 
 func (n *EventBus) NotifyStarted() {
-	n.lastEvent.id = interfaces.RunningEvent
+	n.lastEvent.id = interfaces.RecordingStateEvent
 	n.lastEvent.data = recordingRunningEvent{
+		State:    RUNNING,
 		FileName: "TODO",
 		Started:  time.Now(),
 	}
@@ -46,7 +47,10 @@ func (n *EventBus) NotifyStarted() {
 }
 
 func (n *EventBus) NotifyStopped() {
-	n.lastEvent.id = interfaces.IdleEvent
+	n.lastEvent.id = interfaces.RecordingStateEvent
+	n.lastEvent.data = recordingRunningEvent{
+		State: IDLE,
+	}
 }
 
 func (n *EventBus) send() {

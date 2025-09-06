@@ -3,8 +3,7 @@ package interfaces
 type EventID string
 
 const (
-	RunningEvent EventID = "RUNNING"
-	IdleEvent            = "IDLE"
+	RecordingStateEvent EventID = "RecordingState"
 )
 
 type Sender interface {

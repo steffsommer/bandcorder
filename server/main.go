@@ -72,7 +72,6 @@ func main() {
 			if err := recorder.Init(); err != nil {
 				panic("Failed to init recorder service: " + err.Error())
 			}
-			logrus.Info("😁😁 setting context!")
 			uiSenderService.Init(ctx)
 			go func() {
 				log.Printf("Server starting on localhost:%d\n", API_PORT)
