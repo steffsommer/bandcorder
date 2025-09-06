@@ -4,7 +4,7 @@ package interfaces
 // It should send a state change as soon as a state change happens
 // and every 100ms.
 // The data should be sent as JSON
-type RecordingStateNotifier interface {
+type RecordingEventBus interface {
 	NotifyStarted()
 	NotifyStopped()
 }

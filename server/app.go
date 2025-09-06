@@ -4,9 +4,10 @@ import (
 	"context"
 	"log"
 	"server/internal/pkg/controllers"
+	"server/internal/pkg/facades"
 	"server/internal/pkg/interfaces"
 	"server/internal/pkg/services"
-	"server/internal/pkg/services/notifier"
+	"server/internal/pkg/services/eventbus"
 	"strconv"
 	"time"
 
@@ -21,8 +22,8 @@ const SAMPLE_RATE_HZ = 44100
 // App struct
 type App struct {
 	ctx      context.Context
-	recorder *services.RecorderService
-	notifier *notifier.Notifier
+	recorder *facades.RecordingFacade
+	eventbus *eventbus.EventBus
 }
 
 // NewApp creates a new App application struct
@@ -53,9 +54,10 @@ func (a *App) startup(ctx context.Context) {
 			uiSender,
 		},
 	)
-	a.notifier = notifier.NewNotifier(broadcastSender)
+	a.eventbus = eventbus.NewEventBus(broadcastSender)
 
-	recordingController := controllers.NewRecordingController(a.recorder, a.notifier)
+	a.recorder = facades.NewRecordingFacade(a.eventbus, a.recorder)
+	recordingController := controllers.NewRecordingController(a.recordingFacade)
 
 	//set up REST API + websockets
 	go func() {
@@ -79,11 +81,10 @@ func (a *App) startup(ctx context.Context) {
 
 func (a *App) domReady(_ context.Context) {
 	time.Sleep(500 * time.Millisecond)
-	a.notifier.StartSendingPeriodicUpdates()
+	a.eventbus.StartSendingPeriodicUpdates()
 }
 
 func (a *App) StartRecording() error {
-	log.Println("Starting recording")
 	err := a.recorder.Start()
 	return err
 }

@@ -106,6 +106,7 @@ func (r *RecorderService) Start() error {
 
 // Stop stops the current recording and writes the recorded audio to a wav file
 func (r *RecorderService) Stop() error {
+	logrus.Info("Stopping recording")
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
 
@@ -125,18 +126,20 @@ func (r *RecorderService) Stop() error {
 	logrus.Infof("Recorded %d samples (%.2f seconds)\n",
 		len(r.recording), float64(len(r.recording))/float64(sampleRate))
 
-	logrus.Info("Recording stopped")
 	r.isRunning = false
 	r.recording = nil
+	logrus.Info("Recording stopped")
 	return nil
 }
 
 // Abort aborts the current recording without saving it
 func (r *RecorderService) Abort() error {
+	logrus.Info("Aborting recording")
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
 	r.done <- true
 	r.stream.Close()
 	r.isRunning = false
+	logrus.Info("Recording aborted")
 	return nil
 }

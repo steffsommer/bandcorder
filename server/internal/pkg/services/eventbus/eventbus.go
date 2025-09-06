@@ -1,11 +1,11 @@
-package notifier
+package eventbus
 
 import (
 	"server/internal/pkg/interfaces"
 	"time"
 )
 
-type Notifier struct {
+type EventBus struct {
 	sender    interfaces.Sender
 	lastEvent struct {
 		id   interfaces.EventID
@@ -16,13 +16,13 @@ type Notifier struct {
 // interval time after which state updates are sent to clients
 const interval = 100 * time.Millisecond
 
-func NewNotifier(sender interfaces.Sender) *Notifier {
-	return &Notifier{
+func NewEventBus(sender interfaces.Sender) *EventBus {
+	return &EventBus{
 		sender: sender,
 	}
 }
 
-func (n *Notifier) StartSendingPeriodicUpdates() {
+func (n *EventBus) StartSendingPeriodicUpdates() {
 	go func() {
 		// n.lastEvent.id = interfaces.RunningEvent
 		// n.lastEvent.data = recordingRunningEvent{
@@ -36,7 +36,7 @@ func (n *Notifier) StartSendingPeriodicUpdates() {
 	}()
 }
 
-func (n *Notifier) NotifyStarted() {
+func (n *EventBus) NotifyStarted() {
 	n.lastEvent.id = interfaces.RunningEvent
 	n.lastEvent.data = recordingRunningEvent{
 		FileName: "TODO",
@@ -45,11 +45,11 @@ func (n *Notifier) NotifyStarted() {
 	n.send()
 }
 
-func (n *Notifier) NotifyStopped() {
+func (n *EventBus) NotifyStopped() {
 	n.lastEvent.id = interfaces.IdleEvent
 }
 
-func (n *Notifier) send() {
+func (n *EventBus) send() {
 	if n.lastEvent.id == "" {
 		return
 	}

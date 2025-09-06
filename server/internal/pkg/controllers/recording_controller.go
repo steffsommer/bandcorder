@@ -9,16 +9,13 @@ import (
 
 type RecordingController struct {
 	recorder interfaces.Recorder
-	notifier interfaces.RecordingStateNotifier
 }
 
 func NewRecordingController(
 	recorder interfaces.Recorder,
-	notifier interfaces.RecordingStateNotifier,
 ) RecordingController {
 	return RecordingController{
 		recorder: recorder,
-		notifier: notifier,
 	}
 }
 
