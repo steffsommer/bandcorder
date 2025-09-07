@@ -86,6 +86,7 @@ func main() {
 		},
 		Bind: []interface{}{
 			recordingFacade,
+			storageService,
 		},
 	})
 

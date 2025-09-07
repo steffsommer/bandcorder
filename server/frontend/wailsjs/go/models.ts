@@ -2,8 +2,7 @@ export namespace interfaces {
 	
 	export class StartedResponse {
 	    FileName: string;
-	    // Go type: time
-	    Started: any;
+	    Started: time.Time;
 	
 	    static createFrom(source: any = {}) {
 	        return new StartedResponse(source);
@@ -12,7 +11,7 @@ export namespace interfaces {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.FileName = source["FileName"];
-	        this.Started = this.convertValues(source["Started"], null);
+	        this.Started = this.convertValues(source["Started"], time.Time);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -32,6 +31,42 @@ export namespace interfaces {
 		    }
 		    return a;
 		}
+	}
+
+}
+
+export namespace models {
+	
+	export class RecordingInfo {
+	    FileName: string;
+	    DurationSeconds: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new RecordingInfo(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.FileName = source["FileName"];
+	        this.DurationSeconds = source["DurationSeconds"];
+	    }
+	}
+
+}
+
+export namespace time {
+	
+	export class Time {
+	
+	
+	    static createFrom(source: any = {}) {
+	        return new Time(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	
+	    }
 	}
 
 }

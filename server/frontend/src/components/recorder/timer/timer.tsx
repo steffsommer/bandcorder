@@ -21,7 +21,7 @@ export const Timer: React.FC<Props> = ({ className }) => {
     return EventsOn(EventID.RecordingState, (ev: RecordingStateEvent<any>) => {
       if (ev.State === RecordingState.RUNNING) {
         const runningEvent = ev as RecordingRunningEvent;
-        const str = TimeUtils.SinceStr(runningEvent.Started);
+        const str = TimeUtils.sinceStr(runningEvent.Started);
         setDurationStr(str);
       } else {
         setDurationStr("");

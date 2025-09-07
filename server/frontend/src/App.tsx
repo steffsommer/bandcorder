@@ -3,7 +3,6 @@ import { Card } from "./components/card/card";
 import { Header } from "./components/header/header";
 import { Recorder } from "./components/recorder/recorder";
 import { RecordingsList } from "./components/recordings-list/recordings-list";
-import { Recording } from "./components/recordings-list/recordings-list-entry/recordings-list-entry";
 
 function App() {
   return (
@@ -11,7 +10,7 @@ function App() {
         <Header />
         <div className="container">
           <Card>
-            <RecordingsList recordings={recordings} />
+            <RecordingsList />
           </Card>
           <Card>
             <Recorder />
@@ -22,47 +21,4 @@ function App() {
 }
 
 export default App;
-
-const recordings: Recording[] = [
-  {
-    name: "recording-1",
-    duration: "100s",
-  },
-  {
-    name: "recording-1",
-    duration: "100s",
-  },
-  {
-    name: "recording-1",
-    duration: "100s",
-  },
-  {
-    name: "recording-1",
-    duration: "100s",
-  },
-  {
-    name: "recording-1",
-    duration: "100s",
-  },
-  {
-    name: "recording-1",
-    duration: "100s",
-  },
-  {
-    name: "recording-1",
-    duration: "100s",
-  },
-  {
-    name: "recording-1",
-    duration: "100s",
-  },
-  {
-    name: "recording-1",
-    duration: "100s",
-  },
-  {
-    name: "recording-1",
-    duration: "100s",
-  },
-];
 

@@ -15,3 +15,9 @@
   min-height: 0;
   padding-bottom: var(--spacing);
 }
+
+.no-items {
+  display: grid;
+  place-items: center;
+  height: 100%;
+}

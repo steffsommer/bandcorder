@@ -9,6 +9,8 @@ require (
 
 require github.com/goccy/go-yaml v1.18.0
 
+require golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
+
 require (
 	github.com/bep/debounce v1.2.1 // indirect
 	github.com/bytedance/sonic v1.11.6 // indirect

@@ -29,6 +29,10 @@
   height: 2rem;
 }
 
-.edit-btn>* {
+.edit-btn > * {
   transform: translateX(2px);
+}
+
+.duration-str {
+  width: 5ch;
 }

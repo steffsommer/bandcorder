@@ -4,14 +4,11 @@ import { FaMusic } from "react-icons/fa";
 import { MdOutlineAccessTimeFilled } from "react-icons/md";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { Button } from "../../button/button";
-
-export interface Recording {
-  name: string;
-  duration: string;
-}
+import { models } from "../../../../wailsjs/go/models";
+import { TimeUtils } from "../../../utils/time";
 
 interface Props {
-  recording: Recording;
+  recording: models.RecordingInfo;
 }
 
 export const RecordingsListEntry: React.FC<Props> = ({ recording }) => {
@@ -21,10 +18,10 @@ export const RecordingsListEntry: React.FC<Props> = ({ recording }) => {
         <div className="note-icon-container">
           <FaMusic size="2em" />
         </div>
-        <h3 className="recording-title">{recording.name}</h3>
+        <h3 className="recording-title">{recording.FileName}</h3>
         <span className="duration">
           <MdOutlineAccessTimeFilled size="2em" />
-          <span>{recording.duration}</span>
+          <span className="duration-str">{TimeUtils.toMinutesSecondsStr(recording.DurationSeconds)}</span>
         </span>
         <Button className="list-btn edit-btn">
           <FaEdit />

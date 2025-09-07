@@ -1,21 +1,37 @@
-import {
-  Recording,
-  RecordingsListEntry,
-} from "./recordings-list-entry/recordings-list-entry";
+import React, { useEffect, useRef, useState } from "react";
+import { models } from "../../../wailsjs/go/models";
+import { GetRecordings } from "../../../wailsjs/go/services/FileSystemStorageService";
+import { EventsOn } from "../../../wailsjs/runtime/runtime";
+import { EventID, RecordingState, RecordingStateEvent } from "../events";
+import { RecordingsListEntry } from "./recordings-list-entry/recordings-list-entry";
 import "./recordings-list.css";
-import React from "react";
 
-interface Props {
-  recordings: Recording[];
-}
+export const RecordingsList: React.FC<any> = () => {
+  const [recordings, setRecordings] = useState<models.RecordingInfo[]>([]);
+  const lastState = useRef<RecordingState | null>(null);
 
-export const RecordingsList: React.FC<Props> = ({ recordings }) => {
+  useEffect(() => {
+    return EventsOn(
+      EventID.RecordingState,
+      async (ev: RecordingStateEvent<any>) => {
+        if (
+          ev.State === RecordingState.IDLE &&
+          lastState.current !== RecordingState.IDLE
+        ) {
+          const date = new Date().toISOString();
+          const recordingInfos = await GetRecordings(date);
+          setRecordings(recordingInfos);
+        }
+        lastState.current = ev.State;
+      },
+    );
+  }, []);
   return (
     <div className="recordings-list">
       <h2 className="descriptive-header">Todays' recordings</h2>
       <div className="recordings">
         {recordings.length === 0 ? (
-          <p>No items to display</p>
+          <h2 className="no-items">No items to display</h2>
         ) : (
           recordings.map((item, index) => (
             <RecordingsListEntry recording={item} key={index} />
