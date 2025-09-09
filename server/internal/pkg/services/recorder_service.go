@@ -78,7 +78,7 @@ func (r *RecorderService) Start() (interfaces.StartedResponse, error) {
 	r.stream = stream
 
 	if err := r.stream.Start(); err != nil {
-		return interfaces.StartedResponse{}, fmt.Errorf("Failed to start stream: %v")
+		return interfaces.StartedResponse{}, fmt.Errorf("Failed to start stream: %w", err)
 	}
 
 	go func() {

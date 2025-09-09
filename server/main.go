@@ -4,6 +4,8 @@ import (
 	"context"
 	"embed"
 	"log"
+	"os"
+	"path/filepath"
 	"server/internal/pkg/controllers"
 	"server/internal/pkg/facades"
 	"server/internal/pkg/interfaces"
@@ -21,16 +23,25 @@ import (
 const API_PORT = 6000
 const AUDIO_CHANNEL_COUNT = 1 // Mono
 const SAMPLE_RATE_HZ = 44100
+const SETTINGS_FOLDER_NAME = "bandcorder"
+const SETTINGS_FILE_NAME = "config.yaml"
 
 //go:embed all:frontend/dist
 var assets embed.FS
 
 func main() {
 
-	// NewApp creates a new App application struct
-	settings, err := services.NewSettingsService().Load()
+	configDir, err := os.UserConfigDir()
 	if err != nil {
-		logrus.Fatalf("Failed to load settings: %w", err)
+		panic("Failed to determine user config directory: " + err.Error())
+	}
+	settingsFilePath := filepath.Join(configDir, SETTINGS_FOLDER_NAME, SETTINGS_FILE_NAME)
+
+	// NewApp creates a new App application struct
+	settingsService := services.NewSettingsService(settingsFilePath)
+	settings, err := settingsService.Load()
+	if err != nil {
+		logrus.Fatalf("Failed to load settings: %s", err.Error())
 	}
 	websocketController := controllers.NewWebsocketController()
 	uiSenderService := services.NewUiSenderService()

@@ -60,7 +60,7 @@ func (r *WebsocketController) Send(event interfaces.EventID, data any) {
 	for conn := range maps.Values(r.connections) {
 		err := conn.WriteJSON(ev)
 		if err != nil {
-			logrus.Errorf("Failed to send message %+v via websocket: %w", data, err)
+			logrus.Errorf("Failed to send message %+v via websocket: %s", data, err.Error())
 		}
 	}
 }

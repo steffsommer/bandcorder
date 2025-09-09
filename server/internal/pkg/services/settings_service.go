@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -16,52 +17,37 @@ type Settings struct {
 }
 
 type SettingsService struct {
+	filePath string
 }
 
-func NewSettingsService() *SettingsService {
-	return &SettingsService{}
+func NewSettingsService(filePath string) *SettingsService {
+	return &SettingsService{
+		filePath: filePath,
+	}
 }
 
 func (s *SettingsService) Load() (Settings, error) {
-	configDir, err := os.UserConfigDir()
+	defaults, err := s.getDefaults()
 	if err != nil {
-		logrus.WithError(err).Error("Failed to determine user config directory")
 		return Settings{}, err
 	}
-
-	defaults, err := s.getDefaultSettings()
+	s.createFileIfMissing(defaults)
+	rawSettings, err := os.ReadFile(s.filePath)
 	if err != nil {
-		logrus.WithError(err).Error("Failed to determine user home directory")
-	}
-
-	configFilePath := filepath.Join(configDir, configFolder, fileName)
-	if _, err := os.Stat(configFilePath); os.IsNotExist(err) {
-		os.MkdirAll(filepath.Dir(configFilePath), 0755)
-		_, err := os.Create(configFilePath)
-		if err != nil {
-			logrus.WithError(err).Errorf("Failed to create empty config file %s", configFilePath)
-			return Settings{}, err
-		}
-	}
-
-	yamlContent, err := os.ReadFile(configFilePath)
-	if err != nil {
-		logrus.WithError(err).Errorf("Failed to read config file %s", configFilePath)
+		logrus.WithError(err).Errorf("Failed to read config file %s", s.filePath)
 		return Settings{}, err
 	}
-
 	var userSettings Settings
-	err = yaml.Unmarshal(yamlContent, &userSettings)
+	err = yaml.Unmarshal(rawSettings, &userSettings)
 	if err != nil {
 		logrus.WithError(err).Error("Config file has an invalid format")
 		return Settings{}, err
 	}
-
-	settings := s.mergeSettings(userSettings, defaults)
+	settings := s.merge(defaults, userSettings)
 	return settings, nil
 }
 
-func (s *SettingsService) getDefaultSettings() (Settings, error) {
+func (s *SettingsService) getDefaults() (Settings, error) {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		logrus.WithError(err).Error("Failed to determine user home directory")
@@ -72,9 +58,42 @@ func (s *SettingsService) getDefaultSettings() (Settings, error) {
 	}, nil
 }
 
-func (s *SettingsService) mergeSettings(defaults, userSettings Settings) Settings {
+func (s *SettingsService) merge(defaults, userSettings Settings) Settings {
 	if userSettings.RecordingsDirectory != "" {
 		defaults.RecordingsDirectory = userSettings.RecordingsDirectory
 	}
 	return defaults
+}
+
+func (s *SettingsService) Save(settings Settings) error {
+	defaults, err := s.getDefaults()
+	if err != nil {
+		return err
+	}
+	merged := s.merge(defaults, settings)
+	yamlBytes, err := yaml.Marshal(merged)
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(s.filePath, yamlBytes, 0755)
+}
+
+func (s *SettingsService) createFileIfMissing(settings Settings) error {
+	if _, err := os.Stat(s.filePath); os.IsNotExist(err) {
+		os.MkdirAll(filepath.Dir(s.filePath), 0755)
+		file, err := os.Create(s.filePath)
+		if err != nil {
+			return fmt.Errorf("Failed to create empty config file %s", s.filePath)
+		}
+		defaultYaml, err := yaml.Marshal(settings)
+		if err != nil {
+			return fmt.Errorf(
+				"Failed to write default settings into newly created settings file: %s", err.Error())
+		}
+		if _, err = file.Write(defaultYaml); err != nil {
+			return fmt.Errorf(
+				"Failed to write default settings into newly created settings file: %s", err.Error())
+		}
+	}
+	return nil
 }

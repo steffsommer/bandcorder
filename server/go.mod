@@ -7,9 +7,16 @@ require (
 	github.com/wailsapp/wails/v2 v2.10.2
 )
 
-require github.com/goccy/go-yaml v1.18.0
+require (
+	github.com/goccy/go-yaml v1.18.0
+	github.com/stretchr/testify v1.10.0
+)
 
-require golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
+require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
+	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
+)
 
 require (
 	github.com/bep/debounce v1.2.1 // indirect
