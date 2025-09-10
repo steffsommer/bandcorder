@@ -95,3 +95,16 @@ address {
   text-align: left;
   margin-bottom: var(--spacing);
 }
+
+button {
+  background: unset;
+  border: unset;
+  cursor: pointer;
+  outline: none;
+}
+
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.7) !important;
+}
+
+

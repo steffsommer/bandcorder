@@ -1,0 +1,24 @@
+.settings-dialog {
+  position: fixed;
+  background: var(--color-surface-2);
+  padding: var(--spacing);
+  width: 70vw;
+  height: 80vh;
+  margin: auto;
+  top: 0;
+  bottom: 0;
+}
+
+.settings-heading {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.settings-close-icon {
+  margin-left: auto;
+}
+
+.close-btn {
+  margin-left: auto;
+}
