@@ -5,6 +5,7 @@ import { EventsOn } from "../../../wailsjs/runtime/runtime";
 import { EventID, RecordingState, RecordingStateEvent } from "../events";
 import { RecordingsListEntry } from "./recordings-list-entry/recordings-list-entry";
 import "./recordings-list.css";
+import { AnimatePresence, motion } from "motion/react";
 
 export const RecordingsList: React.FC<any> = () => {
   const [recordings, setRecordings] = useState<models.RecordingInfo[]>([]);
@@ -27,17 +28,29 @@ export const RecordingsList: React.FC<any> = () => {
     );
   }, []);
   return (
-    <div className="recordings-list">
-      <h2 className="descriptive-header">Todays' recordings</h2>
-      <div className="recordings">
-        {recordings.length === 0 ? (
-          <h2 className="no-items">No items to display</h2>
-        ) : (
-          recordings.map((item, index) => (
-            <RecordingsListEntry recording={item} key={index} />
-          ))
-        )}
-      </div>
-    </div>
+    <motion.ul layout layoutId={"list"} className="recordings-list">
+      <AnimatePresence>
+        <h2 className="descriptive-header">Todays' recordings</h2>
+        <div className="recordings">
+          {recordings.length === 0 ? (
+            <h2 className="no-items">No items to display</h2>
+          ) : (
+            recordings.map((item, index) => (
+              <motion.li
+                initial={{ y: 100, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{
+                  delay: 0.03 * index,
+                }}
+                exit={{ opacity: 0 }}
+                key={item.FileName}
+              >
+                <RecordingsListEntry recording={item} key={index} />
+              </motion.li>
+            ))
+          )}
+        </div>
+      </AnimatePresence>
+    </motion.ul>
   );
 };

@@ -9,11 +9,11 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing);
+  overflow-x: hidden;
   overflow-y: scroll;
-  padding-right: var(--spacing);
   height: 100%;
   min-height: 0;
-  padding-bottom: var(--spacing);
+  padding: 0 var(--spacing) var(--spacing) 0;
 }
 
 .no-items {
