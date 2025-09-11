@@ -6,7 +6,7 @@
   aspect-ratio: 1 / 1;
 }
 
-.time-label {
+.duration-label {
   position: absolute;
   font-size: 2.5rem;
   font-weight: bold;
@@ -15,25 +15,25 @@
   transform: translateX(-50%) translateY(-50%);
 }
 
-.timer {
+.gradient-spinner {
   --center-diameter: 70%;
   --color-running: #a0ff92;
   aspect-ratio: 1/1;
   height: 90%;
   box-sizing: border-box;
   background: red;
-  border-radius: 50%;
+  border-radius: 47%;
   border: 0.2rem solid black;
 }
 
-.timer.active {
+.gradient-spinner.active {
   animation: 1s rotate infinite linear;
   background: conic-gradient(from 90deg at 50% 50%,
       rgba(39, 174, 96, 0) 0deg,
       var(--color-running) 360deg);
 }
 
-.timer::after {
+.gradient-spinner::after {
   content: "";
   position: absolute;
   left: 50%;

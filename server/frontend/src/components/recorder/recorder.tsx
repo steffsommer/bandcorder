@@ -16,6 +16,7 @@ import {
 } from "../events.js";
 import "./recorder.css";
 import { Timer } from "./timer/timer";
+import { AnimatePresence, motion } from "motion/react";
 
 export const Recorder: React.FC = () => {
   const [recordingName, setRecordingName] = useState("");
@@ -35,15 +36,19 @@ export const Recorder: React.FC = () => {
     <div className="recorder">
       <h2 className="heading">Recorder</h2>
       <Timer className="timer-widget" />
-      <div
-        className="current-file"
-        style={
-          recordingName === "" ? { visibility: "hidden" } : { visibility: "visible" }
+      <AnimatePresence>
+        {recordingName &&
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="current-file"
+          >
+            <FaFile size="1.2em" className="file-icon" />
+            <h3>{recordingName}</h3>
+          </motion.div>
         }
-      >
-        <FaFile size="1.2em" className="file-icon" />
-        <h3>{recordingName}</h3>
-      </div>
+      </AnimatePresence>
       <Card className="frequency-card">
         <span>🚧 frequency info 🚧</span>
       </Card>

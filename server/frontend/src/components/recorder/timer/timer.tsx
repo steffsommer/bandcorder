@@ -31,8 +31,8 @@ export const Timer: React.FC<Props> = ({ className }) => {
 
   return (
     <div className={"timer-container " + (className ? " " + className : "")}>
-      <div className={"timer " + (durationStr !== "" ? "active" : "")}></div>
-      <span className="time-label">{durationStr}</span>
+      <div className={"gradient-spinner " + (durationStr !== "" ? "active" : "")}></div>
+      <span className="duration-label">{durationStr}</span>
     </div>
   );
 };
