@@ -22,7 +22,7 @@
   aspect-ratio: 1/1;
   height: 90%;
   box-sizing: border-box;
-  background: red;
+  background: var(--color-3);
   border-radius: 47%;
   border: 0.2rem solid black;
 }
