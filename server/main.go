@@ -83,6 +83,7 @@ func main() {
 				panic("Failed to init recorder service: " + err.Error())
 			}
 			uiSenderService.Init(ctx)
+			eventbus.StartSendingPeriodicUpdates()
 			go func() {
 				log.Printf("Server starting on localhost:%d\n", API_PORT)
 
@@ -91,9 +92,6 @@ func main() {
 				}
 
 			}()
-		},
-		OnDomReady: func(_ context.Context) {
-			eventbus.StartSendingPeriodicUpdates()
 		},
 		Bind: []interface{}{
 			recordingFacade,
