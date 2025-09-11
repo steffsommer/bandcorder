@@ -16,6 +16,7 @@
 }
 
 .gradient-spinner {
+  transition-duration: 0.15s;
   --center-diameter: 70%;
   --color-running: #a0ff92;
   aspect-ratio: 1/1;
