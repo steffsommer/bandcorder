@@ -4,7 +4,7 @@ import { Card } from "./components/card/card";
 import { Header } from "./components/header/header";
 import { Recorder } from "./components/recorder/recorder";
 import { RecordingsList } from "./components/recordings-list/recordings-list";
-import { SettingsDialog } from "./components/settings-sidebar/settings-sidebar";
+import { SettingsModal } from "./components/settings-modal/settings-modal";
 
 function App() {
   const [showSettings, setShowSettings] = useState(false);
@@ -19,7 +19,7 @@ function App() {
           <Recorder />
         </Card>
       </div>
-      <SettingsDialog
+      <SettingsModal
         show={showSettings}
         onClose={() => setShowSettings(false)}
       />

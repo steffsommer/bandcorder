@@ -1,14 +1,14 @@
 import { useEffect, useRef } from "react";
 import { FiSettings } from "react-icons/fi";
 import { FaRegWindowClose } from "react-icons/fa";
-import "./settings-sidebar.css";
+import "./settings-modal.css";
 
 interface Props {
   show?: boolean;
   onClose: () => void;
 }
 
-export function SettingsDialog({ show, onClose }: Props) {
+export function SettingsModal({ show, onClose }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
