@@ -27,15 +27,16 @@ export const RecordingsList: React.FC<any> = () => {
       },
     );
   }, []);
+
   return (
     <motion.ul layout layoutId={"list"} className="recordings-list">
-      <AnimatePresence>
-        <h2 className="descriptive-header">Todays' recordings</h2>
-        <div className="recordings">
-          {recordings.length === 0 ? (
-            <h2 className="no-items">No items to display</h2>
-          ) : (
-            recordings.map((item, index) => (
+      <h2 className="descriptive-header">Todays' recordings</h2>
+      <div className="recordings">
+        {recordings.length === 0 ? (
+          <h2 className="no-items">No items to display</h2>
+        ) : (
+          <AnimatePresence>
+            {recordings.map((item, index) => (
               <motion.li
                 initial={{ y: 50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -43,14 +44,14 @@ export const RecordingsList: React.FC<any> = () => {
                   delay: 0.03 * index,
                 }}
                 exit={{ opacity: 0 }}
-                key={item.FileName}
+                key={item.FileName || `recording-${index}`}
               >
-                <RecordingsListEntry recording={item} key={index} />
+                <RecordingsListEntry recording={item} />
               </motion.li>
-            ))
-          )}
-        </div>
-      </AnimatePresence>
+            ))}
+          </AnimatePresence>
+        )}
+      </div>
     </motion.ul>
   );
 };

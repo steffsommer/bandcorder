@@ -1,7 +1,8 @@
 import { useEffect, useRef } from "react";
-import { FiSettings } from "react-icons/fi";
-import { FaRegWindowClose } from "react-icons/fa";
+import { FiSave, FiSettings } from "react-icons/fi";
+import { IoMdClose } from "react-icons/io";
 import "./settings-modal.css";
+import { Button } from "../button/button";
 
 interface Props {
   show?: boolean;
@@ -19,16 +20,32 @@ export function SettingsModal({ show, onClose }: Props) {
     }
   }, [show]);
 
+  const handleSubmit = () => {
+    console.log("Submit not implemented yet");
+  };
+
   return (
     <dialog ref={dialogRef} className="settings-dialog" onClose={onClose}>
-      <form method="dialog">
+      <form method="dialog" onSubmit={handleSubmit}>
         <h2 className="settings-heading">
           <FiSettings />
           <span>Settings</span>
-          <button type="submit" className="close-btn">
-            <FaRegWindowClose className="settings-close-icon" />
+          <button
+            type="button"
+            className="close-btn"
+            onClick={() => dialogRef?.current?.close()}
+          >
+            <IoMdClose className="settings-close-icon" />
           </button>
         </h2>
+        <div className="settings-list">
+          <label htmlFor="recording-directory">Recordings directory</label>
+          <input id="recording-directory" />
+        </div>
+        <Button className="save-btn">
+          <FiSave />
+          <span>Save</span>
+        </Button>
       </form>
     </dialog>
   );

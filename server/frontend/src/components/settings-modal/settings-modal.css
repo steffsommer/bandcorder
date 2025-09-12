@@ -2,11 +2,16 @@
   position: fixed;
   background: var(--color-surface-2);
   padding: var(--spacing);
-  width: 70vw;
-  height: 80vh;
   margin: auto;
   top: 0;
   bottom: 0;
+}
+
+.settings-dialog > * {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
 }
 
 .settings-heading {
@@ -21,4 +26,21 @@
 
 .close-btn {
   margin-left: auto;
+}
+
+.settings-list {
+  display: grid;
+  grid-template-columns: max-content 60ch;
+  gap: 12px;
+  grid-auto-rows: 2rem;
+  align-items: center;
+  margin-block: 4rem;
+}
+
+.save-btn {
+  margin-top: auto;
+  background: var(--color-1);
+  padding-inline: 8rem;
+  margin-inline: auto;
+  width: max-content;
 }

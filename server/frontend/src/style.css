@@ -107,4 +107,20 @@ dialog::backdrop {
   background: rgba(0, 0, 0, 0.7) !important;
 }
 
+input {
+  height: max-content;
+  border-radius: var(--border-radius);
+}
 
+label {
+  font-weight: bold;
+  align-items: center;
+}
+
+input {
+  caret-color: black;
+  padding-inline: 8px;
+}
+
+input:focus {
+}
