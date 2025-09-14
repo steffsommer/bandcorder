@@ -5,6 +5,9 @@
   margin: auto;
   top: 0;
   bottom: 0;
+  /* min-height is needed, because wails does not size the modal
+   * height to accomodate all components for some reason.   */
+  min-height: 300px;
 }
 
 .settings-dialog > * {
