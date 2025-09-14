@@ -3,9 +3,11 @@ import { FiSave, FiSettings } from "react-icons/fi";
 import { IoMdClose } from "react-icons/io";
 import "./settings-modal.css";
 import { Button } from "../button/button";
-
-import { Load, Save } from "../../../wailsjs/go/services/SettingsService";
 import { services } from "../../../wailsjs/go/models";
+import {
+  loadSettings,
+  saveSettings,
+} from "../../services/toast-service/settings-service";
 
 interface Props {
   show?: boolean;
@@ -21,7 +23,7 @@ export function SettingsModal({ show, onClose }: Props) {
   useEffect(() => {
     if (show) {
       const loadAndShow = async () => {
-        const settings = await Load();
+        const settings = await loadSettings();
         setSettings(settings);
         dialogRef?.current?.showModal();
       };
@@ -39,8 +41,8 @@ export function SettingsModal({ show, onClose }: Props) {
     setSettings(updated);
   };
 
-  const handleSubmit = () => {
-    Save(settings);
+  const handleSubmit = async () => {
+    await saveSettings(settings);
   };
 
   return (

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ToastContainer } from "react-toastify";
 import "./App.css";
 import { Card } from "./components/card/card";
 import { Header } from "./components/header/header";
@@ -23,6 +24,7 @@ function App() {
         show={showSettings}
         onClose={() => setShowSettings(false)}
       />
+      <ToastContainer autoClose={1000} />
     </div>
   );
 }
