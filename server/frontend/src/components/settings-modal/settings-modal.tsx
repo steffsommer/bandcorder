@@ -1,8 +1,11 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FiSave, FiSettings } from "react-icons/fi";
 import { IoMdClose } from "react-icons/io";
 import "./settings-modal.css";
 import { Button } from "../button/button";
+
+import { Load, Save } from "../../../wailsjs/go/services/SettingsService";
+import { services } from "../../../wailsjs/go/models";
 
 interface Props {
   show?: boolean;
@@ -11,17 +14,33 @@ interface Props {
 
 export function SettingsModal({ show, onClose }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const [settings, setSettings] = useState<services.Settings>({
+    RecordingsDirectory: "",
+  });
 
   useEffect(() => {
     if (show) {
-      dialogRef?.current?.showModal();
+      const loadAndShow = async () => {
+        const settings = await Load();
+        setSettings(settings);
+        dialogRef?.current?.showModal();
+      };
+      loadAndShow();
     } else {
       dialogRef?.current?.close();
     }
   }, [show]);
 
+  const updateValue = (name: keyof services.Settings, value: string) => {
+    const updated: services.Settings = {
+      ...settings,
+      [name]: value,
+    };
+    setSettings(updated);
+  };
+
   const handleSubmit = () => {
-    console.log("Submit not implemented yet");
+    Save(settings);
   };
 
   return (
@@ -40,7 +59,12 @@ export function SettingsModal({ show, onClose }: Props) {
         </h2>
         <div className="settings-list">
           <label htmlFor="recording-directory">Recordings directory</label>
-          <input id="recording-directory" />
+          <input
+            id="recording-directory"
+            name="recording-directory"
+            value={settings?.RecordingsDirectory}
+            onChange={(e) => updateValue("RecordingsDirectory", e.target.value)}
+          />
         </div>
         <Button className="save-btn">
           <FiSave />

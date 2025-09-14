@@ -54,6 +54,23 @@ export namespace models {
 
 }
 
+export namespace services {
+	
+	export class Settings {
+	    RecordingsDirectory: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new Settings(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.RecordingsDirectory = source["RecordingsDirectory"];
+	    }
+	}
+
+}
+
 export namespace time {
 	
 	export class Time {
