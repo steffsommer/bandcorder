@@ -17,10 +17,10 @@
 
 .gradient-spinner {
   transition-duration: 0.15s;
-  --center-diameter: 70%;
-  --color-running: #a0ff92;
+  --center-diameter: 65%;
+  --color-running: var(--color-1);
   aspect-ratio: 1/1;
-  height: 90%;
+  height: 100%;
   box-sizing: border-box;
   background: var(--color-3);
   border-radius: 47%;
