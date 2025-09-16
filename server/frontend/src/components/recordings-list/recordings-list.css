@@ -3,6 +3,7 @@
   grid-template-rows: max-content 1fr;
   padding: var(--spacing);
   height: 100%;
+  list-style-type: none;
 }
 
 .recordings {
