@@ -1,11 +1,11 @@
 .recorder {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: min-content 2fr 2fr 1fr max-content;
+  grid-template-rows: min-content 3fr 4fr 2fr max-content;
   gap: var(--spacing);
   grid-template-areas:
     "heading timer"
-    "current-file timer"
+    "infos timer"
     "frequency frequency"
     "volume volume"
     "controls controls";
@@ -28,16 +28,27 @@
   margin: auto;
 }
 
-.current-file {
+.infos {
+  display: flex;
+  flex-direction: column;
+}
+
+.current-file-info {
   overflow-wrap: anywhere;
   font-size: 1.7rem;
-  grid-area: current-file;
+  grid-area: infos;
   display: flex;
   align-items: center;
   gap: 0.2rem;
   height: max-content;
   margin-block: auto;
   gap: 0.7rem;
+}
+
+.mic-info {
+  display: flex;
+  align-items: center;
+  margin-top: auto;
 }
 
 .file-icon {

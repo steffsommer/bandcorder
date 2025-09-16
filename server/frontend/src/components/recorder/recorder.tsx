@@ -17,6 +17,7 @@ import {
 import "./recorder.css";
 import { Timer } from "./timer/timer";
 import { AnimatePresence, motion } from "motion/react";
+import { FiMic } from "react-icons/fi";
 
 export const Recorder: React.FC = () => {
   const [recordingName, setRecordingName] = useState("");
@@ -36,19 +37,25 @@ export const Recorder: React.FC = () => {
     <div className="recorder">
       <h2 className="heading">Recorder</h2>
       <Timer className="timer-widget" />
-      <AnimatePresence>
-        {recordingName &&
-          <motion.div
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="current-file"
-          >
-            <FaFile size="1.2em" className="file-icon" />
-            <h3>{recordingName}</h3>
-          </motion.div>
-        }
-      </AnimatePresence>
+      <div className="infos">
+        <AnimatePresence>
+          {recordingName && (
+            <motion.div
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="current-file-info"
+            >
+              <FaFile size="1.2em" className="file-icon" />
+              <h3>{recordingName}</h3>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <div className="mic-info">
+          <FiMic size="1.3em" />
+          <h3>Super ABC Mic</h3>
+        </div>
+      </div>
       <Card className="frequency-card">
         <span>🚧 frequency info 🚧</span>
       </Card>
