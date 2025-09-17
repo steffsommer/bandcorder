@@ -1,5 +1,6 @@
 export enum EventID {
   RecordingState = "RecordingState",
+  SettingsChanged = "SettingsUpdate",
 }
 
 export enum RecordingState {

@@ -1,7 +1,10 @@
+import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { FaFile, FaPause, FaPlay, FaSquareFull } from "react-icons/fa";
+import { FiMic } from "react-icons/fi";
 import {
   Abort,
+  GetMic,
   Start,
   Stop,
 } from "../../../wailsjs/go/facades/RecordingFacade.js";
@@ -16,11 +19,19 @@ import {
 } from "../events.js";
 import "./recorder.css";
 import { Timer } from "./timer/timer";
-import { AnimatePresence, motion } from "motion/react";
-import { FiMic } from "react-icons/fi";
 
 export const Recorder: React.FC = () => {
   const [recordingName, setRecordingName] = useState("");
+  const [mic, setMic] = useState("");
+
+  const updateMic = async () => {
+    try {
+      const micStr = await GetMic();
+      setMic(micStr);
+    } catch (e) {
+      console.log("Failed to get microphone: " + e);
+    }
+  };
 
   useEffect(() => {
     return EventsOn(EventID.RecordingState, (ev: RecordingStateEvent<any>) => {
@@ -30,6 +41,13 @@ export const Recorder: React.FC = () => {
       } else {
         setRecordingName("");
       }
+    });
+  });
+
+  useEffect(() => {
+    updateMic();
+    return EventsOn(EventID.SettingsChanged, async () => {
+      await updateMic();
     });
   });
 
@@ -53,7 +71,7 @@ export const Recorder: React.FC = () => {
         </AnimatePresence>
         <div className="mic-info">
           <FiMic size="1.3em" />
-          <h3>Super ABC Mic</h3>
+          <h3>{mic}</h3>
         </div>
       </div>
       <Card className="frequency-card">

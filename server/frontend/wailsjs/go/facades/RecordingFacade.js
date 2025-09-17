@@ -6,6 +6,10 @@ export function Abort() {
   return window['go']['facades']['RecordingFacade']['Abort']();
 }
 
+export function GetMic() {
+  return window['go']['facades']['RecordingFacade']['GetMic']();
+}
+
 export function Start() {
   return window['go']['facades']['RecordingFacade']['Start']();
 }

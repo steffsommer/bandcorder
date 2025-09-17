@@ -156,3 +156,11 @@ func (r *RecorderService) reset() {
 func (r *RecorderService) isRunning() bool {
 	return r.fileName != ""
 }
+
+func (r *RecorderService) GetMic() (string, error) {
+	inputDevice, err := portaudio.DefaultInputDevice()
+	if err != nil {
+		return "", err
+	}
+	return inputDevice.Name, nil
+}

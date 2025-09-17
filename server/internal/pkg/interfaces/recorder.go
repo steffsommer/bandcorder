@@ -11,4 +11,5 @@ type Recorder interface {
 	Start() (StartedResponse, error)
 	Stop() error
 	Abort() error
+	GetMic() (string, error)
 }

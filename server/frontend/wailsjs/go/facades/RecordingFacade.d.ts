@@ -4,6 +4,8 @@ import {interfaces} from '../models';
 
 export function Abort():Promise<void>;
 
+export function GetMic():Promise<string>;
+
 export function Start():Promise<interfaces.StartedResponse>;
 
 export function Stop():Promise<void>;

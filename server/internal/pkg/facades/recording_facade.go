@@ -53,3 +53,7 @@ func (r *RecordingFacade) Abort() error {
 	logrus.Info("Recording aborted successfully")
 	return err
 }
+
+func (r *RecordingFacade) GetMic() (string, error) {
+	return r.recorder.GetMic()
+}
