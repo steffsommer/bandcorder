@@ -10,7 +10,7 @@ import (
 	"server/internal/pkg/facades"
 	"server/internal/pkg/interfaces"
 	"server/internal/pkg/services"
-	"server/internal/pkg/services/eventbus"
+	"server/internal/pkg/services/cyclic_sender"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -52,7 +52,8 @@ func main() {
 		},
 	)
 
-	eventbus := eventbus.NewEventBus(broadcastSender)
+	eventbus := cyclic_sender.NewCyclicSender(broadcastSender)
+
 	storageService := services.NewFileSystemStorageService(
 		settings.RecordingsDirectory,
 		AUDIO_CHANNEL_COUNT,
@@ -67,7 +68,7 @@ func main() {
 	r.POST("/recording/start", recordingController.HandleStart)
 	r.POST("/recording/stop", recordingController.HandleStop)
 	r.POST("/recording/abort", recordingController.HandleAbort)
-	r.POST("/ws", websocketController.HandleWebsocketUpgrade)
+	r.GET("/ws", websocketController.HandleWebsocketUpgrade)
 
 	err = wails.Run(&options.App{
 		Title:  "server",
