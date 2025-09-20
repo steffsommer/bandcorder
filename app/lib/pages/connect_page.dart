@@ -29,24 +29,41 @@ class ConnectPageState extends State<ConnectPage> {
         child: CustomCard(
           child: Column(
             children: [
+              const SizedBox(height: 60),
               SvgPicture.asset("assets/desktop_pc.svg",
                   semanticsLabel: "Bandcorder logo", height: 160),
-              const SizedBox(height: 30),
+              const SizedBox(height: 60),
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Server IP",
+                  style: TextStyle(
+                      fontSize: Constants.textSizeNormal,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
               CustomTextField(
                 defaultValue: _textFieldValue,
-                labelText:
-                    'Please enter the IP displayed in the Bandcorder Desktop application',
+                labelText: '',
                 onChanged: (value) {
                   setState(() {
                     _textFieldValue = value;
                   });
                 },
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 60),
               CustomButton(
                 color: Constants.colorGreen,
                 children: const [
-                  Text("Connect"),
+                  Icon(
+                    Icons.start,
+                    size: 32.0,
+                    semanticLabel: 'Text to announce in accessibility modes',
+                  ),
+                  Text("CONNECT",
+                      style: TextStyle(
+                          fontSize: Constants.textSizeBigger,
+                          fontWeight: FontWeight.bold)),
                 ],
                 onPressed: () async {
                   await _socketService.connect(_textFieldValue);

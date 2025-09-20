@@ -10,4 +10,14 @@ class Constants {
   static var border = Border.all(color: Colors.black, width: 1);
   static var borderRadius = BorderRadius.circular(25);
   static const padding = EdgeInsets.all(16.0);
+
+  static const textSizeNormal = 17.0;
+  static const textSizeBigger = 20.0;
+  static const boxShadow = [
+    BoxShadow(
+      color: Colors.black,
+      offset: Offset(2, 2),
+      blurRadius: 0,
+    ),
+  ];
 }

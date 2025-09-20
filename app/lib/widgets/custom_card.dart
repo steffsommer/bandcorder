@@ -15,6 +15,7 @@ class CustomCard extends StatelessWidget {
         color: Constants.colorSurface2,
         border: Constants.border,
         borderRadius: Constants.borderRadius,
+        boxShadow: Constants.boxShadow,
       ),
       padding: Constants.padding,
       child: child,

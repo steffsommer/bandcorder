@@ -20,10 +20,9 @@ class CustomButton extends StatelessWidget {
       onTap: onPressed,
       child: Container(
         width: double.infinity,
-        height: 50,
+        height: 60,
         decoration: BoxDecoration(
           border: Constants.border,
-          borderRadius: Constants.borderRadius,
           color: color,
           boxShadow: const [
             BoxShadow(
