@@ -9,4 +9,5 @@ class Constants {
 
   static var border = Border.all(color: Colors.black, width: 1);
   static var borderRadius = BorderRadius.circular(25);
+  static const padding = EdgeInsets.all(16.0);
 }
