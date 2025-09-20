@@ -1,5 +1,6 @@
+import 'package:bandcorder/contants.dart';
 import 'package:flutter/material.dart';
-import 'pages/home_page.dart';
+import 'pages/connect_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,9 +14,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Bandcorder',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Constants.colorSurface1,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Constants.colorSurface1,
+          foregroundColor: Constants.colorSurface2,
+        ),
       ),
-      home: const HomePage(),
+      home: const ConnectPage(),
     );
   }
 }
