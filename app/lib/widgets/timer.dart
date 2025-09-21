@@ -1,4 +1,4 @@
-import 'package:bandcorder/contants.dart';
+import 'package:bandcorder/constants.dart';
 import 'package:flutter/material.dart';
 
 class Timer extends StatefulWidget {
@@ -90,6 +90,8 @@ class _TimerState extends State<Timer> with SingleTickerProviderStateMixin {
 class TimerPainter extends CustomPainter {
   final Color color1;
   final Color color2;
+  static const borderStroke = 2.0;
+  static const ringStroke = 50.0;
 
   TimerPainter({
     required this.color1,
@@ -100,9 +102,6 @@ class TimerPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;
-
-    const borderStroke = 2.0;
-    const ringStroke = 50.0;
 
     final ringRadius = radius - ringStroke / 2 - borderStroke / 2;
     final borderRadius = radius - borderStroke / 2;

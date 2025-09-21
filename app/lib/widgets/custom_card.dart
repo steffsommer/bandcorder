@@ -1,4 +1,4 @@
-import 'package:bandcorder/contants.dart';
+import 'package:bandcorder/constants.dart';
 import 'package:flutter/cupertino.dart';
 
 class CustomCard extends StatelessWidget {

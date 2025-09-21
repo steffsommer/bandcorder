@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
-import '../contants.dart';
+import '../constants.dart';
 
 class Heading extends StatelessWidget {
   final String _message;

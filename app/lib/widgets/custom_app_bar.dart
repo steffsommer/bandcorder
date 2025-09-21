@@ -1,4 +1,4 @@
-import 'package:bandcorder/contants.dart';
+import 'package:bandcorder/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 

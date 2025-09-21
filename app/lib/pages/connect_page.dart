@@ -1,4 +1,4 @@
-import 'package:bandcorder/contants.dart';
+import 'package:bandcorder/constants.dart';
 import 'package:bandcorder/pages/record_page.dart';
 import 'package:bandcorder/widgets/custom_app_bar.dart';
 import 'package:bandcorder/widgets/custom_card.dart';
