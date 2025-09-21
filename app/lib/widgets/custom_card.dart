@@ -19,6 +19,7 @@ class CustomCard extends StatelessWidget {
         boxShadow: Constants.boxShadow,
       ),
       padding: Constants.padding,
+      width: double.infinity,
       child: child,
     ));
   }

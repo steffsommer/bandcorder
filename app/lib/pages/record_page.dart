@@ -1,3 +1,5 @@
+import 'package:bandcorder/widgets/custom_card.dart';
+import 'package:bandcorder/widgets/timer.dart';
 import 'package:flutter/material.dart';
 
 class RecordPage extends StatefulWidget {
@@ -14,14 +16,17 @@ class ConnectPageState extends State<RecordPage> {
       appBar: AppBar(
         title: const Text('Bandcorder'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Text("Recording Page"),
-          ],
-        ),
-      ),
+      body: const Padding(
+          padding: EdgeInsets.all(16.0),
+          child: CustomCard(
+              child: Column(
+
+                children: [
+                  Text("Recording Page"),
+                  Timer(isSpinning: true)
+                ],
+              ),
+          )),
     );
   }
 }
