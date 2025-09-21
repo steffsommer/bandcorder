@@ -10,7 +10,8 @@ class CustomCard extends StatelessWidget {
   Widget build(
     BuildContext context,
   ) {
-    return Container(
+    return IntrinsicHeight(
+        child: Container(
       decoration: BoxDecoration(
         color: Constants.colorSurface2,
         border: Constants.border,
@@ -19,6 +20,6 @@ class CustomCard extends StatelessWidget {
       ),
       padding: Constants.padding,
       child: child,
-    );
+    ));
   }
 }

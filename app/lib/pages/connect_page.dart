@@ -1,11 +1,12 @@
 import 'package:bandcorder/contants.dart';
-import 'package:bandcorder/widgets/custom_app_bar.dart';
 import 'package:bandcorder/pages/record_page.dart';
+import 'package:bandcorder/widgets/custom_app_bar.dart';
 import 'package:bandcorder/widgets/custom_card.dart';
+import 'package:bandcorder/widgets/heading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+
 import '../services/web_socket_service.dart';
-import '../widgets/custom_text_field.dart';
 import '../widgets/custom_button.dart';
 
 class ConnectPage extends StatefulWidget {
@@ -17,17 +18,30 @@ class ConnectPage extends StatefulWidget {
 
 class ConnectPageState extends State<ConnectPage> {
   final WebSocketService _socketService = WebSocketService();
-
   String _textFieldValue = '10.0.2.2';
+  bool _isConnecting = false;
 
   void connect() async {
-    await _socketService.connect(_textFieldValue);
-    Navigator.push(
-      context,
-      MaterialPageRoute<void>(
-        builder: (context) => const RecordPage(),
-      ),
-    );
+    setState(() {
+      _isConnecting = true;
+    });
+
+    try {
+      await _socketService.connect(_textFieldValue);
+      if (!context.mounted) {
+        throw StateError("State is not mounted");
+      }
+      Navigator.push(
+        context,
+        MaterialPageRoute<void>(
+          builder: (context) => const RecordPage(),
+        ),
+      );
+    } catch (e) {
+      setState(() {
+        _isConnecting = false;
+      });
+    }
   }
 
   @override
@@ -39,6 +53,7 @@ class ConnectPageState extends State<ConnectPage> {
         child: CustomCard(
           child: Column(
             children: [
+              const Heading(message: "Connect"),
               const SizedBox(height: 60),
               SvgPicture.asset("assets/desktop_pc.svg",
                   semanticsLabel: "Bandcorder logo", height: 160),
@@ -52,31 +67,39 @@ class ConnectPageState extends State<ConnectPage> {
                       fontWeight: FontWeight.bold),
                 ),
               ),
-              CustomTextField(
-                defaultValue: _textFieldValue,
-                labelText: '',
-                onChanged: (value) {
-                  setState(() {
-                    _textFieldValue = value;
-                  });
-                },
-              ),
-              const SizedBox(height: 60),
-              CustomButton(
-                color: Constants.colorGreen,
-                onPressed: connect,
-                children: const [
-                  Icon(
-                    Icons.start,
-                    size: 32.0,
-                    semanticLabel: 'Text to announce in accessibility modes',
+              TextFormField(
+                  initialValue: _textFieldValue,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
                   ),
-                  Text("CONNECT",
-                      style: TextStyle(
-                          fontSize: Constants.textSizeBigger,
-                          fontWeight: FontWeight.bold)),
-                ],
-              ),
+                  onChanged: (value) {
+                    setState(() {
+                      _textFieldValue = value;
+                    });
+                  }),
+              const SizedBox(height: 30),
+              SizedBox(
+                height: 60,
+                child: Center(
+                    child: _isConnecting
+                        ? const CircularProgressIndicator()
+                        : CustomButton(
+                            color: Constants.colorGreen,
+                            onPressed: connect,
+                            children: const [
+                              Icon(
+                                Icons.start,
+                                size: 32.0,
+                                semanticLabel:
+                                    'Text to announce in accessibility modes',
+                              ),
+                              Text("CONNECT",
+                                  style: TextStyle(
+                                      fontSize: Constants.textSizeBigger,
+                                      fontWeight: FontWeight.bold)),
+                            ],
+                          )),
+              )
             ],
           ),
         ),

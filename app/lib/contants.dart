@@ -13,6 +13,7 @@ class Constants {
 
   static const textSizeNormal = 17.0;
   static const textSizeBigger = 20.0;
+  static const textSizeBiggest = 36.0;
   static const boxShadow = [
     BoxShadow(
       color: Colors.black,

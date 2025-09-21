@@ -10,7 +10,7 @@ class ToastService {
         gravity: ToastGravity.TOP,
         backgroundColor: Constants.colorGreen,
         textColor: Colors.black,
-        fontSize: 16.0);
+        fontSize: Constants.textSizeNormal);
   }
 
   void toastError(String msg) {
@@ -20,6 +20,6 @@ class ToastService {
         gravity: ToastGravity.TOP,
         backgroundColor: Constants.colorPurple,
         textColor: Colors.black,
-        fontSize: 16.0);
+        fontSize: Constants.textSizeNormal);
   }
 }
