@@ -14,8 +14,8 @@ type EventLike interface {
 }
 
 type Event[DataT any] struct {
-	EventId EventId
-	Data    DataT `json:"data,omitempty"`
+	EventId EventId `json:"eventId"`
+	Data    DataT   `json:"data,omitempty"`
 }
 
 func (e Event[DataT]) GetId() EventId {
