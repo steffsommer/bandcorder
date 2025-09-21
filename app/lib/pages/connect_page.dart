@@ -20,6 +20,16 @@ class ConnectPageState extends State<ConnectPage> {
 
   String _textFieldValue = '10.0.2.2';
 
+  void connect() async {
+    await _socketService.connect(_textFieldValue);
+    Navigator.push(
+      context,
+      MaterialPageRoute<void>(
+        builder: (context) => const RecordPage(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,6 +64,7 @@ class ConnectPageState extends State<ConnectPage> {
               const SizedBox(height: 60),
               CustomButton(
                 color: Constants.colorGreen,
+                onPressed: connect,
                 children: const [
                   Icon(
                     Icons.start,
@@ -65,15 +76,6 @@ class ConnectPageState extends State<ConnectPage> {
                           fontSize: Constants.textSizeBigger,
                           fontWeight: FontWeight.bold)),
                 ],
-                onPressed: () async {
-                  await _socketService.connect(_textFieldValue);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute<void>(
-                      builder: (context) => const RecordPage(),
-                    ),
-                  );
-                },
               ),
             ],
           ),
