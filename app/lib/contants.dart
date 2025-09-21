@@ -20,4 +20,5 @@ class Constants {
       blurRadius: 0,
     ),
   ];
+  static const spacing = 16.0;
 }
