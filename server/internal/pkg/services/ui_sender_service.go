@@ -2,7 +2,7 @@ package services
 
 import (
 	"context"
-	"server/internal/pkg/interfaces"
+	"server/internal/pkg/models"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -19,9 +19,9 @@ func (u *UiSenderService) Init(appCtx context.Context) {
 	u.wailsCtx = appCtx
 }
 
-func (u *UiSenderService) Send(event interfaces.EventID, data any) {
+func (u *UiSenderService) Send(event models.EventLike) {
 	if u.wailsCtx == nil {
 		panic("Wails Context has not been set")
 	}
-	runtime.EventsEmit(u.wailsCtx, string(event), data)
+	runtime.EventsEmit(u.wailsCtx, string(event.GetId()), event.GetData())
 }

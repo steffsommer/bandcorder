@@ -2,18 +2,12 @@ package controllers
 
 import (
 	"maps"
-	"server/internal/pkg/interfaces"
-	"time"
+	"server/internal/pkg/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/sirupsen/logrus"
 )
-
-type WebsocketEvent struct {
-	name interfaces.EventID
-	data any
-}
 
 type WebsocketController struct {
 	connections map[string]*websocket.Conn
@@ -44,23 +38,14 @@ func (r *WebsocketController) HandleWebsocketUpgrade(c *gin.Context) {
 	if err != nil {
 		return
 	}
-
-	defer conn.Close()
-	for {
-		conn.WriteMessage(websocket.TextMessage, []byte("Hello, WebSocket!"))
-		time.Sleep(time.Second)
-	}
+	r.connections[clientIp] = conn
 }
 
-func (r *WebsocketController) Send(event interfaces.EventID, data any) {
-	ev := WebsocketEvent{
-		name: event,
-		data: data,
-	}
+func (r *WebsocketController) Send(event models.EventLike) {
 	for conn := range maps.Values(r.connections) {
-		err := conn.WriteJSON(ev)
+		err := conn.WriteJSON(event)
 		if err != nil {
-			logrus.Errorf("Failed to send message %+v via websocket: %s", data, err.Error())
+			logrus.Errorf("Failed to send message %+v via websocket: %s", event, err.Error())
 		}
 	}
 }

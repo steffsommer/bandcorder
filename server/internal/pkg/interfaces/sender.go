@@ -1,11 +1,7 @@
 package interfaces
 
-type EventID string
-
-const (
-	RecordingStateEvent EventID = "RecordingState"
-)
+import "server/internal/pkg/models"
 
 type Sender interface {
-	Send(event EventID, data any)
+	Send(event models.EventLike)
 }
