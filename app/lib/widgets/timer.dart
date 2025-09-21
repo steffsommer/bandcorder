@@ -33,6 +33,9 @@ class _TimerState extends State<Timer> with SingleTickerProviderStateMixin {
       duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
+    if (widget.isSpinning) {
+      _controller.repeat();
+    }
   }
 
   @override

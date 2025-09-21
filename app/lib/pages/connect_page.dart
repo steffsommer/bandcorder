@@ -37,7 +37,7 @@ class ConnectPageState extends State<ConnectPage> {
           builder: (context) => const RecordPage(),
         ),
       );
-    } catch (e) {
+    } finally {
       setState(() {
         _isConnecting = false;
       });
