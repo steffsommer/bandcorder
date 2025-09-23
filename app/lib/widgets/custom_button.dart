@@ -3,15 +3,17 @@ import 'package:flutter/material.dart';
 import '../constants.dart';
 
 class CustomButton extends StatelessWidget {
-  final List<Widget> children;
   final VoidCallback? onPressed;
   final Color color;
+  final String text;
+  final IconData icon;
 
   const CustomButton({
     super.key,
-    required this.children,
     this.onPressed,
     required this.color,
+    required this.icon,
+    required this.text,
   });
 
   @override
@@ -34,7 +36,16 @@ class CustomButton extends StatelessWidget {
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: children,
+          children: [
+            Icon(
+              icon,
+              size: 32.0,
+            ),
+            Text(text,
+                style: const TextStyle(
+                    fontSize: Constants.textSizeBigger,
+                    fontWeight: FontWeight.bold)),
+          ],
         ),
       ),
     );

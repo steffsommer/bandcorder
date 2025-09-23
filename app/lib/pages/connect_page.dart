@@ -86,19 +86,8 @@ class ConnectPageState extends State<ConnectPage> {
                         : CustomButton(
                             color: Constants.colorGreen,
                             onPressed: connect,
-                            children: const [
-                              Icon(
-                                Icons.start,
-                                size: 32.0,
-                                semanticLabel:
-                                    'Text to announce in accessibility modes',
-                              ),
-                              Text("CONNECT",
-                                  style: TextStyle(
-                                      fontSize: Constants.textSizeBigger,
-                                      fontWeight: FontWeight.bold)),
-                            ],
-                          )),
+                            icon: Icons.start,
+                            text: "CONNECT")),
               )
             ],
           ),

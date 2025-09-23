@@ -19,13 +19,11 @@ class ConnectPageState extends State<RecordPage> {
       body: const Padding(
           padding: EdgeInsets.all(16.0),
           child: CustomCard(
-              child: Column(
-
-                children: [
-                  Text("Recording Page"),
-                  Timer(isSpinning: true)
-                ],
-              ),
+            child: Column(
+              children: [
+                Timer(isSpinning: true),
+              ],
+            ),
           )),
     );
   }
