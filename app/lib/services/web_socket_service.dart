@@ -69,7 +69,7 @@ class WebSocketService {
   /// Returns an unsubscribe function that can be called to remove the callback
   /// and stop receiving notifications for this event type.
   void Function() on<T extends Event>(void Function(T) callback) {
-    _eventsToCallbacks.putIfAbsent(T, () => <void Function(Event)>[]);
+    _eventsToCallbacks.putIfAbsent(T, () => <Function>[]);
     _eventsToCallbacks[T]?.add(callback);
     return () => _eventsToCallbacks[T]?.remove(callback);
   }
@@ -82,8 +82,10 @@ class WebSocketService {
     var eventData = decodedJson["data"];
 
     switch (eventId) {
-      case EventId.recordingStateUpdate:
-        return RecordingStateEvent.withJsonEventData(eventData);
+      case EventId.recordingIdle:
+        return RecordingIdleEvent();
+      case EventId.recordingRunning:
+        return RecordingRunningEvent.fromJson(eventData);
     }
   }
 }

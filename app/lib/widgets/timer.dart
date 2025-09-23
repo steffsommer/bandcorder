@@ -1,22 +1,22 @@
 import 'package:bandcorder/constants.dart';
 import 'package:flutter/material.dart';
 
+import '../utils/datetime_utils.dart';
+
 class Timer extends StatefulWidget {
-  final bool isSpinning;
   final double size;
   final Color color1;
   final Color color2;
-  final String centerText;
   final TextStyle? textStyle;
+  final DateTime? startTime;
 
   const Timer({
     super.key,
-    required this.isSpinning,
     this.size = 280,
     this.color2 = Constants.colorGreen,
     this.color1 = Constants.colorSurface2,
-    this.centerText = '2:49',
     this.textStyle,
+    this.startTime,
   });
 
   @override
@@ -33,7 +33,7 @@ class _TimerState extends State<Timer> with SingleTickerProviderStateMixin {
       duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
-    if (widget.isSpinning) {
+    if (widget.startTime != null) {
       _controller.repeat();
     }
   }
@@ -41,7 +41,7 @@ class _TimerState extends State<Timer> with SingleTickerProviderStateMixin {
   @override
   void didUpdateWidget(Timer oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.isSpinning) {
+    if (widget.startTime != null) {
       _controller.repeat();
     } else {
       _controller.stop();
@@ -78,7 +78,7 @@ class _TimerState extends State<Timer> with SingleTickerProviderStateMixin {
             },
           ),
           Text(
-            widget.centerText,
+            widget.startTime != null ? formatTimeSince(widget.startTime!) : "",
             style: const TextStyle(
                 fontSize: Constants.textSizeBiggest,
                 fontWeight: FontWeight.bold),

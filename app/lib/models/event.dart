@@ -1,5 +1,6 @@
 enum EventId {
-  recordingStateUpdate("RecordingState");
+  recordingIdle("RecordingIdle"),
+  recordingRunning("RecordingRunning");
 
   const EventId(this.value);
 
@@ -29,20 +30,16 @@ class RecordingStateData {
   }
 }
 
-abstract class Event {
-  EventId get id;
+// Marker
+abstract class Event {}
+
+class RecordingRunningEvent extends Event {
+  final DateTime started;
+  final String fileName;
+
+  RecordingRunningEvent.fromJson(Map<String, dynamic> eventData)
+      : started = DateTime.parse(eventData['started']),
+        fileName = eventData['fileName'] ?? '';
 }
 
-class RecordingStateEvent extends Event {
-  @override
-  final EventId id = EventId.recordingStateUpdate;
-  final RecordingStateData data;
-
-  RecordingStateEvent(this.data);
-
-  factory RecordingStateEvent.withJsonEventData(
-      Map<String, dynamic> eventData) {
-    return RecordingStateEvent(RecordingStateData.fromJson(eventData));
-  }
-}
-
+class RecordingIdleEvent extends Event {}
