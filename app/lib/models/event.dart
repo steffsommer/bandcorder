@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 enum EventId {
   recordingStateUpdate("RecordingState");
 
@@ -16,13 +14,35 @@ enum EventId {
   }
 }
 
-class Event {
-  late EventId id;
+// Data types for different events
+class RecordingStateData {
+  final bool isRecording;
+  final String fileName;
 
-  Event.fromJson(dynamic json) {
-    var jsonStr = json.toString();
-    var decodedJson = jsonDecode(jsonStr) as Map<String, dynamic>;
-    var idStr = decodedJson["eventId"];
-    id = EventId.fromString(idStr);
+  RecordingStateData({required this.isRecording, required this.fileName});
+
+  factory RecordingStateData.fromJson(Map<String, dynamic> json) {
+    return RecordingStateData(
+      isRecording: json['isRecording'] ?? false,
+      fileName: json['fileName'] ?? '',
+    );
   }
 }
+
+abstract class Event {
+  EventId get id;
+}
+
+class RecordingStateEvent extends Event {
+  @override
+  final EventId id = EventId.recordingStateUpdate;
+  final RecordingStateData data;
+
+  RecordingStateEvent(this.data);
+
+  factory RecordingStateEvent.withJsonEventData(
+      Map<String, dynamic> eventData) {
+    return RecordingStateEvent(RecordingStateData.fromJson(eventData));
+  }
+}
+

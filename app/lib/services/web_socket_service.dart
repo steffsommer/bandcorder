@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:bandcorder/models/event.dart';
 import 'package:bandcorder/services/toast_service.dart';
@@ -9,7 +10,7 @@ const websocketPath = "/ws";
 const connectTimeout = Duration(seconds: 3);
 
 class WebSocketService {
-  final _eventsToCallbacks = <EventId, List<void Function(Event)>>{};
+  final _eventsToCallbacks = <Type, List<Function>>{};
   final toastService = ToastService();
 
   Future<void> connect(String host) async {
@@ -21,19 +22,23 @@ class WebSocketService {
 
       print('Websocket connection established');
 
-      channel.stream.listen((message) {
-        var event = Event.fromJson(message);
-        var callbacks = _eventsToCallbacks[event.id];
-        if (callbacks == null) {
-          return;
-        }
-        for (var cb in callbacks) {
-          cb(event);
+      channel.stream.listen((rawJson) {
+        try {
+          var event = convertJsonToEvent(rawJson);
+          var callbacks = _eventsToCallbacks[event.runtimeType];
+          if (callbacks == null) {
+            return;
+          }
+          for (var cb in callbacks) {
+            cb(event);
+          }
+        } catch (e) {
+          print('Failed to deserialize or process event from JSON $rawJson');
         }
       });
     } on TimeoutException {
       toastService.toastError(
-          "Server not reachable. Check that Bandcorder is running.");
+          "Server not reachable. Check that Bandcorder is running and the IP is correct");
       rethrow;
     } catch (e) {
       toastService.toastError("Unknown error while connecting to server");
@@ -41,8 +46,21 @@ class WebSocketService {
     }
   }
 
-  on(EventId eventId, void Function(Event) callback) {
-    _eventsToCallbacks.putIfAbsent(eventId, () => <void Function(Event)>[]);
-    _eventsToCallbacks[eventId]?.add(callback);
+  void on<T extends Event>(void Function(T) callback) {
+    _eventsToCallbacks.putIfAbsent(T, () => <void Function(Event)>[]);
+    _eventsToCallbacks[T]?.add(callback);
+  }
+
+  static Event convertJsonToEvent(dynamic json) {
+    var jsonStr = json.toString();
+    var decodedJson = jsonDecode(jsonStr) as Map<String, dynamic>;
+    var idStr = decodedJson["eventId"];
+    var eventId = EventId.fromString(idStr);
+    var eventData = decodedJson["data"];
+
+    switch (eventId) {
+      case EventId.recordingStateUpdate:
+        return RecordingStateEvent.withJsonEventData(eventData);
+    }
   }
 }
