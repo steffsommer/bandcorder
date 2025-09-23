@@ -1,6 +1,6 @@
 import 'package:bandcorder/constants.dart';
+import 'package:bandcorder/screens/connect_screen.dart';
 import 'package:flutter/material.dart';
-import 'pages/connect_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
           foregroundColor: Constants.colorSurface2,
         ),
       ),
-      home: const ConnectPage(),
+      home: const ConnectScreen(),
     );
   }
 }

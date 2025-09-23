@@ -1,5 +1,5 @@
 import 'package:bandcorder/constants.dart';
-import 'package:bandcorder/pages/record_page.dart';
+import 'package:bandcorder/screens/record_screen.dart';
 import 'package:bandcorder/widgets/custom_app_bar.dart';
 import 'package:bandcorder/widgets/custom_card.dart';
 import 'package:bandcorder/widgets/heading.dart';
@@ -9,14 +9,14 @@ import 'package:flutter_svg/svg.dart';
 import '../services/web_socket_service.dart';
 import '../widgets/custom_button.dart';
 
-class ConnectPage extends StatefulWidget {
-  const ConnectPage({super.key});
+class ConnectScreen extends StatefulWidget {
+  const ConnectScreen({super.key});
 
   @override
-  ConnectPageState createState() => ConnectPageState();
+  ConnectScreenState createState() => ConnectScreenState();
 }
 
-class ConnectPageState extends State<ConnectPage> {
+class ConnectScreenState extends State<ConnectScreen> {
   final WebSocketService _socketService = WebSocketService();
   String _textFieldValue = '10.0.2.2';
   bool _isConnecting = false;
@@ -34,7 +34,7 @@ class ConnectPageState extends State<ConnectPage> {
       Navigator.push(
         context,
         MaterialPageRoute<void>(
-          builder: (context) => const RecordPage(),
+          builder: (context) => const RecordScreen(),
         ),
       );
     } finally {

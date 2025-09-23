@@ -4,14 +4,14 @@ import 'package:bandcorder/widgets/timer.dart';
 import 'package:flutter/material.dart';
 import '../constants.dart';
 
-class RecordPage extends StatefulWidget {
-  const RecordPage({super.key});
+class RecordScreen extends StatefulWidget {
+  const RecordScreen({super.key});
 
   @override
-  RecordPageState createState() => RecordPageState();
+  RecordScreenState createState() => RecordScreenState();
 }
 
-class RecordPageState extends State<RecordPage> {
+class RecordScreenState extends State<RecordScreen> {
   final isRunning = true;
 
   @override
