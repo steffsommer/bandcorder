@@ -19,9 +19,9 @@ export const Timer: React.FC<Props> = ({ className }) => {
 
   useEffect(() => {
     return EventsOn(EventID.RecordingState, (ev: RecordingStateEvent<any>) => {
-      if (ev.State === RecordingState.RUNNING) {
+      if (ev.state === RecordingState.RUNNING) {
         const runningEvent = ev as RecordingRunningEvent;
-        const str = TimeUtils.sinceStr(runningEvent.Started);
+        const str = TimeUtils.sinceStr(runningEvent.started);
         setDurationStr(str);
       } else {
         setDurationStr("");

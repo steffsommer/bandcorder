@@ -16,14 +16,14 @@ export const RecordingsList: React.FC<any> = () => {
       EventID.RecordingState,
       async (ev: RecordingStateEvent<any>) => {
         if (
-          ev.State === RecordingState.IDLE &&
+          ev.state === RecordingState.IDLE &&
           lastState.current !== RecordingState.IDLE
         ) {
           const date = new Date().toISOString();
           const recordingInfos = await GetRecordings(date);
           setRecordings(recordingInfos);
         }
-        lastState.current = ev.State;
+        lastState.current = ev.state;
       },
     );
   }, []);

@@ -35,9 +35,9 @@ export const Recorder: React.FC = () => {
 
   useEffect(() => {
     return EventsOn(EventID.RecordingState, (ev: RecordingStateEvent<any>) => {
-      if (ev.State === RecordingState.RUNNING) {
+      if (ev.state === RecordingState.RUNNING) {
         const runningEvent = ev as RecordingRunningEvent;
-        setRecordingName(runningEvent.FileName);
+        setRecordingName(runningEvent.fileName);
       } else {
         setRecordingName("");
       }

@@ -9,13 +9,13 @@ export enum RecordingState {
 }
 
 export interface RecordingStateEvent<T extends RecordingState> {
-  State: T;
+  state: T;
 }
 
 export interface RecordingRunningEvent
   extends RecordingStateEvent<RecordingState.RUNNING> {
-  FileName: string;
-  Started: string;
+  fileName: string;
+  started: string;
 }
 
 export type RecordingIdleEvent = RecordingStateEvent<RecordingState.IDLE>;
