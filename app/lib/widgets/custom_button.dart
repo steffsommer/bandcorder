@@ -39,11 +39,11 @@ class CustomButton extends StatelessWidget {
           children: [
             Icon(
               icon,
-              size: 32.0,
+              size: 42.0,
             ),
             Text(text,
                 style: const TextStyle(
-                    fontSize: Constants.textSizeBigger,
+                    fontSize: Constants.textSizeBiggest,
                     fontWeight: FontWeight.bold)),
           ],
         ),

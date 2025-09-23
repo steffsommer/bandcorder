@@ -12,27 +12,52 @@ class RecordPage extends StatefulWidget {
 }
 
 class RecordPageState extends State<RecordPage> {
+  final isRunning = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Bandcorder'),
       ),
-      body: const Padding(
-          padding: EdgeInsets.all(16.0),
+      body: Padding(
+          padding: const EdgeInsets.all(16.0),
           child: CustomCard(
             child: Column(
               children: [
-                Timer(isSpinning: true),
-                SizedBox(height: 60),
-                CustomButton(
-                    color: Constants.colorGreen,
-                    icon: Icons.play_arrow,
-                    text: "START"),
-                SizedBox(height: 60)
+                const Timer(isSpinning: true),
+                const SizedBox(height: 120),
+                Column(children: getControls())
               ],
             ),
           )),
     );
+  }
+
+  List<Widget> getControls() {
+    if (isRunning) {
+      return getRunningControls();
+    }
+    return getIdleControls();
+  }
+
+  List<Widget> getIdleControls() {
+    return const [
+      CustomButton(
+          color: Constants.colorGreen, icon: Icons.play_arrow, text: "START"),
+      SizedBox(height: 30),
+      CustomButton(
+          color: Constants.colorYellow, icon: Icons.edit, text: "START"),
+    ];
+  }
+
+  List<Widget> getRunningControls() {
+    return const [
+      CustomButton(
+          color: Constants.colorYellow, icon: Icons.pause, text: "STOP"),
+      SizedBox(height: 30),
+      CustomButton(
+          color: Constants.colorPurple, icon: Icons.stop, text: "ABORT"),
+    ];
   }
 }
