@@ -3,6 +3,7 @@ import 'package:bandcorder/widgets/custom_card.dart';
 import 'package:bandcorder/widgets/timer.dart';
 import 'package:flutter/material.dart';
 import '../constants.dart';
+import '../services/web_socket_service.dart';
 
 class RecordScreen extends StatefulWidget {
   const RecordScreen({super.key});
@@ -13,6 +14,7 @@ class RecordScreen extends StatefulWidget {
 
 class RecordScreenState extends State<RecordScreen> {
   final isRunning = true;
+  static final WebSocketService instance = WebSocketService.instance;
 
   @override
   Widget build(BuildContext context) {

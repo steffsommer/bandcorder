@@ -17,7 +17,7 @@ class ConnectScreen extends StatefulWidget {
 }
 
 class ConnectScreenState extends State<ConnectScreen> {
-  final WebSocketService _socketService = WebSocketService();
+  final WebSocketService _socketService = WebSocketService.instance;
   String _textFieldValue = '10.0.2.2';
   bool _isConnecting = false;
 
