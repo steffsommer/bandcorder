@@ -1,15 +1,17 @@
+import 'package:bandcorder/widgets/custom_button.dart';
 import 'package:bandcorder/widgets/custom_card.dart';
 import 'package:bandcorder/widgets/timer.dart';
 import 'package:flutter/material.dart';
+import '../constants.dart';
 
 class RecordPage extends StatefulWidget {
   const RecordPage({super.key});
 
   @override
-  ConnectPageState createState() => ConnectPageState();
+  RecordPageState createState() => RecordPageState();
 }
 
-class ConnectPageState extends State<RecordPage> {
+class RecordPageState extends State<RecordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,6 +24,12 @@ class ConnectPageState extends State<RecordPage> {
             child: Column(
               children: [
                 Timer(isSpinning: true),
+                SizedBox(height: 60),
+                CustomButton(
+                    color: Constants.colorGreen,
+                    icon: Icons.play_arrow,
+                    text: "START"),
+                SizedBox(height: 60)
               ],
             ),
           )),
