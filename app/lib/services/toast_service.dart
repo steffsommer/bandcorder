@@ -1,4 +1,4 @@
-import 'package:bandcorder/constants.dart';
+import 'package:bandcorder/style_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -8,9 +8,9 @@ class ToastService {
         msg: msg,
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.TOP,
-        backgroundColor: Constants.colorGreen,
+        backgroundColor: StyleConstants.colorGreen,
         textColor: Colors.black,
-        fontSize: Constants.textSizeNormal);
+        fontSize: StyleConstants.textSizeNormal);
   }
 
   void toastError(String msg) {
@@ -18,8 +18,8 @@ class ToastService {
         msg: msg,
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.TOP,
-        backgroundColor: Constants.colorPurple,
+        backgroundColor: StyleConstants.colorPurple,
         textColor: Colors.black,
-        fontSize: Constants.textSizeNormal);
+        fontSize: StyleConstants.textSizeNormal);
   }
 }

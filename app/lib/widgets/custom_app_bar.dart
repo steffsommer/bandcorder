@@ -1,8 +1,8 @@
-import 'package:bandcorder/constants.dart';
+import 'package:bandcorder/style_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-const _marginTop = Constants.spacing;
+const _marginTop = StyleConstants.spacing;
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBar({super.key});
@@ -18,17 +18,17 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             child: SafeArea(
               child: Container(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                color: Constants.colorSurface1,
+                color: StyleConstants.colorSurface1,
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: Constants.borderRadius,
-                    border: Constants.border,
-                    boxShadow: Constants.boxShadow,
+                    borderRadius: StyleConstants.borderRadius,
+                    border: StyleConstants.border,
+                    boxShadow: StyleConstants.boxShadow,
                   ),
                   child: AppBar(
                     shape: RoundedRectangleBorder(
-                      borderRadius: Constants.borderRadius,
+                      borderRadius: StyleConstants.borderRadius,
                     ),
                     title: Row(
                       mainAxisSize: MainAxisSize.min,

@@ -1,4 +1,4 @@
-import 'package:bandcorder/constants.dart';
+import 'package:bandcorder/style_constants.dart';
 import 'package:bandcorder/screens/connect_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -14,10 +14,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Bandcorder',
       theme: ThemeData(
-        scaffoldBackgroundColor: Constants.colorSurface1,
+        scaffoldBackgroundColor: StyleConstants.colorSurface1,
         appBarTheme: const AppBarTheme(
-          backgroundColor: Constants.colorSurface1,
-          foregroundColor: Constants.colorSurface2,
+          backgroundColor: StyleConstants.colorSurface1,
+          foregroundColor: StyleConstants.colorSurface2,
         ),
       ),
       home: const ConnectScreen(),

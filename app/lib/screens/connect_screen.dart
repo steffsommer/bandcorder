@@ -1,4 +1,4 @@
-import 'package:bandcorder/constants.dart';
+import 'package:bandcorder/style_constants.dart';
 import 'package:bandcorder/screens/record_screen.dart';
 import 'package:bandcorder/widgets/custom_app_bar.dart';
 import 'package:bandcorder/widgets/custom_card.dart';
@@ -49,7 +49,7 @@ class ConnectScreenState extends State<ConnectScreen> {
     return Scaffold(
       appBar: const CustomAppBar(),
       body: Padding(
-        padding: Constants.padding,
+        padding: StyleConstants.padding,
         child: CustomCard(
           child: Column(
             children: [
@@ -63,7 +63,7 @@ class ConnectScreenState extends State<ConnectScreen> {
                 child: Text(
                   "Server IP",
                   style: TextStyle(
-                      fontSize: Constants.textSizeNormal,
+                      fontSize: StyleConstants.textSizeNormal,
                       fontWeight: FontWeight.bold),
                 ),
               ),
@@ -84,7 +84,7 @@ class ConnectScreenState extends State<ConnectScreen> {
                     child: _isConnecting
                         ? const CircularProgressIndicator()
                         : CustomButton(
-                            color: Constants.colorGreen,
+                            color: StyleConstants.colorGreen,
                             onPressed: connect,
                             icon: Icons.start,
                             text: "CONNECT")),

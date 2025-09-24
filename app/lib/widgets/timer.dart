@@ -1,4 +1,4 @@
-import 'package:bandcorder/constants.dart';
+import 'package:bandcorder/style_constants.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/datetime_utils.dart';
@@ -13,8 +13,8 @@ class Timer extends StatefulWidget {
   const Timer({
     super.key,
     this.size = 280,
-    this.color2 = Constants.colorGreen,
-    this.color1 = Constants.colorSurface2,
+    this.color2 = StyleConstants.colorGreen,
+    this.color1 = StyleConstants.colorSurface2,
     this.textStyle,
     this.startTime,
   });
@@ -72,6 +72,7 @@ class _TimerState extends State<Timer> with SingleTickerProviderStateMixin {
                   painter: TimerPainter(
                     color1: widget.color1,
                     color2: widget.color2,
+                    active: widget.startTime != null,
                   ),
                 ),
               );
@@ -80,7 +81,7 @@ class _TimerState extends State<Timer> with SingleTickerProviderStateMixin {
           Text(
             widget.startTime != null ? formatTimeSince(widget.startTime!) : "",
             style: const TextStyle(
-                fontSize: Constants.textSizeBiggest,
+                fontSize: StyleConstants.textSizeBiggest,
                 fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
@@ -93,12 +94,14 @@ class _TimerState extends State<Timer> with SingleTickerProviderStateMixin {
 class TimerPainter extends CustomPainter {
   final Color color1;
   final Color color2;
+  final bool active;
   static const borderStroke = 2.0;
   static const ringStroke = 50.0;
 
   TimerPainter({
     required this.color1,
     required this.color2,
+    required this.active,
   });
 
   @override
@@ -109,18 +112,27 @@ class TimerPainter extends CustomPainter {
     final ringRadius = radius - ringStroke / 2 - borderStroke / 2;
     final borderRadius = radius - borderStroke / 2;
 
+    Paint paint;
     // Draw colored ring
-    final paint = Paint()
-      ..shader = SweepGradient(
-        colors: [
-          color1,
-          color2,
-        ],
-        stops: const [0.0, 0.5],
-      ).createShader(Rect.fromCircle(center: center, radius: radius))
-      ..strokeWidth = ringStroke
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
+    if (active) {
+      paint = Paint()
+        ..shader = SweepGradient(
+          colors: [
+            color1,
+            color2,
+          ],
+          stops: const [0.0, 0.5],
+        ).createShader(Rect.fromCircle(center: center, radius: radius))
+        ..strokeWidth = ringStroke
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round;
+    } else {
+      paint = Paint()
+        ..color = StyleConstants.colorPurple
+        ..strokeWidth = ringStroke
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round;
+    }
     canvas.drawCircle(center, ringRadius, paint);
 
     // Draw border

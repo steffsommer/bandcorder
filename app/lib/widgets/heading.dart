@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
-import '../constants.dart';
+import '../style_constants.dart';
 
 class Heading extends StatelessWidget {
   final String _message;
@@ -12,7 +12,7 @@ class Heading extends StatelessWidget {
     return Text(
       _message,
       style: const TextStyle(
-        fontSize: Constants.textSizeBiggest,
+        fontSize: StyleConstants.textSizeBiggest,
         fontWeight: FontWeight.bold,
       ),
     );

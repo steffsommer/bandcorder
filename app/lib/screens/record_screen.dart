@@ -4,7 +4,7 @@ import 'package:bandcorder/widgets/custom_card.dart';
 import 'package:bandcorder/widgets/timer.dart';
 import 'package:flutter/material.dart';
 
-import '../constants.dart';
+import '../style_constants.dart';
 import '../services/web_socket_service.dart';
 
 class RecordScreen extends StatefulWidget {
@@ -79,20 +79,20 @@ class RecordScreenState extends State<RecordScreen> {
   List<Widget> getIdleControls() {
     return const [
       CustomButton(
-          color: Constants.colorGreen, icon: Icons.play_arrow, text: "START"),
+          color: StyleConstants.colorGreen, icon: Icons.play_arrow, text: "START"),
       SizedBox(height: 30),
       CustomButton(
-          color: Constants.colorYellow, icon: Icons.edit, text: "RENAME LAST"),
+          color: StyleConstants.colorYellow, icon: Icons.edit, text: "RENAME LAST"),
     ];
   }
 
   List<Widget> getRunningControls() {
     return const [
       CustomButton(
-          color: Constants.colorYellow, icon: Icons.pause, text: "STOP"),
+          color: StyleConstants.colorYellow, icon: Icons.pause, text: "STOP"),
       SizedBox(height: 30),
       CustomButton(
-          color: Constants.colorPurple, icon: Icons.stop, text: "ABORT"),
+          color: StyleConstants.colorPurple, icon: Icons.stop, text: "ABORT"),
     ];
   }
 

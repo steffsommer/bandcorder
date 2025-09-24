@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../constants.dart';
+import '../style_constants.dart';
 
 class CustomButton extends StatelessWidget {
   final VoidCallback? onPressed;
@@ -24,7 +24,7 @@ class CustomButton extends StatelessWidget {
         width: double.infinity,
         height: 60,
         decoration: BoxDecoration(
-          border: Constants.border,
+          border: StyleConstants.border,
           color: color,
           boxShadow: const [
             BoxShadow(
@@ -43,7 +43,7 @@ class CustomButton extends StatelessWidget {
             ),
             Text(text,
                 style: const TextStyle(
-                    fontSize: Constants.textSizeBiggest,
+                    fontSize: StyleConstants.textSizeBiggest,
                     fontWeight: FontWeight.bold)),
           ],
         ),

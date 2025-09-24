@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:bandcorder/app_constants.dart';
 import 'package:bandcorder/models/event.dart';
 import 'package:bandcorder/services/toast_service.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-const port = 6000;
 const websocketPath = "/ws";
 const connectTimeout = Duration(seconds: 3);
 
@@ -30,7 +30,8 @@ class WebSocketService {
   /// - Other exceptions for connection failures
   Future<void> connect(String host) async {
     try {
-      final url = Uri.parse('ws://$host:$port$websocketPath');
+      final url =
+          Uri.parse('ws://$host:${AppConstants.serverPort}$websocketPath');
       print('Connecting to $url');
       final channel = WebSocketChannel.connect(url);
       await channel.ready.timeout(connectTimeout);

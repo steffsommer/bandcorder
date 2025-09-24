@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class Constants {
+class StyleConstants {
   static const colorSurface1 = Color(0xFF5EB3F5);
   static const colorSurface2 = Color(0xFFFFFFFF);
   static const colorGreen = Color(0xFFa0ff92);
