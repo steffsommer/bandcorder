@@ -60,7 +60,25 @@ class RecordScreenState extends State<RecordScreen> {
               children: [
                 const SizedBox(height: 30),
                 Timer(startTime: startTime),
-                const SizedBox(height: 120),
+                SizedBox(
+                  height: 120,
+                  child: recordingName == ""
+                      ? null
+                      : Center(
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.audio_file,
+                                size: 30.0,
+                              ),
+                              Text(recordingName,
+                                  style: const TextStyle(
+                                      fontSize: StyleConstants.textSizeBigger,
+                                      fontWeight: FontWeight.bold)),
+                            ],
+                          ),
+                        ),
+                ),
                 Column(children: getControls()),
                 const SizedBox(height: 30),
               ],
@@ -79,10 +97,14 @@ class RecordScreenState extends State<RecordScreen> {
   List<Widget> getIdleControls() {
     return const [
       CustomButton(
-          color: StyleConstants.colorGreen, icon: Icons.play_arrow, text: "START"),
+          color: StyleConstants.colorGreen,
+          icon: Icons.play_arrow,
+          text: "START"),
       SizedBox(height: 30),
       CustomButton(
-          color: StyleConstants.colorYellow, icon: Icons.edit, text: "RENAME LAST"),
+          color: StyleConstants.colorYellow,
+          icon: Icons.edit,
+          text: "RENAME LAST"),
     ];
   }
 
