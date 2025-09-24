@@ -1,3 +1,4 @@
+import 'package:bandcorder/services/recording_service.dart';
 import 'package:bandcorder/style_constants.dart';
 import 'package:bandcorder/screens/record_screen.dart';
 import 'package:bandcorder/widgets/custom_app_bar.dart';
@@ -17,8 +18,9 @@ class ConnectScreen extends StatefulWidget {
 }
 
 class ConnectScreenState extends State<ConnectScreen> {
-  final WebSocketService _socketService = WebSocketService.instance;
-  String _textFieldValue = '10.0.2.2';
+  final WebSocketService socketService = WebSocketService.instance;
+  final RecordingService recordingService = RecordingService.instance;
+  String _host = '10.0.2.2';
   bool _isConnecting = false;
 
   void connect() async {
@@ -27,7 +29,8 @@ class ConnectScreenState extends State<ConnectScreen> {
     });
 
     try {
-      await _socketService.connect(_textFieldValue);
+      await socketService.connect(_host);
+      recordingService.init(_host);
       if (!context.mounted) {
         throw StateError("State is not mounted");
       }
@@ -68,13 +71,13 @@ class ConnectScreenState extends State<ConnectScreen> {
                 ),
               ),
               TextFormField(
-                  initialValue: _textFieldValue,
+                  initialValue: _host,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                   ),
                   onChanged: (value) {
                     setState(() {
-                      _textFieldValue = value;
+                      _host = value;
                     });
                   }),
               const SizedBox(height: 30),

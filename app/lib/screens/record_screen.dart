@@ -1,4 +1,5 @@
 import 'package:bandcorder/models/event.dart';
+import 'package:bandcorder/services/recording_service.dart';
 import 'package:bandcorder/widgets/custom_button.dart';
 import 'package:bandcorder/widgets/custom_card.dart';
 import 'package:bandcorder/widgets/timer.dart';
@@ -16,9 +17,12 @@ class RecordScreen extends StatefulWidget {
 
 class RecordScreenState extends State<RecordScreen> {
   static final WebSocketService websocketService = WebSocketService.instance;
+  static final RecordingService recordingService = RecordingService.instance;
+
   List<void Function()> cleanupFns = [];
   String recordingName = "";
   DateTime? startTime;
+  bool _loading = false;
 
   @override
   void initState() {
@@ -44,6 +48,19 @@ class RecordScreenState extends State<RecordScreen> {
     super.dispose();
     for (var cleanup in cleanupFns) {
       cleanup();
+    }
+  }
+
+  void _displayLoadingWhile(Future<void> Function() fn) async {
+    setState(() {
+      _loading = true;
+    });
+    try {
+      await fn();
+    } finally {
+      setState(() {
+        _loading = false;
+      });
     }
   }
 
@@ -79,7 +96,9 @@ class RecordScreenState extends State<RecordScreen> {
                           ),
                         ),
                 ),
-                Column(children: getControls()),
+                _loading
+                    ? const CircularProgressIndicator()
+                    : Column(children: getControls()),
                 const SizedBox(height: 30),
               ],
             ),
@@ -95,26 +114,46 @@ class RecordScreenState extends State<RecordScreen> {
   }
 
   List<Widget> getIdleControls() {
-    return const [
+    return [
       CustomButton(
-          color: StyleConstants.colorGreen,
-          icon: Icons.play_arrow,
-          text: "START"),
-      SizedBox(height: 30),
+        color: StyleConstants.colorGreen,
+        icon: Icons.play_arrow,
+        text: "START",
+        onPressed: () {
+          _displayLoadingWhile(recordingService.startRecording);
+        },
+      ),
+      const SizedBox(height: 30),
       CustomButton(
-          color: StyleConstants.colorYellow,
-          icon: Icons.edit,
-          text: "RENAME LAST"),
+        color: StyleConstants.colorYellow,
+        icon: Icons.edit,
+        text: "RENAME LAST",
+        onPressed: () {
+          _displayLoadingWhile(recordingService.renameLastRecording);
+        },
+      ),
     ];
   }
 
   List<Widget> getRunningControls() {
-    return const [
+    return [
       CustomButton(
-          color: StyleConstants.colorYellow, icon: Icons.pause, text: "STOP"),
-      SizedBox(height: 30),
+        color: StyleConstants.colorYellow,
+        icon: Icons.pause,
+        text: "STOP",
+        onPressed: () {
+          _displayLoadingWhile(recordingService.stopRecording);
+        },
+      ),
+      const SizedBox(height: 30),
       CustomButton(
-          color: StyleConstants.colorPurple, icon: Icons.stop, text: "ABORT"),
+        color: StyleConstants.colorPurple,
+        icon: Icons.stop,
+        text: "ABORT",
+        onPressed: () {
+          _displayLoadingWhile(recordingService.abortRecording);
+        },
+      ),
     ];
   }
 
