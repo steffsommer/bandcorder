@@ -87,7 +87,7 @@ class RecordScreenState extends State<RecordScreen> {
           child: CustomCard(
             child: Column(
               children: [
-                const Heading(message: "RECORD"),
+                const Heading(message: "Record"),
                 const SizedBox(height: 30),
                 Timer(startTime: startTime),
                 SizedBox(
