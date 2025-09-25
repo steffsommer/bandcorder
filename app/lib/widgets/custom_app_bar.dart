@@ -9,11 +9,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final canPop = ModalRoute.of(context)?.canPop ?? false;
+
     return PreferredSize(
       preferredSize: AppBar().preferredSize,
       child: Column(
         children: [
-          const SizedBox(height: _marginTop), // 20px margin at top
+          const SizedBox(height: _marginTop),
           Expanded(
             child: SafeArea(
               child: Container(
@@ -30,18 +32,23 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: StyleConstants.borderRadius,
                     ),
+                    leading: canPop ? IconButton(
+                      icon: const Icon(Icons.arrow_back, color: Colors.black),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ) : null,
                     title: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         SvgPicture.asset("assets/logo.svg",
-                            semanticsLabel: "Bandcorder logo", height: 26),
+                            semanticsLabel: "Bandcorder logo", height: 20),
                         const SizedBox(width: 8),
                         const Text(
                           'BANDCORDER',
-                          style: TextStyle(color: Colors.black),
+                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
+                    centerTitle: true,
                     elevation: 0,
                     backgroundColor: Colors.transparent,
                   ),
@@ -56,5 +63,5 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize =>
-      const Size.fromHeight(kToolbarHeight + _marginTop); // Increased height
+      const Size.fromHeight(kToolbarHeight + _marginTop);
 }

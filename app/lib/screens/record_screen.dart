@@ -2,11 +2,13 @@ import 'package:bandcorder/models/event.dart';
 import 'package:bandcorder/services/recording_service.dart';
 import 'package:bandcorder/widgets/custom_button.dart';
 import 'package:bandcorder/widgets/custom_card.dart';
+import 'package:bandcorder/widgets/heading.dart';
 import 'package:bandcorder/widgets/timer.dart';
 import 'package:flutter/material.dart';
 
 import '../style_constants.dart';
 import '../services/web_socket_service.dart';
+import '../widgets/custom_app_bar.dart';
 
 class RecordScreen extends StatefulWidget {
   const RecordScreen({super.key});
@@ -67,14 +69,13 @@ class RecordScreenState extends State<RecordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Bandcorder'),
-      ),
+      appBar: const CustomAppBar(),
       body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: CustomCard(
             child: Column(
               children: [
+                const Heading(message: "RECORD"),
                 const SizedBox(height: 30),
                 Timer(startTime: startTime),
                 SizedBox(
