@@ -109,9 +109,16 @@ class RecordScreenState extends State<RecordScreen> {
                           ),
                         ),
                 ),
-                _loading
-                    ? const CircularProgressIndicator()
-                    : Column(children: getControls()),
+                AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 200),
+                    child: Column(
+                      key: ValueKey(
+                          '${_loading}_${isRunning()}'),
+                      children: getControls(), // Combined key
+                    )),
+                // _loading
+                //     ? const CircularProgressIndicator()
+                //     : Column(children: getControls()),
                 const SizedBox(height: 30),
               ],
             ),
@@ -120,7 +127,9 @@ class RecordScreenState extends State<RecordScreen> {
   }
 
   List<Widget> getControls() {
-    if (isRunning()) {
+    if (_loading) {
+      return [const CircularProgressIndicator()];
+    } else if (isRunning()) {
       return getRunningControls();
     }
     return getIdleControls();
