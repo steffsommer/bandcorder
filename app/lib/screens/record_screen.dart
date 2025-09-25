@@ -1,5 +1,6 @@
 import 'package:bandcorder/models/event.dart';
 import 'package:bandcorder/services/recording_service.dart';
+import 'package:bandcorder/widgets/confirmation_dialog.dart';
 import 'package:bandcorder/widgets/custom_button.dart';
 import 'package:bandcorder/widgets/custom_card.dart';
 import 'package:bandcorder/widgets/heading.dart';
@@ -53,7 +54,7 @@ class RecordScreenState extends State<RecordScreen> {
     }
   }
 
-  void _displayLoadingWhile(Future<void> Function() fn) async {
+  Future<void> _displayLoadingWhile(Future<void> Function() fn) async {
     setState(() {
       _loading = true;
     });
@@ -64,6 +65,17 @@ class RecordScreenState extends State<RecordScreen> {
         _loading = false;
       });
     }
+  }
+
+  Future<void> _confirmAbortLoading(BuildContext context) async {
+    final confirmed = await showConfirmationDialog(
+            context: context,
+            message: "Are you sure you want to abort the current recording?") ??
+        false;
+    if (!confirmed) {
+      return;
+    }
+    await _displayLoadingWhile(recordingService.abortRecording);
   }
 
   @override
@@ -152,7 +164,7 @@ class RecordScreenState extends State<RecordScreen> {
         icon: Icons.stop,
         text: "ABORT",
         onPressed: () {
-          _displayLoadingWhile(recordingService.abortRecording);
+          _confirmAbortLoading(context);
         },
       ),
     ];
