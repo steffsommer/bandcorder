@@ -24,7 +24,7 @@ class RecordScreenState extends State<RecordScreen> {
 
   List<void Function()> cleanupFns = [];
   String recordingName = "";
-  DateTime? startTime;
+  int? secondsRunning;
   bool _loading = false;
 
   @override
@@ -34,13 +34,13 @@ class RecordScreenState extends State<RecordScreen> {
       websocketService.on<RecordingRunningEvent>((event) {
         setState(() {
           recordingName = event.fileName;
-          startTime = event.started;
+          secondsRunning = event.secondsRunning;
         });
       }),
       websocketService.on<RecordingIdleEvent>((event) {
         setState(() {
           recordingName = "";
-          startTime = null;
+          secondsRunning = null;
         });
       })
     ];
@@ -89,7 +89,7 @@ class RecordScreenState extends State<RecordScreen> {
               children: [
                 const Heading(message: "Record"),
                 const SizedBox(height: 30),
-                Timer(startTime: startTime),
+                Timer(secondsRunning: secondsRunning),
                 SizedBox(
                   height: 120,
                   child: recordingName == ""
@@ -112,8 +112,7 @@ class RecordScreenState extends State<RecordScreen> {
                 AnimatedSwitcher(
                     duration: const Duration(milliseconds: 200),
                     child: Column(
-                      key: ValueKey(
-                          '${_loading}_${isRunning()}'),
+                      key: ValueKey('${_loading}_${isRunning()}'),
                       children: getControls(), // Combined key
                     )),
                 // _loading

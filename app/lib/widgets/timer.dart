@@ -8,7 +8,7 @@ class Timer extends StatefulWidget {
   final Color color1;
   final Color color2;
   final TextStyle? textStyle;
-  final DateTime? startTime;
+  final int? secondsRunning;
 
   const Timer({
     super.key,
@@ -16,7 +16,7 @@ class Timer extends StatefulWidget {
     this.color2 = StyleConstants.colorGreen,
     this.color1 = StyleConstants.colorSurface2,
     this.textStyle,
-    this.startTime,
+    this.secondsRunning,
   });
 
   @override
@@ -33,7 +33,7 @@ class _TimerState extends State<Timer> with SingleTickerProviderStateMixin {
       duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
-    if (widget.startTime != null) {
+    if (widget.secondsRunning != null) {
       _controller.repeat();
     }
   }
@@ -41,7 +41,7 @@ class _TimerState extends State<Timer> with SingleTickerProviderStateMixin {
   @override
   void didUpdateWidget(Timer oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.startTime != null) {
+    if (widget.secondsRunning != null) {
       _controller.repeat();
     } else {
       _controller.stop();
@@ -72,14 +72,16 @@ class _TimerState extends State<Timer> with SingleTickerProviderStateMixin {
                   painter: TimerPainter(
                     color1: widget.color1,
                     color2: widget.color2,
-                    active: widget.startTime != null,
+                    active: widget.secondsRunning != null,
                   ),
                 ),
               );
             },
           ),
           Text(
-            widget.startTime != null ? formatTimeSince(widget.startTime!) : "",
+            widget.secondsRunning != null
+                ? formatSecondsRunning(widget.secondsRunning!)
+                : "",
             style: const TextStyle(
                 fontSize: StyleConstants.textSizeBiggest,
                 fontWeight: FontWeight.bold),

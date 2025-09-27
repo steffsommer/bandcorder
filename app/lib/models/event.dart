@@ -34,11 +34,11 @@ class RecordingStateData {
 abstract class Event {}
 
 class RecordingRunningEvent extends Event {
-  final DateTime started;
+  final int secondsRunning;
   final String fileName;
 
   RecordingRunningEvent.fromJson(Map<String, dynamic> eventData)
-      : started = DateTime.parse(eventData['started']),
+      : secondsRunning = eventData['secondsRunning'],
         fileName = eventData['fileName'] ?? '';
 }
 
