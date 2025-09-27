@@ -6,6 +6,6 @@ package interfaces
 // and every 100ms.
 // The data should be sent as JSON
 type RecordingEventBus interface {
-	NotifyStarted(res StartedResponse)
+	NotifyStarted(res RecordingMetaData)
 	NotifyStopped()
 }

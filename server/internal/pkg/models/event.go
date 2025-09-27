@@ -27,26 +27,27 @@ func (e Event[DataT]) GetData() any {
 	return e.Data
 }
 
-type RecordingEventData struct {
-	FileName string    `json:"fileName,omitempty"`
-	Started  time.Time `json:"started,omitempty"`
+type RunningEventData struct {
+	FileName       string `json:"fileName"`
+	SecondsRunning uint32 `json:"secondsRunning"`
 }
 
 func NewRecordingRunningEvent(
 	fileName string,
 	started time.Time,
-) Event[RecordingEventData] {
-	return Event[RecordingEventData]{
+) Event[RunningEventData] {
+	duration := time.Since(started)
+	return Event[RunningEventData]{
 		EventId: RecordingRunningEvent,
-		Data: RecordingEventData{
-			FileName: fileName,
-			Started:  started,
+		Data: RunningEventData{
+			FileName:       fileName,
+			SecondsRunning: uint32(duration.Seconds()),
 		},
 	}
 }
 
-func NewRecordingIdleEvent() Event[RecordingEventData] {
-	return Event[RecordingEventData]{
+func NewRecordingIdleEvent() Event[RunningEventData] {
+	return Event[RunningEventData]{
 		EventId: RecordingIdleEvent,
 	}
 }

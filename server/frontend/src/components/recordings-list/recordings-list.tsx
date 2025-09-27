@@ -1,31 +1,37 @@
-import React, { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import React, { useEffect, useState } from "react";
 import { models } from "../../../wailsjs/go/models";
 import { GetRecordings } from "../../../wailsjs/go/services/FileSystemStorageService";
 import { EventsOn } from "../../../wailsjs/runtime/runtime";
-import { EventID, RecordingState, RecordingStateEvent } from "../events";
+import { EventID } from "../events";
 import { RecordingsListEntry } from "./recordings-list-entry/recordings-list-entry";
 import "./recordings-list.css";
-import { AnimatePresence, motion } from "motion/react";
 
 export const RecordingsList: React.FC<any> = () => {
   const [recordings, setRecordings] = useState<models.RecordingInfo[]>([]);
-  const lastState = useRef<RecordingState | null>(null);
+  const [lastEventWasRunningEvent, setLastEventWasRunningEvent] =
+    useState<boolean>(false);
 
   useEffect(() => {
-    return EventsOn(
-      EventID.RecordingState,
-      async (ev: RecordingStateEvent<any>) => {
-        if (
-          ev.state === RecordingState.IDLE &&
-          lastState.current !== RecordingState.IDLE
-        ) {
-          const date = new Date().toISOString();
-          const recordingInfos = await GetRecordings(date);
-          setRecordings(recordingInfos);
-        }
-        lastState.current = ev.state;
-      },
-    );
+    async function updateList() {
+      const date = new Date().toISOString();
+      const recordingInfos = await GetRecordings(date);
+      setRecordings(recordingInfos);
+    }
+    updateList();
+    const cb1 = EventsOn(EventID.RecordingIdle, async () => {
+      if (!lastEventWasRunningEvent) {
+        updateList();
+      }
+      setLastEventWasRunningEvent(false);
+    });
+    const cb2 = EventsOn(EventID.RecordingRunning, () => {
+      setLastEventWasRunningEvent(true);
+    });
+    return () => {
+      cb1();
+      cb2();
+    };
   }, []);
 
   return (

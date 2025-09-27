@@ -47,12 +47,12 @@ func (r *RecorderService) Init() error {
 
 // Start starts a new recording. The recording will fill an in-memory buffer
 // until either Stop() or Abort() are called
-func (r *RecorderService) Start() (interfaces.StartedResponse, error) {
+func (r *RecorderService) Start() (interfaces.RecordingMetaData, error) {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
 
 	if r.isRunning() {
-		return interfaces.StartedResponse{}, errors.New("Recording is already running")
+		return interfaces.RecordingMetaData{}, errors.New("Recording is already running")
 	}
 
 	inputDevice, err := portaudio.DefaultInputDevice()
@@ -73,12 +73,12 @@ func (r *RecorderService) Start() (interfaces.StartedResponse, error) {
 
 	stream, err := portaudio.OpenStream(inputParams, r.inputBuffer)
 	if err != nil {
-		return interfaces.StartedResponse{}, fmt.Errorf("Failed to open stream: %w", err)
+		return interfaces.RecordingMetaData{}, fmt.Errorf("Failed to open stream: %w", err)
 	}
 	r.stream = stream
 
 	if err := r.stream.Start(); err != nil {
-		return interfaces.StartedResponse{}, fmt.Errorf("Failed to start stream: %w", err)
+		return interfaces.RecordingMetaData{}, fmt.Errorf("Failed to start stream: %w", err)
 	}
 
 	go func() {
@@ -97,7 +97,7 @@ func (r *RecorderService) Start() (interfaces.StartedResponse, error) {
 	}()
 
 	r.fileName = fmt.Sprintf("recording_%d.wav", time.Now().Unix())
-	return interfaces.StartedResponse{
+	return interfaces.RecordingMetaData{
 		FileName: r.fileName,
 		Started:  time.Now(),
 	}, nil

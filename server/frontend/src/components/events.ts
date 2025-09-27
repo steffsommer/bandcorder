@@ -1,21 +1,10 @@
 export enum EventID {
-  RecordingState = "RecordingState",
-  SettingsChanged = "SettingsUpdate",
+  RecordingIdle = "RecordingIdle",
+  RecordingRunning = "RecordingRunning",
 }
 
-export enum RecordingState {
-  RUNNING = "RUNNING",
-  IDLE = "IDLE",
-}
-
-export interface RecordingStateEvent<T extends RecordingState> {
-  state: T;
-}
-
-export interface RecordingRunningEvent
-  extends RecordingStateEvent<RecordingState.RUNNING> {
+export interface RunningEventData {
   fileName: string;
-  started: string;
+	secondsRunning: number;
 }
 
-export type RecordingIdleEvent = RecordingStateEvent<RecordingState.IDLE>;

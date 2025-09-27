@@ -21,7 +21,7 @@ export const RecordingsListEntry: React.FC<Props> = ({ recording }) => {
         <h3 className="recording-title">{recording.FileName}</h3>
         <span className="duration">
           <MdOutlineAccessTimeFilled size="2em" />
-          <span className="duration-str">{TimeUtils.toMinutesSecondsStr(recording.DurationSeconds)}</span>
+          <span className="duration-str">{TimeUtils.toMMSS(recording.DurationSeconds)}</span>
         </span>
         <Button className="list-btn edit-btn">
           <FaEdit />

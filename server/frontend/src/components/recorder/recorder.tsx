@@ -11,12 +11,7 @@ import {
 import { EventsOn } from "../../../wailsjs/runtime/runtime.js";
 import { Button } from "../button/button";
 import { Card } from "../card/card";
-import {
-  EventID,
-  RecordingRunningEvent,
-  RecordingState,
-  RecordingStateEvent,
-} from "../events.js";
+import { EventID, RunningEventData } from "../events.js";
 import "./recorder.css";
 import { Timer } from "./timer/timer";
 
@@ -34,21 +29,20 @@ export const Recorder: React.FC = () => {
   };
 
   useEffect(() => {
-    return EventsOn(EventID.RecordingState, (ev: RecordingStateEvent<any>) => {
-      if (ev.state === RecordingState.RUNNING) {
-        const runningEvent = ev as RecordingRunningEvent;
-        setRecordingName(runningEvent.fileName);
-      } else {
-        setRecordingName("");
-      }
+    const cb1 = EventsOn(EventID.RecordingIdle, () => {
+      setRecordingName("");
     });
+    const cb2 = EventsOn(EventID.RecordingRunning, (data: RunningEventData) => {
+      setRecordingName(data.fileName);
+    });
+    return () => {
+      cb1();
+      cb2();
+    };
   });
 
   useEffect(() => {
     updateMic();
-    return EventsOn(EventID.SettingsChanged, async () => {
-      await updateMic();
-    });
   });
 
   return (

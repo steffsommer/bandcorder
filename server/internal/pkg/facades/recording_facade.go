@@ -21,7 +21,7 @@ func NewRecordingFacade(
 	}
 }
 
-func (r *RecordingFacade) Start() (interfaces.StartedResponse, error) {
+func (r *RecordingFacade) Start() (interfaces.RecordingMetaData, error) {
 	res, err := r.recorder.Start()
 	if err != nil {
 		logrus.Errorf("Failed to start recording: %s", err.Error())

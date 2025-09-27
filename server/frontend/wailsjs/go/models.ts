@@ -1,11 +1,11 @@
 export namespace interfaces {
 	
-	export class StartedResponse {
+	export class RecordingMetaData {
 	    FileName: string;
 	    Started: time.Time;
 	
 	    static createFrom(source: any = {}) {
-	        return new StartedResponse(source);
+	        return new RecordingMetaData(source);
 	    }
 	
 	    constructor(source: any = {}) {

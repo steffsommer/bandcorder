@@ -6,6 +6,6 @@ export function Abort():Promise<void>;
 
 export function GetMic():Promise<string>;
 
-export function Start():Promise<interfaces.StartedResponse>;
+export function Start():Promise<interfaces.RecordingMetaData>;
 
 export function Stop():Promise<void>;
