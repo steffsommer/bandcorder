@@ -5,7 +5,8 @@ import "time"
 type EventId string
 
 const (
-	RecordingStateUpdate EventId = "RecordingState"
+	RecordingIdleEvent    EventId = "RecordingIdle"
+	RecordingRunningEvent EventId = "RecordingRunning"
 )
 
 type EventLike interface {
@@ -26,17 +27,9 @@ func (e Event[DataT]) GetData() any {
 	return e.Data
 }
 
-type RecordingState string
-
-const (
-	IDLE    RecordingState = "IDLE"
-	RUNNING RecordingState = "RUNNING"
-)
-
 type RecordingEventData struct {
-	State    RecordingState `json:"state,omitempty"`
-	FileName string         `json:"fileName,omitempty"`
-	Started  time.Time      `json:"started,omitempty"`
+	FileName string    `json:"fileName,omitempty"`
+	Started  time.Time `json:"started,omitempty"`
 }
 
 func NewRecordingRunningEvent(
@@ -44,9 +37,8 @@ func NewRecordingRunningEvent(
 	started time.Time,
 ) Event[RecordingEventData] {
 	return Event[RecordingEventData]{
-		EventId: RecordingStateUpdate,
+		EventId: RecordingRunningEvent,
 		Data: RecordingEventData{
-			State:    RUNNING,
 			FileName: fileName,
 			Started:  started,
 		},
@@ -55,9 +47,6 @@ func NewRecordingRunningEvent(
 
 func NewRecordingIdleEvent() Event[RecordingEventData] {
 	return Event[RecordingEventData]{
-		EventId: RecordingStateUpdate,
-		Data: RecordingEventData{
-			State: IDLE,
-		},
+		EventId: RecordingIdleEvent,
 	}
 }
