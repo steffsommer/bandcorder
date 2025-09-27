@@ -96,7 +96,7 @@ func (r *RecorderService) Start() (interfaces.RecordingMetaData, error) {
 		}
 	}()
 
-	r.fileName = fmt.Sprintf("recording_%d.wav", time.Now().Unix())
+	r.fileName = fmt.Sprintf("recording-%s.wav", time.Now().Format("15-04-05"))
 	return interfaces.RecordingMetaData{
 		FileName: r.fileName,
 		Started:  time.Now(),
