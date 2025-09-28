@@ -7,6 +7,7 @@ type EventId string
 const (
 	RecordingIdleEvent    EventId = "RecordingIdle"
 	RecordingRunningEvent EventId = "RecordingRunning"
+	LiveAudioDataEvent    EventId = "LiveAudioData"
 )
 
 type EventLike interface {
@@ -49,5 +50,18 @@ func NewRecordingRunningEvent(
 func NewRecordingIdleEvent() Event[RunningEventData] {
 	return Event[RunningEventData]{
 		EventId: RecordingIdleEvent,
+	}
+}
+
+type LiveAudioData struct {
+	LoudnessPercentage uint8
+}
+
+func NewLiveAudioDataEvent(loudnessPercentage uint8) Event[LiveAudioData] {
+	return Event[LiveAudioData]{
+		EventId: LiveAudioDataEvent,
+		Data: LiveAudioData{
+			LoudnessPercentage: loudnessPercentage,
+		},
 	}
 }

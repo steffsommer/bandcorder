@@ -59,7 +59,8 @@ func main() {
 		AUDIO_CHANNEL_COUNT,
 		SAMPLE_RATE_HZ,
 	)
-	recorder := services.NewRecorderService(storageService)
+	processor := services.NewAudioProcessorService(broadcastSender)
+	recorder := services.NewRecorderService(storageService, processor)
 	recordingFacade := facades.NewRecordingFacade(eventbus, recorder)
 	recordingController := controllers.NewRecordingController(recordingFacade)
 

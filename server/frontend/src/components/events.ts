@@ -5,6 +5,5 @@ export enum EventID {
 
 export interface RunningEventData {
   fileName: string;
-	secondsRunning: number;
+  secondsRunning: number;
 }
-
