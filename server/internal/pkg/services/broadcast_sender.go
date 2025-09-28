@@ -6,17 +6,17 @@ import (
 )
 
 type BroadcastSender struct {
-	senders []interfaces.Sender
+	senders []interfaces.EventDispatcher
 }
 
-func NewBroadcastSender(senders []interfaces.Sender) *BroadcastSender {
+func NewBroadcastSender(senders []interfaces.EventDispatcher) *BroadcastSender {
 	return &BroadcastSender{
 		senders: senders,
 	}
 }
 
-func (b *BroadcastSender) Send(event models.EventLike) {
+func (b *BroadcastSender) Dispatch(event models.EventLike) {
 	for _, sender := range b.senders {
-		sender.Send(event)
+		sender.Dispatch(event)
 	}
 }

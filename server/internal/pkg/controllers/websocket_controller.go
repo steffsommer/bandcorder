@@ -41,7 +41,7 @@ func (r *WebsocketController) HandleWebsocketUpgrade(c *gin.Context) {
 	r.connections[clientIp] = conn
 }
 
-func (r *WebsocketController) Send(event models.EventLike) {
+func (r *WebsocketController) Dispatch(event models.EventLike) {
 	for conn := range maps.Values(r.connections) {
 		err := conn.WriteJSON(event)
 		if err != nil {

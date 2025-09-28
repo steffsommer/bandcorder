@@ -46,7 +46,7 @@ func main() {
 	websocketController := controllers.NewWebsocketController()
 	uiSenderService := services.NewUiSenderService()
 	broadcastSender := services.NewBroadcastSender(
-		[]interfaces.Sender{
+		[]interfaces.EventDispatcher{
 			websocketController,
 			uiSenderService,
 		},
