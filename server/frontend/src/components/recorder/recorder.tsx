@@ -12,6 +12,7 @@ import { EventsOn } from "../../../wailsjs/runtime/runtime.js";
 import { Button } from "../button/button";
 import { Card } from "../card/card";
 import { EventID, RunningEventData } from "../events.js";
+import { VolumeBar } from "../volume-bar/volume-bar.js";
 import "./recorder.css";
 import { Timer } from "./timer/timer";
 
@@ -72,7 +73,7 @@ export const Recorder: React.FC = () => {
         <span>🚧 frequency info 🚧</span>
       </Card>
       <Card className="volume-card">
-        <span>🚧 volume info 🚧</span>
+        <VolumeBar />
       </Card>
       <div className="controls">
         <Button onClick={Start} className="recorder-btn icon-large play-btn">
