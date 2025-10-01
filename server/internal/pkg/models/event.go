@@ -53,14 +53,14 @@ func NewRecordingIdleEvent() Event[RunningEventData] {
 	}
 }
 
-type LiveAudioData struct {
-	LoudnessPercentage uint8
+type LiveAudioEventData struct {
+	LoudnessPercentage uint8 `json:"loudnessPercentage"`
 }
 
-func NewLiveAudioDataEvent(loudnessPercentage uint8) Event[LiveAudioData] {
-	return Event[LiveAudioData]{
+func NewLiveAudioDataEvent(loudnessPercentage uint8) Event[LiveAudioEventData] {
+	return Event[LiveAudioEventData]{
 		EventId: LiveAudioDataEvent,
-		Data: LiveAudioData{
+		Data: LiveAudioEventData{
 			LoudnessPercentage: loudnessPercentage,
 		},
 	}

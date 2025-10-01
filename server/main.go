@@ -9,6 +9,7 @@ import (
 	"server/internal/pkg/controllers"
 	"server/internal/pkg/facades"
 	"server/internal/pkg/interfaces"
+	"server/internal/pkg/models"
 	"server/internal/pkg/services"
 	"server/internal/pkg/services/cyclic_sender"
 	"strconv"
@@ -71,6 +72,7 @@ func main() {
 	r.POST("/recording/abort", recordingController.HandleAbort)
 	r.GET("/ws", websocketController.HandleWebsocketUpgrade)
 
+	modelExporter := models.ModelExporter{}
 	err = wails.Run(&options.App{
 		Title:  "server",
 		Width:  1920,
@@ -96,6 +98,7 @@ func main() {
 			}()
 		},
 		Bind: []interface{}{
+			&modelExporter,
 			recordingFacade,
 			storageService,
 			settingsService,

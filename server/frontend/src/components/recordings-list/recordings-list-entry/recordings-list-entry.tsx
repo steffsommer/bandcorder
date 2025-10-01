@@ -18,10 +18,12 @@ export const RecordingsListEntry: React.FC<Props> = ({ recording }) => {
         <div className="note-icon-container">
           <FaMusic size="2em" />
         </div>
-        <h3 className="recording-title">{recording.FileName}</h3>
+        <h3 className="recording-title">{recording.fileName}</h3>
         <span className="duration">
           <MdOutlineAccessTimeFilled size="2em" />
-          <span className="duration-str">{TimeUtils.toMMSS(recording.DurationSeconds)}</span>
+          <span className="duration-str">
+            {TimeUtils.toMMSS(recording.durationSeconds)}
+          </span>
         </span>
         <Button className="list-btn edit-btn">
           <FaEdit />
