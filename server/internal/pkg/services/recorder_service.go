@@ -6,26 +6,23 @@ import (
 	"server/internal/pkg/interfaces"
 	"sync"
 	"time"
+	"unsafe"
 
-	"github.com/gordonklaus/portaudio"
+	"github.com/gen2brain/malgo"
 	"github.com/sirupsen/logrus"
 )
 
 const (
 	sampleRate = 44100
-	channels   = 1 // mono
+	channels   = 1
 	bufferSize = 1024
 )
 
-// Recorder creates audio recordings
-//
-// TODOs:
-// - handle microphone selection
 type RecorderService struct {
 	storageSerivce interfaces.StorageService
 	audioProcessor interfaces.AudioProcessor
-	stream         *portaudio.Stream
-	inputBuffer    []float32
+	ctx            *malgo.AllocatedContext
+	device         *malgo.Device
 	recording      []float32
 	fileName       string
 	done           chan bool
@@ -44,14 +41,15 @@ func NewRecorderService(
 	}
 }
 
-// Init should be called once to initialize the underlying audio system
-// for example, init scans for available audio devices
 func (r *RecorderService) Init() error {
-	return portaudio.Initialize()
+	ctx, err := malgo.InitContext(nil, malgo.ContextConfig{}, nil)
+	if err != nil {
+		return err
+	}
+	r.ctx = ctx
+	return nil
 }
 
-// Start starts a new recording. The recording will fill an in-memory buffer
-// until either Stop() or Abort() are called
 func (r *RecorderService) Start() (interfaces.RecordingMetaData, error) {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
@@ -60,56 +58,45 @@ func (r *RecorderService) Start() (interfaces.RecordingMetaData, error) {
 		return interfaces.RecordingMetaData{}, errors.New("Recording is already running")
 	}
 
-	inputDevice, err := portaudio.DefaultInputDevice()
-	if err != nil {
-		fmt.Errorf("Failed to get default input device: %w", err)
-	}
+	deviceConfig := malgo.DefaultDeviceConfig(malgo.Capture)
+	deviceConfig.Capture.Format = malgo.FormatF32
+	deviceConfig.Capture.Channels = channels
+	deviceConfig.SampleRate = sampleRate
+	deviceConfig.Alsa.NoMMap = 1
 
-	inputParams := portaudio.StreamParameters{
-		Input: portaudio.StreamDeviceParameters{
-			Device:   inputDevice,
-			Channels: channels,
-			Latency:  inputDevice.DefaultLowInputLatency,
-		},
-		SampleRate:      sampleRate,
-		FramesPerBuffer: bufferSize,
-	}
-	r.inputBuffer = make([]float32, bufferSize)
-
-	stream, err := portaudio.OpenStream(inputParams, r.inputBuffer)
-	if err != nil {
-		return interfaces.RecordingMetaData{}, fmt.Errorf("Failed to open stream: %w", err)
-	}
-	r.stream = stream
-
-	if err := r.stream.Start(); err != nil {
-		return interfaces.RecordingMetaData{}, fmt.Errorf("Failed to start stream: %w", err)
-	}
-
-	go func() {
-		for {
-			select {
-			case <-r.done:
-				return
-			default:
-				if err := r.stream.Read(); err != nil {
-					logrus.Errorf("Error reading from stream: %v", err)
-					continue
-				}
-				r.audioProcessor.Process(r.inputBuffer)
-				r.recording = append(r.recording, r.inputBuffer...)
-			}
+	onRecvFrames := func(pOutputSample, pInputSamples []byte, framecount uint32) {
+		inputBuffer := make([]float32, framecount*channels)
+		// Convert bytes to float32
+		for i := range inputBuffer {
+			idx := i * 4
+			bits := uint32(pInputSamples[idx]) | uint32(pInputSamples[idx+1])<<8 |
+				uint32(pInputSamples[idx+2])<<16 | uint32(pInputSamples[idx+3])<<24
+			inputBuffer[i] = *(*float32)(unsafe.Pointer(&bits))
 		}
-	}()
+		r.audioProcessor.Process(inputBuffer)
+		r.recording = append(r.recording, inputBuffer...)
+	}
 
+	device, err := malgo.InitDevice(r.ctx.Context, deviceConfig, malgo.DeviceCallbacks{
+		Data: onRecvFrames,
+	})
+	if err != nil {
+		return interfaces.RecordingMetaData{}, fmt.Errorf("Failed to initialize device: %w", err)
+	}
+
+	if err := device.Start(); err != nil {
+		return interfaces.RecordingMetaData{}, fmt.Errorf("Failed to start device: %w", err)
+	}
+
+	r.device = device
 	r.fileName = fmt.Sprintf("recording-%s.wav", time.Now().Format("15-04-05"))
+
 	return interfaces.RecordingMetaData{
 		FileName: r.fileName,
 		Started:  time.Now(),
 	}, nil
 }
 
-// Stop stops the current recording and writes the recorded audio to a wav file
 func (r *RecorderService) Stop() error {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
@@ -118,11 +105,7 @@ func (r *RecorderService) Stop() error {
 		return errors.New("No recording is running")
 	}
 
-	r.done <- true
-
-	if err := r.stream.Close(); err != nil {
-		return err
-	}
+	r.device.Uninit()
 
 	if err := r.storageSerivce.Save(r.fileName, r.recording); err != nil {
 		return err
@@ -135,7 +118,6 @@ func (r *RecorderService) Stop() error {
 	return nil
 }
 
-// Abort aborts the current recording without saving it
 func (r *RecorderService) Abort() error {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
@@ -144,13 +126,8 @@ func (r *RecorderService) Abort() error {
 		return errors.New("No recording is running")
 	}
 
-	r.done <- true
-	err := r.stream.Close()
-	if err != nil {
-		return err
-	}
+	r.device.Uninit()
 	r.reset()
-
 	return nil
 }
 
@@ -164,9 +141,12 @@ func (r *RecorderService) isRunning() bool {
 }
 
 func (r *RecorderService) GetMic() (string, error) {
-	inputDevice, err := portaudio.DefaultInputDevice()
+	infos, err := r.ctx.Devices(malgo.Capture)
 	if err != nil {
 		return "", err
 	}
-	return inputDevice.Name, nil
+	if len(infos) == 0 {
+		return "", errors.New("No input devices found")
+	}
+	return infos[0].Name(), nil
 }

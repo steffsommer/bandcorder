@@ -8,6 +8,7 @@ require (
 )
 
 require (
+	github.com/gen2brain/malgo v0.11.24
 	github.com/goccy/go-yaml v1.18.0
 	github.com/stretchr/testify v1.10.0
 )
@@ -33,7 +34,6 @@ require (
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
-	github.com/gordonklaus/portaudio v0.0.0-20250206071425-98a94950218b
 	github.com/gorilla/websocket v1.5.3
 	github.com/jchv/go-winloader v0.0.0-20210711035445-715c2860da7e // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
