@@ -64,8 +64,10 @@
 
 .volume-card {
   grid-area: volume;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(2 * var(--spacing)) var(--spacing);
 }
 
 .controls {

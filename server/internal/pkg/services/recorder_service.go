@@ -23,6 +23,7 @@ const (
 // - handle microphone selection
 type RecorderService struct {
 	storageSerivce interfaces.StorageService
+	audioProcessor interfaces.AudioProcessor
 	stream         *portaudio.Stream
 	inputBuffer    []float32
 	recording      []float32
@@ -31,11 +32,15 @@ type RecorderService struct {
 	mutex          sync.Mutex
 }
 
-func NewRecorderService(storageService interfaces.StorageService) *RecorderService {
+func NewRecorderService(
+	storageService interfaces.StorageService,
+	audioProcessor interfaces.AudioProcessor,
+) *RecorderService {
 	return &RecorderService{
 		done:           make(chan bool),
 		recording:      make([]float32, 0, 1000),
 		storageSerivce: storageService,
+		audioProcessor: audioProcessor,
 	}
 }
 
@@ -91,12 +96,13 @@ func (r *RecorderService) Start() (interfaces.RecordingMetaData, error) {
 					logrus.Errorf("Error reading from stream: %v", err)
 					continue
 				}
+				r.audioProcessor.Process(r.inputBuffer)
 				r.recording = append(r.recording, r.inputBuffer...)
 			}
 		}
 	}()
 
-	r.fileName = fmt.Sprintf("recording_%d.wav", time.Now().Unix())
+	r.fileName = fmt.Sprintf("recording-%s.wav", time.Now().Format("15-04-05"))
 	return interfaces.RecordingMetaData{
 		FileName: r.fileName,
 		Started:  time.Now(),

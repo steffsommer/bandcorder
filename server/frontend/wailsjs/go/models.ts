@@ -37,9 +37,21 @@ export namespace interfaces {
 
 export namespace models {
 	
+	export class LiveAudioEventData {
+	    loudnessPercentage: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new LiveAudioEventData(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.loudnessPercentage = source["loudnessPercentage"];
+	    }
+	}
 	export class RecordingInfo {
-	    FileName: string;
-	    DurationSeconds: number;
+	    fileName: string;
+	    durationSeconds: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new RecordingInfo(source);
@@ -47,8 +59,22 @@ export namespace models {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.FileName = source["FileName"];
-	        this.DurationSeconds = source["DurationSeconds"];
+	        this.fileName = source["fileName"];
+	        this.durationSeconds = source["durationSeconds"];
+	    }
+	}
+	export class RunningEventData {
+	    fileName: string;
+	    secondsRunning: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new RunningEventData(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.fileName = source["fileName"];
+	        this.secondsRunning = source["secondsRunning"];
 	    }
 	}
 

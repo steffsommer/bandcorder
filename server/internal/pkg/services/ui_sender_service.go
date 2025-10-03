@@ -19,7 +19,7 @@ func (u *UiSenderService) Init(appCtx context.Context) {
 	u.wailsCtx = appCtx
 }
 
-func (u *UiSenderService) Send(event models.EventLike) {
+func (u *UiSenderService) Dispatch(event models.EventLike) {
 	if u.wailsCtx == nil {
 		panic("Wails Context has not been set")
 	}

@@ -105,7 +105,7 @@ func (f *FileSystemStorageService) getTargetDirCreateIfNeeded() (string, error) 
 }
 
 func (f *FileSystemStorageService) getAbsDateDir(date time.Time) string {
-	dateDir := fmt.Sprintf("%d-%d-%d", date.Year(), date.Month(), date.Day())
+	dateDir := date.Format("2006-01-02")
 	return filepath.Join(f.baseDir, dateDir)
 }
 

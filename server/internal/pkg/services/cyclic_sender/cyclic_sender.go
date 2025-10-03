@@ -7,16 +7,16 @@ import (
 )
 
 type CyclicSender struct {
-	sender   interfaces.Sender
-	metaData *interfaces.RecordingMetaData
+	dispatcher interfaces.EventDispatcher
+	metaData   *interfaces.RecordingMetaData
 }
 
 // interval time after which state updates are sent to clients
 const interval = 100 * time.Millisecond
 
-func NewCyclicSender(sender interfaces.Sender) *CyclicSender {
+func NewCyclicSender(dispatcher interfaces.EventDispatcher) *CyclicSender {
 	return &CyclicSender{
-		sender: sender,
+		dispatcher: dispatcher,
 	}
 }
 
@@ -24,7 +24,7 @@ func (n *CyclicSender) StartSendingPeriodicUpdates() {
 	n.NotifyStopped()
 	go func() {
 		for {
-			n.send()
+			n.dispatch()
 			time.Sleep(interval)
 		}
 	}()
@@ -32,20 +32,20 @@ func (n *CyclicSender) StartSendingPeriodicUpdates() {
 
 func (n *CyclicSender) NotifyStarted(res interfaces.RecordingMetaData) {
 	n.metaData = &res
-	n.send()
+	n.dispatch()
 }
 
 func (n *CyclicSender) NotifyStopped() {
 	n.metaData = nil
-	n.send()
+	n.dispatch()
 }
 
-func (n *CyclicSender) send() {
+func (n *CyclicSender) dispatch() {
 	var event models.EventLike
 	if n.metaData == nil {
 		event = models.NewRecordingIdleEvent()
 	} else {
 		event = models.NewRecordingRunningEvent(n.metaData.FileName, n.metaData.Started)
 	}
-	n.sender.Send(event)
+	n.dispatcher.Dispatch(event)
 }

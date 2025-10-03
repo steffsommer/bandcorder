@@ -1,6 +1,6 @@
 package models
 
 type RecordingInfo struct {
-	FileName string
-	DurationSeconds uint32
+	FileName        string `json:"fileName"`
+	DurationSeconds uint32 `json:"durationSeconds"`
 }

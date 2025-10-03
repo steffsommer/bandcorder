@@ -50,7 +50,7 @@ export const RecordingsList: React.FC<any> = () => {
                   delay: 0.03 * index,
                 }}
                 exit={{ opacity: 0 }}
-                key={item.FileName || `recording-${index}`}
+                key={item.fileName || `recording-${index}`}
               >
                 <RecordingsListEntry recording={item} />
               </motion.li>

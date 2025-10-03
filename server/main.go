@@ -9,6 +9,7 @@ import (
 	"server/internal/pkg/controllers"
 	"server/internal/pkg/facades"
 	"server/internal/pkg/interfaces"
+	"server/internal/pkg/models"
 	"server/internal/pkg/services"
 	"server/internal/pkg/services/cyclic_sender"
 	"strconv"
@@ -46,7 +47,7 @@ func main() {
 	websocketController := controllers.NewWebsocketController()
 	uiSenderService := services.NewUiSenderService()
 	broadcastSender := services.NewBroadcastSender(
-		[]interfaces.Sender{
+		[]interfaces.EventDispatcher{
 			websocketController,
 			uiSenderService,
 		},
@@ -59,7 +60,8 @@ func main() {
 		AUDIO_CHANNEL_COUNT,
 		SAMPLE_RATE_HZ,
 	)
-	recorder := services.NewRecorderService(storageService)
+	processor := services.NewAudioProcessorService(broadcastSender)
+	recorder := services.NewRecorderService(storageService, processor)
 	recordingFacade := facades.NewRecordingFacade(eventbus, recorder)
 	recordingController := controllers.NewRecordingController(recordingFacade)
 
@@ -70,6 +72,7 @@ func main() {
 	r.POST("/recording/abort", recordingController.HandleAbort)
 	r.GET("/ws", websocketController.HandleWebsocketUpgrade)
 
+	modelExporter := models.ModelExporter{}
 	err = wails.Run(&options.App{
 		Title:  "server",
 		Width:  1920,
@@ -95,6 +98,7 @@ func main() {
 			}()
 		},
 		Bind: []interface{}{
+			&modelExporter,
 			recordingFacade,
 			storageService,
 			settingsService,

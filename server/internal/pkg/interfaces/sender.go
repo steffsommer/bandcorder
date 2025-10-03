@@ -2,6 +2,6 @@ package interfaces
 
 import "server/internal/pkg/models"
 
-type Sender interface {
-	Send(event models.EventLike)
+type EventDispatcher interface {
+	Dispatch(event models.EventLike)
 }
