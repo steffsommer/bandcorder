@@ -1,18 +1,22 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:bandcorder/app_constants.dart';
 import 'package:bandcorder/models/event.dart';
 import 'package:bandcorder/services/toast_service.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:flutter/material.dart';
 
 const websocketPath = "/ws";
 const connectTimeout = Duration(seconds: 3);
+const pingFrequency = Duration(milliseconds: 500);
 
 class WebSocketService {
   final _eventsToCallbacks = <Type, List<Function>>{};
-  final toastService = ToastService();
+  final _toastService = ToastService();
   static final WebSocketService instance = WebSocketService._();
+  WebSocket? _webSocket;
+  VoidCallback? onConnectionLost;
 
   WebSocketService._();
 
@@ -30,34 +34,44 @@ class WebSocketService {
   /// - Other exceptions for connection failures
   Future<void> connect(String host) async {
     try {
-      final url =
-          Uri.parse('ws://$host:${AppConstants.serverPort}$websocketPath');
+      final url = 'ws://$host:${AppConstants.serverPort}$websocketPath';
       print('Connecting to $url');
-      final channel = WebSocketChannel.connect(url);
-      await channel.ready.timeout(connectTimeout);
+
+      _webSocket = await WebSocket.connect(url).timeout(connectTimeout);
+      _webSocket!.pingInterval = pingFrequency;
 
       print('Websocket connection established');
 
-      channel.stream.listen((rawJson) {
-        try {
-          var event = _convertJsonToEvent(rawJson);
-          var callbacks = _eventsToCallbacks[event.runtimeType];
-          if (callbacks == null) {
-            return;
+      _webSocket!.listen(
+        (data) {
+          try {
+            var event = _convertJsonToEvent(data);
+            var callbacks = _eventsToCallbacks[event.runtimeType];
+            if (callbacks == null) {
+              return;
+            }
+            for (var cb in callbacks) {
+              cb(event);
+            }
+          } catch (e) {
+            print('Failed to deserialize or process event from JSON $data');
           }
-          for (var cb in callbacks) {
-            cb(event);
-          }
-        } catch (e) {
-          print('Failed to deserialize or process event from JSON $rawJson');
-        }
-      });
+        },
+        onDone: () {
+          _toastService.toastError("Bandcorder was stopped");
+          onConnectionLost?.call();
+        },
+        onError: (error) {
+          _toastService.toastError("Unknown connection error");
+          onConnectionLost?.call();
+        },
+      );
     } on TimeoutException {
-      toastService.toastError(
+      _toastService.toastError(
           "Server not reachable. Check that Bandcorder is running and the IP is correct");
       rethrow;
     } catch (e) {
-      toastService.toastError("Unknown error while connecting to server");
+      _toastService.toastError("Unknown error while connecting to server");
       rethrow;
     }
   }
