@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"maps"
 	"server/internal/pkg/models"
+	"sync"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -11,6 +11,7 @@ import (
 
 type WebsocketController struct {
 	connections map[string]*websocket.Conn
+	mutex       sync.Mutex
 }
 
 func NewWebsocketController() *WebsocketController {
@@ -28,6 +29,7 @@ var upgrader = websocket.Upgrader{
 // If a client has an existing connection, the old connection is closed and a new
 // one created.
 func (r *WebsocketController) HandleWebsocketUpgrade(c *gin.Context) {
+	r.mutex.Lock()
 	clientIp := c.ClientIP()
 	existingConn, exists := r.connections[clientIp]
 	if exists {
@@ -39,13 +41,18 @@ func (r *WebsocketController) HandleWebsocketUpgrade(c *gin.Context) {
 		return
 	}
 	r.connections[clientIp] = conn
+	r.mutex.Unlock()
 }
 
 func (r *WebsocketController) Dispatch(event models.EventLike) {
-	for conn := range maps.Values(r.connections) {
+	r.mutex.Lock()
+	for ip, conn := range r.connections {
 		err := conn.WriteJSON(event)
 		if err != nil {
-			logrus.Errorf("Failed to send message %+v via websocket: %s", event, err.Error())
+			logrus.Errorf("Failed to send to %s: %s", ip, err.Error())
+			conn.Close()
+			delete(r.connections, ip)
 		}
 	}
+	r.mutex.Unlock()
 }

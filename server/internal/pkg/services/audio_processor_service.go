@@ -1,7 +1,6 @@
 package services
 
 import (
-	"fmt"
 	"math"
 	"server/internal/pkg/interfaces"
 	"server/internal/pkg/models"
@@ -30,7 +29,6 @@ func (a *AudioSampleProcessorService) Process(samples []float32) {
 // RMS provides a better representation of perceived loudness compared to peak amplitude
 // detection by measuring the average energy of a batch of samples.
 func calculateRMSLoudness(samples []float32) uint8 {
-	fmt.Printf("%v\n", samples)
 	if len(samples) == 0 {
 		return 0
 	}
