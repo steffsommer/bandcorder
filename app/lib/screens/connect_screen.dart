@@ -23,17 +23,6 @@ class ConnectScreenState extends State<ConnectScreen> {
   String _host = '10.0.2.2';
   bool _isConnecting = false;
 
-  ConnectScreenState() {
-    socketService.onConnectionLost = () {
-      Navigator.push(
-        context,
-        MaterialPageRoute<void>(
-          builder: (context) => const ConnectScreen(),
-        ),
-      );
-    };
-  }
-
   void connect() async {
     setState(() {
       _isConnecting = true;

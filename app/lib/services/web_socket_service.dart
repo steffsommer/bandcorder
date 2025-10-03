@@ -7,6 +7,9 @@ import 'package:bandcorder/models/event.dart';
 import 'package:bandcorder/services/toast_service.dart';
 import 'package:flutter/material.dart';
 
+import '../globals.dart';
+import '../screens/connect_screen.dart';
+
 const websocketPath = "/ws";
 const connectTimeout = Duration(seconds: 3);
 const pingFrequency = Duration(milliseconds: 500);
@@ -16,7 +19,6 @@ class WebSocketService {
   final _toastService = ToastService();
   static final WebSocketService instance = WebSocketService._();
   WebSocket? _webSocket;
-  VoidCallback? onConnectionLost;
 
   WebSocketService._();
 
@@ -59,11 +61,11 @@ class WebSocketService {
         },
         onDone: () {
           _toastService.toastError("Bandcorder was stopped");
-          onConnectionLost?.call();
+          _onConnectionLoss();
         },
         onError: (error) {
           _toastService.toastError("Unknown connection error");
-          onConnectionLost?.call();
+          _onConnectionLoss();
         },
       );
     } on TimeoutException {
@@ -74,6 +76,13 @@ class WebSocketService {
       _toastService.toastError("Unknown error while connecting to server");
       rethrow;
     }
+  }
+
+  void _onConnectionLoss() {
+    navigatorKey.currentState?.pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => const ConnectScreen()),
+      (route) => false,
+    );
   }
 
   /// Registers a callback for events of type [T].

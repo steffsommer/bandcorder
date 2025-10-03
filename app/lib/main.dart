@@ -2,6 +2,8 @@ import 'package:bandcorder/style_constants.dart';
 import 'package:bandcorder/screens/connect_screen.dart';
 import 'package:flutter/material.dart';
 
+import 'globals.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -12,6 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       title: 'Bandcorder',
       theme: ThemeData(
         scaffoldBackgroundColor: StyleConstants.colorSurface1,
