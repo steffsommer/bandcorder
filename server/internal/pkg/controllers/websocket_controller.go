@@ -3,6 +3,7 @@ package controllers
 import (
 	"server/internal/pkg/models"
 	"sync"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -28,6 +29,10 @@ var upgrader = websocket.Upgrader{
 // HandleWebsocketUpgrade handles the connection upgrade from HTTP to a websocket connection
 // If a client has an existing connection, the old connection is closed and a new
 // one created.
+// Connections are deemed healthy for as long as writes to it are successful. As soon as one
+// write fails, the connection is closed.
+// The server will respond with PONG messages as an answer to PINGs. Clients should ping
+// frequently to determine their connection health.
 func (r *WebsocketController) HandleWebsocketUpgrade(c *gin.Context) {
 	r.mutex.Lock()
 	clientIp := c.ClientIP()
@@ -35,13 +40,32 @@ func (r *WebsocketController) HandleWebsocketUpgrade(c *gin.Context) {
 	if exists {
 		existingConn.Close()
 	}
-
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		return
 	}
+	conn.SetPingHandler(func(appData string) error {
+		deadline := time.Now().Add(time.Second)
+		return conn.WriteControl(websocket.PongMessage, []byte(appData), deadline)
+	})
 	r.connections[clientIp] = conn
 	r.mutex.Unlock()
+
+	// Read incoming messages (required for ping handler to get invoked)
+	go func() {
+		defer func() {
+			r.mutex.Lock()
+			conn.Close()
+			delete(r.connections, clientIp)
+			r.mutex.Unlock()
+		}()
+
+		for {
+			if _, _, err := conn.ReadMessage(); err != nil {
+				break
+			}
+		}
+	}()
 }
 
 func (r *WebsocketController) Dispatch(event models.EventLike) {
