@@ -1,5 +1,7 @@
 # Bandcorder
 
+![App Mockup](misc/img/mockup.svg)
+
 Disclaimer: This is early stage software
 
 ## About
@@ -20,47 +22,16 @@ Bandcorder solves both of these problems in a simple manner.
 
 ## How it works
 
-When the client app gets opened and is connected to a Wifi, it scans the network for a Bandcorder server.
-As soon as the server is found, a connection is established and the client is part of a recording session.
+You open the app and connect to the desktop application via its IP. Once the connection is established,
+the client is part of a recording session.
 Any client may start or stop recordings and the recording state is synced between all participants.  
-The server uses the default Microphone of the system to create the recordings. The recording files are
+The server uses the default Microphone of the system to create the recordings. The audio files are
 saved in a directory corresponding to the current day with a file name resembling the current time.
 To share the recordings quickly with bandmates, a Cloud storage sync (e.g. using Dropbox) may be set
 for the folder.
 
-## Configuration
+## Getting started
 
-Copy `config.yml.template` to `config.yml` and specify a valid data directory.
-
-## Development setup
-
-### Requirements
-
-- python3
-- Flutter >= 3.18
-
-### Server setup
-```bash
-    # (optional) Create venv
-    python -m venv .venv && source ./.venv/Scripts/activate
-    # Install dependencies
-    cd server && pip install -e .
-```
-
-## Todos for 1.0
-
-- [ ] Mobile UI (Flutter)
-- [x] Reconfiguration as yml file
-  - [x] Specify recording directory
-- [ ] Desktop UI Tkinter
-- [x] Replace Flask with socket.io server
-- [x] Create virtualenv
-- [ ] Create Release.exe
-- [x] Put recordings in date folders
-- [ ] Create a fancy logo
-
-## Accepted Limitations for 1.0
-
-- Only one server instance per Wifi network
-- Plaintext communication (no secrets are transmitted though)
-- Only tested on Windows 11
+Binary versions of the desktop application and the app will be provided as part of the 2.0 milestone. Currently
+you have to take a look at the readmes of the [app](app/README.md) and [desktop application](server/README.md)
+and build them yourself.
