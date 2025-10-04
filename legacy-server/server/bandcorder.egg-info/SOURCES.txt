@@ -1,6 +1,0 @@
-pyproject.toml
-bandcorder.egg-info/PKG-INFO
-bandcorder.egg-info/SOURCES.txt
-bandcorder.egg-info/dependency_links.txt
-bandcorder.egg-info/requires.txt
-bandcorder.egg-info/top_level.txt
