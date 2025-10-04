@@ -1,16 +1,25 @@
-# bandcorder
+# Bandcorder mobile app
 
-A new Flutter project.
+## About
 
-## Getting Started
+The mobile app can be used to control the recording state of the application.
+At the moment, only Android is supported.
 
-This project is a starting point for a Flutter application.
+## Prerequisites
 
-A few resources to get you started if this is your first Flutter project:
+- `flutter --version` >= 3.0.0
+- An IDE (e.g. Android Studio, VS Code)
+- Android SDK >= 21 (tested with v35)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Getting started
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Open the project in your IDE. Your IDE should prompt you whether you want to
+  install an Android SDK (in case you don't have a fitting one already).
+- Check that flutter is set up correctly:
+
+```bash
+   flutter doctor
+```
+
+- Afterwards, you should be able to start an Android emulator. The app can be compiled
+  and shipped to the emulator when starting the application in `main.dart`.
