@@ -1,12 +1,14 @@
 # Bandcorder
 
+Create audio recordings in multi-user sessions by a single button tap.
+
 ![App Mockup](misc/img/mockup.svg)
 
 Disclaimer: This is early stage software
 
 ## About
 
-Simply put, Bandcorder allows to create, start & stop audio recordings easily in a multi-client, shared session using a smartphone app.
+Simply put, Bandcorder allows to create, start & stop audio recordings easily in a multi-user, shared session using a smartphone app.
 The recordings may be done using a (high quality) microphone attached to a server (potentially a laptop).
 
 ## Motivation
