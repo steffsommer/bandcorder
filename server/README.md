@@ -2,18 +2,70 @@
 
 ## About
 
-This is the official Wails React-TS template.
+This project is the server/desktop application of Bandcorder, which can be controlled via
+the app additionally to its own UI. The project utilizes the cross-platform application
+framework [wails](https://wails.io/).
 
-You can configure the project by editing `wails.json`. More information about the project settings can be found
-here: https://wails.io/docs/reference/project-config
+The backend is written in Go. It includes a REST API, which takes commands from the
+app clients. The frontend is a React web application.
 
-## Live Development
+## Prerequisites
 
-To run in live development mode, run `wails dev` in the project directory. This will run a Vite development
-server that will provide very fast hot reload of your frontend changes. If you want to develop in a browser
-and have access to your Go methods, there is also a dev server that runs on http://localhost:34115. Connect
-to this in your browser, and you can call your Go code from devtools.
+- `go version` >= 1.25
+- `wails version` >= 2.10.2
+- `node -v` >= 20.11.0
+- `make` (available on all major platforms)
+- A C compiler, e.g. `gcc` (see platform-specific requirements below)
 
-## Building
+### C Compiler Requirements
 
-To build a redistributable, production mode package, use `wails build`.
+**This project requires CGO** because it uses low-level audio libraries. CGO needs a C compiler to build the native code portions.
+
+#### On Windows
+
+Windows does not come with a C compiler. You must install one of the following:
+
+- **MinGW-w64** (recommended): Download from [mingw-w64.org](https://www.mingw-w64.org/) or install via package managers:
+
+  ```powershell
+  # Via Chocolatey
+  choco install mingw
+
+  # Via MSYS2
+  pacman -S mingw-w64-x86_64-gcc
+  ```
+
+After installation, ensure `gcc.exe` or `clang.exe` is in your `PATH`. CGO will auto-detect it.
+
+#### On Linux (Native Builds)
+
+Most Linux distributions include `gcc` by default. If not:
+
+```bash
+# Debian/Ubuntu
+sudo apt install build-essential
+
+# Arch Linux
+sudo pacman -S base-devel
+```
+
+#### On Linux (Cross-Compiling to Windows)
+
+To build Windows executables from Linux, install MinGW-w64:
+
+```bash
+# Arch Linux
+sudo pacman -S mingw-w64-gcc
+
+# Debian/Ubuntu
+sudo apt install gcc-mingw-w64
+```
+
+## Make Targets
+
+| Target                     | Description                                                                                            |
+| -------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `make livereload`          | Compiles the project and hot-reloads on changes. To debug the frontend, go to `http://localhost:34115` |
+| `make build`               | Compile the application for your current OS and architecture                                           |
+| `make cross-build-windows` | Cross-compile the application for 64-bit Windows using MinGW (Linux only)                              |
+| `make test`                | Run all Go tests in the project                                                                        |
