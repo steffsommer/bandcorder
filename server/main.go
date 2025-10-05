@@ -81,7 +81,7 @@ func main() {
 			Assets: assets,
 		},
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 0},
-		Fullscreen:       true,
+		WindowStartState: options.Maximised,
 		OnStartup: func(ctx context.Context) {
 			if err := recorder.Init(); err != nil {
 				panic("Failed to init recorder service: " + err.Error())
