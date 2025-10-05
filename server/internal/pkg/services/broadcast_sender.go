@@ -5,6 +5,8 @@ import (
 	"server/internal/pkg/models"
 )
 
+// BroadcastSender is an EventDispatcher, which writes to multiple other
+// EventDispatchers
 type BroadcastSender struct {
 	senders []interfaces.EventDispatcher
 }

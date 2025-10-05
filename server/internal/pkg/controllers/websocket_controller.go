@@ -15,6 +15,7 @@ type WebsocketController struct {
 	mutex       sync.Mutex
 }
 
+// NewRecordingController creates a new WebsocketController
 func NewWebsocketController() *WebsocketController {
 	return &WebsocketController{
 		connections: make(map[string]*websocket.Conn),
@@ -68,6 +69,9 @@ func (r *WebsocketController) HandleWebsocketUpgrade(c *gin.Context) {
 	}()
 }
 
+// Dispatch sends an event to all public Websocket clients (app clients)
+// If sending to a client fails, a connection error is assumed and the
+// connection gets closed
 func (r *WebsocketController) Dispatch(event models.EventLike) {
 	r.mutex.Lock()
 	for ip, conn := range r.connections {

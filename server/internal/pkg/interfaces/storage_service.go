@@ -5,6 +5,8 @@ import (
 	"time"
 )
 
+// StorageService saves raw audio data into an arbitrary audio file format and
+// allows querying records created on certain days.
 type StorageService interface {
 	Save(fileName string, data []float32) error
 	GetRecordings(date time.Time) ([]models.RecordingInfo, error)

@@ -18,6 +18,8 @@ func NewAudioProcessorService(
 	}
 }
 
+// Process calculates the average loudness of the given audio sample
+// and dispatches a LiveAudioDataEvent with the result
 func (a *AudioSampleProcessorService) Process(samples []float32) {
 	loudness := calculateRMSLoudness(samples)
 	event := models.NewLiveAudioDataEvent(loudness)

@@ -33,6 +33,9 @@ type WAVHeader struct {
 	Subchunk2Size uint32  // Size of data chunk
 }
 
+// FileSystemStorageService creates WAV Files from raw float32 audio data and saves
+// them to the file system. For each day with recordings, a folder with the name of
+// the current date is created.
 type FileSystemStorageService struct {
 	baseDir      string
 	channelCount int

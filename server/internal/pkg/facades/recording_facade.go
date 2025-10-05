@@ -6,11 +6,14 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// RecordingFacade is a proxy implementation of the recorder interface, which notifies
+// the event system about recording state changes
 type RecordingFacade struct {
 	eventbus interfaces.RecordingEventBus
 	recorder interfaces.Recorder
 }
 
+// NewRecordingFacade creates a new NewRecordingFacade
 func NewRecordingFacade(
 	eventbus interfaces.RecordingEventBus,
 	recorder interfaces.Recorder,
@@ -21,6 +24,7 @@ func NewRecordingFacade(
 	}
 }
 
+// Start starts a new recording and notifies the event bus
 func (r *RecordingFacade) Start() (interfaces.RecordingMetaData, error) {
 	res, err := r.recorder.Start()
 	if err != nil {
@@ -32,6 +36,7 @@ func (r *RecordingFacade) Start() (interfaces.RecordingMetaData, error) {
 	return res, nil
 }
 
+// Stop stops the current recording and notifies the event bus
 func (r *RecordingFacade) Stop() error {
 	err := r.recorder.Stop()
 	if err != nil {
@@ -43,6 +48,7 @@ func (r *RecordingFacade) Stop() error {
 	return err
 }
 
+// Abort aborts the current recording and notifies the event bus
 func (r *RecordingFacade) Abort() error {
 	err := r.recorder.Abort()
 	if err != nil {
@@ -54,6 +60,7 @@ func (r *RecordingFacade) Abort() error {
 	return err
 }
 
+// GetMic returns the name of the microphone in use by the recorder
 func (r *RecordingFacade) GetMic() (string, error) {
 	return r.recorder.GetMic()
 }

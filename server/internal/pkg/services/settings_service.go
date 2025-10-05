@@ -16,16 +16,20 @@ type Settings struct {
 	RecordingsDirectory string
 }
 
+// SettingsService reads and writes the application settings to a YAML file
 type SettingsService struct {
 	filePath string
 }
 
+// NewSettingsService creates a new SettingsService
 func NewSettingsService(filePath string) *SettingsService {
 	return &SettingsService{
 		filePath: filePath,
 	}
 }
 
+// Load loads the application settings from disk. If the settings file does not exist,
+// a new one with the default settings will be created.
 func (s *SettingsService) Load() (Settings, error) {
 	defaults, err := s.getDefaults()
 	if err != nil {
@@ -65,6 +69,7 @@ func (s *SettingsService) merge(defaults, userSettings Settings) Settings {
 	return defaults
 }
 
+// Saves saves the settings to disk
 func (s *SettingsService) Save(settings Settings) error {
 	defaults, err := s.getDefaults()
 	if err != nil {

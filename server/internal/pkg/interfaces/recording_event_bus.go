@@ -1,10 +1,7 @@
 package interfaces
 
-
-// ClientNotifier sends state changes to the client
-// It should send a state change as soon as a state change happens
-// and every 100ms.
-// The data should be sent as JSON
+// RecordingEventBus provides an interface to notify all clients about
+// recording state updates
 type RecordingEventBus interface {
 	NotifyStarted(res RecordingMetaData)
 	NotifyStopped()

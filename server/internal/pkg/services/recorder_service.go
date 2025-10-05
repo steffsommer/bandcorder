@@ -18,6 +18,7 @@ const (
 	bufferSize = 1024
 )
 
+// Recorder manages audio recording operations
 type RecorderService struct {
 	storageSerivce interfaces.StorageService
 	audioProcessor interfaces.AudioProcessor
@@ -29,6 +30,7 @@ type RecorderService struct {
 	mutex          sync.Mutex
 }
 
+// NewRecordingFacade creates a new RecorderService. It uses the default input device
 func NewRecorderService(
 	storageService interfaces.StorageService,
 	audioProcessor interfaces.AudioProcessor,
@@ -76,21 +78,17 @@ func (r *RecorderService) Start() (interfaces.RecordingMetaData, error) {
 		r.audioProcessor.Process(inputBuffer)
 		r.recording = append(r.recording, inputBuffer...)
 	}
-
 	device, err := malgo.InitDevice(r.ctx.Context, deviceConfig, malgo.DeviceCallbacks{
 		Data: onRecvFrames,
 	})
 	if err != nil {
 		return interfaces.RecordingMetaData{}, fmt.Errorf("Failed to initialize device: %w", err)
 	}
-
 	if err := device.Start(); err != nil {
 		return interfaces.RecordingMetaData{}, fmt.Errorf("Failed to start device: %w", err)
 	}
-
 	r.device = device
 	r.fileName = fmt.Sprintf("recording-%s.wav", time.Now().Format("15-04-05"))
-
 	return interfaces.RecordingMetaData{
 		FileName: r.fileName,
 		Started:  time.Now(),
@@ -100,20 +98,15 @@ func (r *RecorderService) Start() (interfaces.RecordingMetaData, error) {
 func (r *RecorderService) Stop() error {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
-
 	if !r.isRunning() {
 		return errors.New("No recording is running")
 	}
-
 	r.device.Uninit()
-
 	if err := r.storageSerivce.Save(r.fileName, r.recording); err != nil {
 		return err
 	}
-
 	logrus.Infof("Recorded %d samples (%.2f seconds)\n",
 		len(r.recording), float64(len(r.recording))/float64(sampleRate))
-
 	r.reset()
 	return nil
 }

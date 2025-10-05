@@ -11,6 +11,7 @@ type RecordingController struct {
 	recorder interfaces.Recorder
 }
 
+// NewRecordingController creates a new RecordingController
 func NewRecordingController(
 	recorder interfaces.Recorder,
 ) *RecordingController {
@@ -20,6 +21,7 @@ func NewRecordingController(
 }
 
 // HandleStart starts a new recording
+// Returns 200 OK on success, 500 Internal Server Error on failure
 func (r RecordingController) HandleStart(c *gin.Context) {
 	_, err := r.recorder.Start()
 	if err != nil {
@@ -30,6 +32,7 @@ func (r RecordingController) HandleStart(c *gin.Context) {
 }
 
 // HandleStop stops the current recording
+// Returns 200 OK on success, 500 Internal Server Error on failure
 func (r RecordingController) HandleStop(c *gin.Context) {
 	err := r.recorder.Stop()
 	if err != nil {
@@ -39,7 +42,8 @@ func (r RecordingController) HandleStop(c *gin.Context) {
 	c.Writer.WriteHeader(http.StatusOK)
 }
 
-// HandleAbort stops the current recording
+// HandleAbort aborts the current recording
+// Returns 200 OK on success, 500 Internal Server Error on failure
 func (r RecordingController) HandleAbort(c *gin.Context) {
 	err := r.recorder.Abort()
 	if err != nil {
