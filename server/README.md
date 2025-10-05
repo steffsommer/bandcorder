@@ -63,9 +63,10 @@ sudo apt install gcc-mingw-w64
 
 ## Make Targets
 
-| Target                     | Description                                                                                            |
-| -------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `make livereload`          | Compiles the project and hot-reloads on changes. To debug the frontend, go to `http://localhost:34115` |
-| `make build`               | Compile the application for your current OS and architecture                                           |
-| `make cross-build-windows` | Cross-compile the application for 64-bit Windows using MinGW (Linux only)                              |
-| `make test`                | Run all Go tests in the project                                                                        |
+| Target                     | Description                                                                                                |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `make livereload`          | Compiles the project and hot-reloads on changes. To debug the frontend, go to `http://localhost:34115`     |
+| `make build`               | Compile the application for your current OS and architecture                                               |
+| `make cross-build-windows` | Cross-compile the application for 64-bit Windows using MinGW (Linux only)                                  |
+| `make tests`               | Run all Go tests                                                                                           |
+| `make tests-nice`          | Run all Go tests with nicer output, requires binaries installed via `go install` to be available in `PATH` |
