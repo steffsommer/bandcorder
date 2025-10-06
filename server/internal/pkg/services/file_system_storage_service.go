@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"server/internal/pkg/interfaces"
 	"server/internal/pkg/models"
 	"slices"
 	"strings"
@@ -40,17 +41,20 @@ type FileSystemStorageService struct {
 	baseDir      string
 	channelCount int
 	sampleRate   int
+	timeProvider interfaces.TimeProvider
 }
 
 func NewFileSystemStorageService(
 	dir string,
 	channelCount int,
 	sampleRate int,
+	timeProvider interfaces.TimeProvider,
 ) *FileSystemStorageService {
 	return &FileSystemStorageService{
 		baseDir:      dir,
 		channelCount: channelCount,
 		sampleRate:   sampleRate,
+		timeProvider: timeProvider,
 	}
 }
 
@@ -95,7 +99,7 @@ func (f *FileSystemStorageService) Save(fileName string, data []float32) error {
 }
 
 func (f *FileSystemStorageService) getTargetDirCreateIfNeeded() (string, error) {
-	today := time.Now()
+	today := f.timeProvider.Now()
 	absTargetDir := f.getAbsDateDir(today)
 	var err error
 	if _, err = os.Stat(absTargetDir); os.IsNotExist(err) {

@@ -54,11 +54,13 @@ func main() {
 	)
 
 	eventbus := cyclic_sender.NewCyclicSender(broadcastSender)
+	timeProvider := services.NewRealTimeProvider()
 
 	storageService := services.NewFileSystemStorageService(
 		settings.RecordingsDirectory,
 		AUDIO_CHANNEL_COUNT,
 		SAMPLE_RATE_HZ,
+		timeProvider,
 	)
 	processor := services.NewAudioProcessorService(broadcastSender)
 	recorder := services.NewRecorderService(storageService, processor)
