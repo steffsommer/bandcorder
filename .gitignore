@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # IDEs
 .idea/
 
@@ -17,3 +18,23 @@ venv.bak/
 
 # PyInstaller spec files
 *.spec
+||||||| f6a4920
+# IDEs
+.idea/
+
+# binaries
+__pycache__/
+*.py[cod]
+*$py.class
+
+# virtual env
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+=======
+*.wav
+>>>>>>> origin/v2

@@ -1,23 +1,25 @@
+import 'package:bandcorder/style_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class ToastService {
-  toastSuccess(String message) {
-    _toast(message, Colors.black, Colors.green, Toast.LENGTH_SHORT);
-  }
-
-  toastError(String message) {
-    _toast(message, Colors.white, Colors.red, Toast.LENGTH_LONG);
-  }
-
-  _toast(String message, Color textColor, Color backgroundColor, Toast length) {
+  void toastSuccess(String msg) {
     Fluttertoast.showToast(
-      msg: message,
-      toastLength: length,
-      gravity: ToastGravity.TOP,
-      backgroundColor: backgroundColor,
-      textColor: textColor,
-      fontSize: 16.0,
-    );
+        msg: msg,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.TOP,
+        backgroundColor: StyleConstants.colorGreen,
+        textColor: Colors.black,
+        fontSize: StyleConstants.textSizeNormal);
+  }
+
+  void toastError(String msg) {
+    Fluttertoast.showToast(
+        msg: msg,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.TOP,
+        backgroundColor: StyleConstants.colorPurple,
+        textColor: Colors.black,
+        fontSize: StyleConstants.textSizeNormal);
   }
 }

@@ -1,0 +1,31 @@
+header {
+  display: flex;
+  justify-content: space-between;
+  height: 60px;
+  margin-inline: var(--spacing-max);
+  margin-top: var(--spacing);
+}
+
+.logo {
+  width: max-content;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spacing);
+  gap: var(--spacing);
+}
+
+.logo-img {
+  height: 2rem;
+}
+
+.centered {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1/1;
+}
+
+.settings-btn {
+  background: white !important;
+  width: max-content !important;
+}

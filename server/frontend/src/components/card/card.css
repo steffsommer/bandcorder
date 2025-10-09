@@ -1,0 +1,6 @@
+.card {
+  display: block;
+  height: 100%;
+  border: 1px solid black;
+  background: var(--color-surface-2);
+}

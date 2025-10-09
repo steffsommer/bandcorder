@@ -1,4 +1,13 @@
+<<<<<<< HEAD
 config.yml
 bandcorder.egg-info/
 dist/
 build/
+||||||| f6a4920
+config.yml
+bandcorder.egg-info/
+=======
+build/bin
+node_modules
+frontend/dist
+>>>>>>> origin/v2

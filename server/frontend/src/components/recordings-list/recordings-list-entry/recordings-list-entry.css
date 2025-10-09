@@ -1,0 +1,38 @@
+.row {
+  display: grid;
+  grid-template-columns: max-content 1fr repeat(4, max-content);
+  align-items: center;
+  justify-items: left;
+  gap: var(--spacing);
+}
+
+.note-icon-container {
+  background: var(--color-surface-1);
+  border-radius: var(--border-radius) 0 0 var(--border-radius);
+  padding: var(--spacing);
+}
+
+.duration {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  gap: 0.4em;
+  margin-right: 1rem;
+}
+
+.entry-card {
+  height: unset;
+}
+
+.list-btn {
+  width: 2rem;
+  height: 2rem;
+}
+
+.edit-btn > * {
+  transform: translateX(2px);
+}
+
+.duration-str {
+  width: 5ch;
+}

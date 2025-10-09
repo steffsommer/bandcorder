@@ -1,0 +1,98 @@
+.recorder {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: min-content 3fr 4fr 2fr max-content;
+  gap: var(--spacing);
+  grid-template-areas:
+    "heading timer"
+    "infos timer"
+    "frequency frequency"
+    "volume volume"
+    "controls controls";
+  padding: var(--spacing);
+  height: 100%;
+}
+
+.recorder > * {
+  min-height: 0;
+  min-width: 0;
+}
+
+.heading {
+  text-align: left;
+  grid-area: heading;
+}
+
+.timer-widget {
+  grid-area: timer;
+  margin: auto;
+}
+
+.infos {
+  display: flex;
+  flex-direction: column;
+}
+
+.current-file-info {
+  overflow-wrap: anywhere;
+  font-size: 1.7rem;
+  grid-area: infos;
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  height: max-content;
+  margin-block: auto;
+  gap: 0.7rem;
+}
+
+.mic-info {
+  display: flex;
+  align-items: center;
+  margin-top: auto;
+}
+
+.file-icon {
+  margin-top: 0.2em;
+  margin-bottom: auto;
+}
+
+.frequency-card {
+  grid-area: frequency;
+  display: grid;
+  place-items: center;
+}
+
+.volume-card {
+  grid-area: volume;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(2 * var(--spacing)) var(--spacing);
+}
+
+.controls {
+  grid-area: controls;
+  gap: 10px;
+  display: flex;
+}
+
+.icon-large {
+  font-size: 1.7rem;
+}
+
+.recorder-btn {
+  width: 4rem;
+  height: 4rem;
+}
+
+.play-btn {
+  background: #a0ff92;
+}
+
+.pause-btn {
+  background: #f8cb46;
+}
+
+.abort-btn {
+  background: #fe90e9;
+}
