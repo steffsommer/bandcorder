@@ -1,3 +1,4 @@
+import 'package:bandcorder/services/connection_cache_service.dart';
 import 'package:bandcorder/services/recording_service.dart';
 import 'package:bandcorder/style_constants.dart';
 import 'package:bandcorder/screens/record_screen.dart';
@@ -6,7 +7,6 @@ import 'package:bandcorder/widgets/custom_card.dart';
 import 'package:bandcorder/widgets/heading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
 import '../services/web_socket_service.dart';
 import '../widgets/custom_button.dart';
 
@@ -18,19 +18,34 @@ class ConnectScreen extends StatefulWidget {
 }
 
 class ConnectScreenState extends State<ConnectScreen> {
-  final WebSocketService socketService = WebSocketService.instance;
-  final RecordingService recordingService = RecordingService.instance;
+  final _socketService = WebSocketService.instance;
+  final _recordingService = RecordingService.instance;
+  final _connectionCacheService = ConnectionCacheService();
   String _host = '10.0.2.2';
   bool _isConnecting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _connectionCacheService.queryHost().then((address) {
+      if (address != null) {
+        print("Found server address in cache. Connecting right away.");
+        setState(() {
+          _host = address;
+        });
+        connect();
+      }
+    });
+  }
 
   void connect() async {
     setState(() {
       _isConnecting = true;
     });
-
     try {
-      await socketService.connect(_host);
-      recordingService.init(_host);
+      await _socketService.connect(_host);
+      _connectionCacheService.cacheHost(_host);
+      _recordingService.init(_host);
       if (!context.mounted) {
         throw StateError("State is not mounted");
       }
@@ -54,45 +69,47 @@ class ConnectScreenState extends State<ConnectScreen> {
       body: Padding(
         padding: StyleConstants.padding,
         child: CustomCard(
-          child: Column(
-            children: [
-              const Heading(message: "Connect"),
-              const SizedBox(height: 60),
-              SvgPicture.asset("assets/desktop_pc.svg",
-                  semanticsLabel: "Bandcorder logo", height: 160),
-              const SizedBox(height: 60),
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Server IP",
-                  style: TextStyle(
-                      fontSize: StyleConstants.textSizeNormal,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-              TextFormField(
-                  initialValue: _host,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const Heading(message: "Connect"),
+                const SizedBox(height: 60),
+                SvgPicture.asset("assets/desktop_pc.svg",
+                    semanticsLabel: "Bandcorder logo", height: 160),
+                const SizedBox(height: 60),
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Server IP",
+                    style: TextStyle(
+                        fontSize: StyleConstants.textSizeNormal,
+                        fontWeight: FontWeight.bold),
                   ),
-                  onChanged: (value) {
-                    setState(() {
-                      _host = value;
-                    });
-                  }),
-              const SizedBox(height: 30),
-              SizedBox(
-                height: 60,
-                child: Center(
-                    child: _isConnecting
-                        ? const CircularProgressIndicator()
-                        : CustomButton(
-                            color: StyleConstants.colorGreen,
-                            onPressed: connect,
-                            icon: Icons.start,
-                            text: "CONNECT")),
-              )
-            ],
+                ),
+                TextFormField(
+                    initialValue: _host,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _host = value;
+                      });
+                    }),
+                const SizedBox(height: 30),
+                SizedBox(
+                  height: 60,
+                  child: Center(
+                      child: _isConnecting
+                          ? const CircularProgressIndicator()
+                          : CustomButton(
+                              color: StyleConstants.colorGreen,
+                              onPressed: connect,
+                              icon: Icons.start,
+                              text: "CONNECT")),
+                )
+              ],
+            ),
           ),
         ),
       ),

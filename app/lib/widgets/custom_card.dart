@@ -3,15 +3,11 @@ import 'package:flutter/cupertino.dart';
 
 class CustomCard extends StatelessWidget {
   final Widget? child;
-
   const CustomCard({super.key, this.child});
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
-    return IntrinsicHeight(
-        child: Container(
+  Widget build(BuildContext context) {
+    return Container(
       decoration: BoxDecoration(
         color: StyleConstants.colorSurface2,
         border: StyleConstants.border,
@@ -21,6 +17,6 @@ class CustomCard extends StatelessWidget {
       padding: StyleConstants.padding,
       width: double.infinity,
       child: child,
-    ));
+    );
   }
 }
