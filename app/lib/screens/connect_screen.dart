@@ -21,8 +21,9 @@ class ConnectScreenState extends State<ConnectScreen> {
   final _socketService = WebSocketService.instance;
   final _recordingService = RecordingService.instance;
   final _connectionCacheService = ConnectionCacheService();
-  String _host = '10.0.2.2';
+  final _hostController = TextEditingController(text: '10.0.2.2');
   bool _isConnecting = false;
+  static bool _isInitialLoad = true;
 
   @override
   void initState() {
@@ -30,12 +31,19 @@ class ConnectScreenState extends State<ConnectScreen> {
     _connectionCacheService.queryHost().then((address) {
       if (address != null) {
         print("Found server address in cache. Connecting right away.");
-        setState(() {
-          _host = address;
-        });
-        connect();
+        _hostController.text = address;
+        if (_isInitialLoad) {
+          _isInitialLoad = false;
+          connect();
+        }
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _hostController.dispose();
+    super.dispose();
   }
 
   void connect() async {
@@ -43,9 +51,9 @@ class ConnectScreenState extends State<ConnectScreen> {
       _isConnecting = true;
     });
     try {
-      await _socketService.connect(_host);
-      _connectionCacheService.cacheHost(_host);
-      _recordingService.init(_host);
+      await _socketService.connect(_hostController.text);
+      _connectionCacheService.cacheHost(_hostController.text);
+      _recordingService.init(_hostController.text);
       if (!context.mounted) {
         throw StateError("State is not mounted");
       }
@@ -87,15 +95,10 @@ class ConnectScreenState extends State<ConnectScreen> {
                   ),
                 ),
                 TextFormField(
-                    initialValue: _host,
+                    controller: _hostController,
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        _host = value;
-                      });
-                    }),
+                    )),
                 const SizedBox(height: 30),
                 SizedBox(
                   height: 60,
