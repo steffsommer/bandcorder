@@ -38,12 +38,19 @@ class WebSocketService {
   /// - Other exceptions for connection failures
   Future<void> connect(String host) async {
     try {
+      await disconnect();
+
       final url = 'ws://$host:${AppConstants.serverPort}$websocketPath';
       print('Connecting to $url');
 
-      await disconnect();
+      // Chaining .timeout() behind .connect() is not viable, because the default
+      // underlying HTTP client keeps connecting with the default timeout of
+      // 30 seconds, which leads to multiple connections being created
+      // https://github.com/dart-lang/http/issues/1598
+      final httpClient = HttpClient();
+      httpClient.connectionTimeout = connectTimeout;
+      _webSocket = await WebSocket.connect(url, customClient: httpClient);
 
-      _webSocket = await WebSocket.connect(url).timeout(connectTimeout);
       _webSocket!.pingInterval = pingFrequency;
 
       print('Websocket connection established');

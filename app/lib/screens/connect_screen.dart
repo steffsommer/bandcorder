@@ -28,17 +28,20 @@ class ConnectScreenState extends State<ConnectScreen> {
   @override
   void initState() {
     super.initState();
-    _socketService.disconnect();
-    _connectionCacheService.queryHost().then((address) {
-      if (address != null) {
-        print("Found server address in cache. Connecting right away.");
-        _hostController.text = address;
-        if (_isInitialLoad) {
-          _isInitialLoad = false;
-          connect();
-        }
+    _initializeConnection();
+  }
+
+  Future<void> _initializeConnection() async {
+    await _socketService.disconnect();
+    final address = await _connectionCacheService.queryHost();
+    if (address != null) {
+      print("Found server address in cache. Connecting right away.");
+      _hostController.text = address;
+      if (_isInitialLoad) {
+        _isInitialLoad = false;
+        connect();
       }
-    });
+    }
   }
 
   @override
