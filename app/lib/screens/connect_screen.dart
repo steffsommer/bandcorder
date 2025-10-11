@@ -28,6 +28,7 @@ class ConnectScreenState extends State<ConnectScreen> {
   @override
   void initState() {
     super.initState();
+    _socketService.disconnect();
     _connectionCacheService.queryHost().then((address) {
       if (address != null) {
         print("Found server address in cache. Connecting right away.");

@@ -17,8 +17,10 @@ const pingFrequency = Duration(milliseconds: 500);
 class WebSocketService {
   final _eventsToCallbacks = <Type, List<Function>>{};
   final _toastService = ToastService();
+  static const String _intentionalCloseReason = "Disconnect by User";
   static final WebSocketService instance = WebSocketService._();
   WebSocket? _webSocket;
+  StreamSubscription<dynamic>? _eventSubscription;
 
   WebSocketService._();
 
@@ -39,12 +41,14 @@ class WebSocketService {
       final url = 'ws://$host:${AppConstants.serverPort}$websocketPath';
       print('Connecting to $url');
 
+      await disconnect();
+
       _webSocket = await WebSocket.connect(url).timeout(connectTimeout);
       _webSocket!.pingInterval = pingFrequency;
 
       print('Websocket connection established');
 
-      _webSocket!.listen(
+      _eventSubscription = _webSocket!.listen(
         (data) {
           try {
             var event = _convertJsonToEvent(data);
@@ -60,6 +64,9 @@ class WebSocketService {
           }
         },
         onDone: () {
+          if (_webSocket?.closeCode == WebSocketStatus.normalClosure) {
+            return;
+          }
           _toastService.toastError("Bandcorder was stopped");
           _onConnectionLoss();
         },
@@ -96,6 +103,19 @@ class WebSocketService {
     _eventsToCallbacks.putIfAbsent(T, () => <Function>[]);
     _eventsToCallbacks[T]?.add(callback);
     return () => _eventsToCallbacks[T]?.remove(callback);
+  }
+
+  Future<void> disconnect() async {
+    try {
+      await _eventSubscription?.cancel();
+      await _webSocket?.close(
+          WebSocketStatus.normalClosure, _intentionalCloseReason);
+      print('disconnected');
+    } on WebSocketException catch (e) {
+      print('WebSocket error during close: $e');
+    } catch (e) {
+      print('Unexpected error: $e');
+    }
   }
 
   static Event _convertJsonToEvent(dynamic json) {
