@@ -39,10 +39,15 @@ func (r *WebsocketController) HandleWebsocketUpgrade(c *gin.Context) {
 	clientIp := c.ClientIP()
 	existingConn, exists := r.connections[clientIp]
 	if exists {
-		existingConn.Close()
+		logrus.Errorf("Client with IP %s already has a connection, closing the old one", clientIp)
+		err := existingConn.Close()
+		if err != nil {
+			logrus.Errorf("Failed to close connection of client with IP %s", clientIp)
+		}
 	}
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
+		logrus.Errorf("Failed to upgrade connection for client with IP: %s: %s", clientIp, err.Error())
 		return
 	}
 	conn.SetPingHandler(func(appData string) error {
