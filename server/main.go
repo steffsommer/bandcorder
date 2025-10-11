@@ -93,7 +93,7 @@ func main() {
 			go func() {
 				log.Printf("Server starting on localhost:%d\n", API_PORT)
 
-				if err := r.Run(":" + strconv.Itoa(API_PORT)); err != nil {
+				if err := r.Run("0.0.0.0:" + strconv.Itoa(API_PORT)); err != nil {
 					log.Fatal("Failed to start server:", err)
 				}
 
