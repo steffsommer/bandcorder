@@ -5,11 +5,10 @@ import { EventID } from "../events";
 import "./frequency-chart.css";
 
 const BAR_COUNT = 40;
+const MIN_BAR_HEIGHT = 2;
 const CANVAS_WIDTH = 1000;
 const CANVAS_HEIGHT = 400;
-const MIN_BAR_HEIGHT = 2;
-const BAR_MIN = 3;
-const DEFAULT_BARS = Array(40).fill(BAR_MIN);
+const DEFAULT_BARS = Array(40).fill(MIN_BAR_HEIGHT);
 
 export function FrequencyChart() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -20,8 +19,7 @@ export function FrequencyChart() {
     requestAnimationFrame(draw);
     const unsubAudioData = EventsOn(EventID.LiveAudioDataEvent,
       async (event: models.LiveAudioEventData) => {
-        // interpolator.setTarget(event.loudnessPercentage);
-        bars = event.frequencyBars.map(val => val < BAR_MIN ? BAR_MIN : val)
+        bars = event.frequencyBars.map(val => val < MIN_BAR_HEIGHT ? MIN_BAR_HEIGHT : val)
       }
     );
     const unsubIdleEvent = EventsOn(EventID.RecordingIdle,
@@ -65,18 +63,6 @@ export function FrequencyChart() {
     });
     requestAnimationFrame(draw);
   }
-
-  // Initial blank draw
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (canvas) {
-      const ctx = canvas.getContext("2d");
-      if (ctx) ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-    }
-  }, []);
-
-  // Attach draw to the component for external access
-  (FrequencyChart as any).draw = draw;
 
   return (
     <canvas

@@ -6,7 +6,6 @@ import (
 	"server/internal/pkg/interfaces"
 	"server/internal/pkg/models"
 	"server/internal/pkg/utils"
-
 	"github.com/mjibson/go-dsp/fft"
 )
 
@@ -16,53 +15,64 @@ const (
 )
 
 type AudioSampleProcessorService struct {
-	dispatcher interfaces.EventDispatcher
+	dispatcher   interfaces.EventDispatcher
+	sampleBuffer []float32
 }
 
 func NewAudioProcessorService(
 	dispatcher interfaces.EventDispatcher,
 ) *AudioSampleProcessorService {
 	return &AudioSampleProcessorService{
-		dispatcher: dispatcher,
+		dispatcher:   dispatcher,
+		sampleBuffer: make([]float32, 0, FFTSize),
 	}
 }
 
-// Process calculates the average loudness of the given audio sample
-// and dispatches a LiveAudioDataEvent with the result
 func (a *AudioSampleProcessorService) Process(samples []float32) {
-	loudness := calculateRMSLoudness(samples)
-	bars := calculateFrequencyBars(samples)
+	a.sampleBuffer = append(a.sampleBuffer, samples...)
+
+	// Only process when we have enough samples
+	if len(a.sampleBuffer) < FFTSize {
+		return
+	}
+
+	// Process the first FFTSize samples
+	loudness := calculateRMSLoudness(a.sampleBuffer[:FFTSize])
+
+	var bars []int
+	// If too quiet, send empty bars
+	if loudness < 2 {
+		bars = make([]int, BarCount)
+	} else {
+		bars = calculateFrequencyBars(a.sampleBuffer[:FFTSize])
+	}
+
 	event := models.NewLiveAudioDataEvent(loudness, bars)
 	a.dispatcher.Dispatch(event)
+
+	// Slide window by half for overlap
+	a.sampleBuffer = a.sampleBuffer[FFTSize/2:]
 }
 
-// calculateRMSLoudness calculates the loudness of audio samples using RMS (Root Mean Square)
-//
-// RMS provides a better representation of perceived loudness compared to peak amplitude
-// detection by measuring the average energy of a batch of samples.
 func calculateRMSLoudness(samples []float32) uint8 {
 	if len(samples) == 0 {
 		return 0
 	}
-
 	var squareSum float64
 	for _, sample := range samples {
 		squareSum += float64(sample * sample)
 	}
-
 	rms := math.Sqrt(squareSum / float64(len(samples)))
 	loudness := rms * 100
-
 	if loudness > 100 {
 		loudness = 100
 	}
-
 	return uint8(math.Round(loudness))
 }
 
 func calculateFrequencyBars(audioFrame []float32) []int {
 	nyquist := float64(utils.SampleRate) / 2
-	// Convert float32 to complex128 for FFT
+
 	spectrum := make([]complex128, FFTSize)
 	for i := 0; i < len(audioFrame) && i < FFTSize; i++ {
 		spectrum[i] = complex(float64(audioFrame[i]), 0)
@@ -75,7 +85,6 @@ func calculateFrequencyBars(audioFrame []float32) []int {
 		magnitudes[i] = cmplx.Abs(fftResult[i])
 	}
 
-	// Map to 40 bars for 50Hz - 8kHz range
 	lowFreq := 50.0
 	highFreq := 8000.0
 	lowBin := (lowFreq / nyquist) * float64(FFTSize/2)
@@ -83,7 +92,6 @@ func calculateFrequencyBars(audioFrame []float32) []int {
 
 	bars := make([]float32, BarCount)
 	for i := 0; i < BarCount; i++ {
-		// Linear mapping across bin range
 		startBin := lowBin + (float64(i)/float64(BarCount))*(highBin-lowBin)
 		endBin := lowBin + (float64(i+1)/float64(BarCount))*(highBin-lowBin)
 
@@ -118,6 +126,5 @@ func calculateFrequencyBars(audioFrame []float32) []int {
 	for i, v := range bars {
 		intBars[i] = int(v)
 	}
-
 	return intBars
 }
