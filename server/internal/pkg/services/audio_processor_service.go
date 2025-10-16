@@ -2,8 +2,17 @@ package services
 
 import (
 	"math"
+	"math/cmplx"
 	"server/internal/pkg/interfaces"
 	"server/internal/pkg/models"
+	"server/internal/pkg/utils"
+
+	"github.com/mjibson/go-dsp/fft"
+)
+
+const (
+	FFTSize  = 2048
+	BarCount = 40
 )
 
 type AudioSampleProcessorService struct {
@@ -22,7 +31,8 @@ func NewAudioProcessorService(
 // and dispatches a LiveAudioDataEvent with the result
 func (a *AudioSampleProcessorService) Process(samples []float32) {
 	loudness := calculateRMSLoudness(samples)
-	event := models.NewLiveAudioDataEvent(loudness)
+	bars := calculateFrequencyBars(samples)
+	event := models.NewLiveAudioDataEvent(loudness, bars)
 	a.dispatcher.Dispatch(event)
 }
 
@@ -48,4 +58,66 @@ func calculateRMSLoudness(samples []float32) uint8 {
 	}
 
 	return uint8(math.Round(loudness))
+}
+
+func calculateFrequencyBars(audioFrame []float32) []int {
+	nyquist := float64(utils.SampleRate) / 2
+	// Convert float32 to complex128 for FFT
+	spectrum := make([]complex128, FFTSize)
+	for i := 0; i < len(audioFrame) && i < FFTSize; i++ {
+		spectrum[i] = complex(float64(audioFrame[i]), 0)
+	}
+
+	fftResult := fft.FFT(spectrum)
+
+	magnitudes := make([]float64, FFTSize/2)
+	for i := 0; i < FFTSize/2; i++ {
+		magnitudes[i] = cmplx.Abs(fftResult[i])
+	}
+
+	// Map to 40 bars for 50Hz - 8kHz range
+	lowFreq := 50.0
+	highFreq := 8000.0
+	lowBin := (lowFreq / nyquist) * float64(FFTSize/2)
+	highBin := (highFreq / nyquist) * float64(FFTSize/2)
+
+	bars := make([]float32, BarCount)
+	for i := 0; i < BarCount; i++ {
+		// Linear mapping across bin range
+		startBin := lowBin + (float64(i)/float64(BarCount))*(highBin-lowBin)
+		endBin := lowBin + (float64(i+1)/float64(BarCount))*(highBin-lowBin)
+
+		var sum float64
+		count := 0
+		for j := int(math.Floor(startBin)); j < int(math.Ceil(endBin)); j++ {
+			if j < len(magnitudes) {
+				sum += magnitudes[j]
+				count++
+			}
+		}
+
+		if count > 0 {
+			bars[i] = float32(sum / float64(count))
+		}
+	}
+
+	maxMagnitude := float32(0)
+	for _, bar := range bars {
+		if bar > maxMagnitude {
+			maxMagnitude = bar
+		}
+	}
+
+	if maxMagnitude > 0 {
+		for i := range bars {
+			bars[i] = (bars[i] / maxMagnitude) * 100
+		}
+	}
+
+	intBars := make([]int, len(bars))
+	for i, v := range bars {
+		intBars[i] = int(v)
+	}
+
+	return intBars
 }

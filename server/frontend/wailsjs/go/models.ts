@@ -39,6 +39,7 @@ export namespace models {
 	
 	export class LiveAudioEventData {
 	    loudnessPercentage: number;
+	    frequencyBars: number[];
 	
 	    static createFrom(source: any = {}) {
 	        return new LiveAudioEventData(source);
@@ -47,6 +48,7 @@ export namespace models {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.loudnessPercentage = source["loudnessPercentage"];
+	        this.frequencyBars = source["frequencyBars"];
 	    }
 	}
 	export class RecordingInfo {
