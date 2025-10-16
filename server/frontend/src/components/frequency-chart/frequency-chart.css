@@ -1,6 +1,5 @@
 .frequency-chart {
   min-height: 0;
-  border: 1px solid red;
   padding: var(--spacing);
   height: 100%;
   width: 100%;

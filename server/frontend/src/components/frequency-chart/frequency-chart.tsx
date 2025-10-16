@@ -6,6 +6,7 @@ import { EventID } from "../events";
 import "./frequency-chart.css";
 
 const BAR_COUNT = 40;
+const BAR_GAP = 8;
 const MIN_BAR_HEIGHT = 3;
 const CANVAS_WIDTH = 1000;
 const CANVAS_HEIGHT = 400;
@@ -53,16 +54,26 @@ export function FrequencyChart() {
 
     const barWidth = CANVAS_WIDTH / BAR_COUNT;
     const bars = interpolators.map(ip => ip.getValue())
-    bars.slice(0, BAR_COUNT).forEach((value, i) => {
+    bars.forEach((value, i) => {
+      const x = i * barWidth;
       const barHeight =
         ((CANVAS_HEIGHT - MIN_BAR_HEIGHT) * value) / 100 + MIN_BAR_HEIGHT;
-      ctx.fillStyle = "#3498db";
+      ctx.fillStyle = "#5eb3f5";
       ctx.fillRect(
-        i * barWidth,
+        x,
         CANVAS_HEIGHT - barHeight,
-        barWidth - 2,
+        barWidth - BAR_GAP,
         barHeight
       );
+      ctx.strokeStyle = "black"
+      ctx.lineWidth = 3;
+      ctx.strokeRect(
+        x,
+        CANVAS_HEIGHT - barHeight,
+        barWidth - BAR_GAP,
+        barHeight
+
+      )
     });
     requestAnimationFrame(draw);
   }
@@ -73,7 +84,6 @@ export function FrequencyChart() {
       ref={canvasRef}
       width={CANVAS_WIDTH}
       height={CANVAS_HEIGHT}
-      style={{ border: "1px solid #ccc" }}
     />
   );
 }

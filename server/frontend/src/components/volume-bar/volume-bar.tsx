@@ -6,6 +6,7 @@ import { EventID } from "../events";
 import "./volume-bar.css";
 
 const BAR_COUNT = 40;
+const BAR_GAP = 2;
 const INTERPOLATION_SPEED = 60;
 
 export function VolumeBar() {
@@ -33,7 +34,6 @@ export function VolumeBar() {
     const width = canvasRef.current?.width ?? 0;
     const height = canvasRef.current?.height ?? 0;
     const barWidth = width / BAR_COUNT;
-    const gap = 2;
 
     context.clearRect(0, 0, width, height);
 
@@ -42,11 +42,11 @@ export function VolumeBar() {
       const fillThreshold = ((i + 1) / BAR_COUNT) * 100;
       if (percentage >= fillThreshold) {
         context.fillStyle = "black";
-        context.fillRect(x + gap, 0, barWidth - gap * 2, height);
+        context.fillRect(x + BAR_GAP, 0, barWidth - BAR_GAP * 2, height);
       } else {
         context.strokeStyle = "#aaa";
         context.lineWidth = 1;
-        context.strokeRect(x + gap, 0, barWidth - gap * 2, height);
+        context.strokeRect(x + BAR_GAP, 0, barWidth - BAR_GAP * 2, height);
       }
     }
     animationFrameHandleRef.current = requestAnimationFrame(draw);
