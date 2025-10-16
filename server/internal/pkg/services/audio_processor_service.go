@@ -1,17 +1,19 @@
 package services
 
 import (
+	"github.com/mjibson/go-dsp/fft"
 	"math"
 	"math/cmplx"
 	"server/internal/pkg/interfaces"
 	"server/internal/pkg/models"
 	"server/internal/pkg/utils"
-	"github.com/mjibson/go-dsp/fft"
 )
 
 const (
 	FFTSize  = 2048
 	BarCount = 40
+	LowFreq  = 50.0
+	HighFreq = 6000.0
 )
 
 type AudioSampleProcessorService struct {
@@ -85,10 +87,8 @@ func calculateFrequencyBars(audioFrame []float32) []int {
 		magnitudes[i] = cmplx.Abs(fftResult[i])
 	}
 
-	lowFreq := 50.0
-	highFreq := 8000.0
-	lowBin := (lowFreq / nyquist) * float64(FFTSize/2)
-	highBin := (highFreq / nyquist) * float64(FFTSize/2)
+	lowBin := (LowFreq / nyquist) * float64(FFTSize/2)
+	highBin := (HighFreq / nyquist) * float64(FFTSize/2)
 
 	bars := make([]float32, BarCount)
 	for i := 0; i < BarCount; i++ {
