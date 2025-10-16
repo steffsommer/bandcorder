@@ -52,5 +52,5 @@ export function VolumeBar() {
     animationFrameHandleRef.current = requestAnimationFrame(draw);
   }
 
-  return <canvas className="volume-bar" ref={canvasRef} width={400} height={30}></canvas>;
+  return <canvas className="volume-bar" ref={canvasRef} width={1000} height={120}></canvas>;
 }
