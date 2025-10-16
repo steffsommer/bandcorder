@@ -10,10 +10,10 @@ import (
 )
 
 const (
-	FFTSize  = 2048
-	BarCount = 40
-	LowFreq  = 50.0
-	HighFreq = 6000.0
+	FFTSize  = 2048   // Number of samples to accumulate before data is processed
+	BarCount = 40     // Number of frequency bar data (range 0-100 per bar) to calculate
+	LowFreq  = 50.0   // approximate frequency of the lowest bar
+	HighFreq = 6000.0 // approximate frequency of the highest bar
 )
 
 type AudioSampleProcessorService struct {
@@ -21,6 +21,7 @@ type AudioSampleProcessorService struct {
 	sampleBuffer []float32
 }
 
+// NewAudioProcessorService creates a new AudioProcessorService
 func NewAudioProcessorService(
 	dispatcher interfaces.EventDispatcher,
 ) *AudioSampleProcessorService {
@@ -30,19 +31,21 @@ func NewAudioProcessorService(
 	}
 }
 
+// Process buffers audio samples and dispatches a LiveAudioDataEvent when
+// FFTSize samples accumulated over a internal threshold and got processed.
+// It calculates loudness and frequency bars, sending empty bars if the audio
+// is too quiet (loudness < 2). The sample buffer uses a 50% overlap window for
+// smoother transitions between frames.
 func (a *AudioSampleProcessorService) Process(samples []float32) {
 	a.sampleBuffer = append(a.sampleBuffer, samples...)
-
-	// Only process when we have enough samples
 	if len(a.sampleBuffer) < FFTSize {
 		return
 	}
 
-	// Process the first FFTSize samples
-	loudness := calculateRMSLoudness(a.sampleBuffer[:FFTSize])
+	loudness := calculateRootMeanSqaureLoudness(a.sampleBuffer[:FFTSize])
 
+	// Remove noise
 	var bars []int
-	// If too quiet, send empty bars
 	if loudness < 2 {
 		bars = make([]int, BarCount)
 	} else {
@@ -56,7 +59,7 @@ func (a *AudioSampleProcessorService) Process(samples []float32) {
 	a.sampleBuffer = a.sampleBuffer[FFTSize/2:]
 }
 
-func calculateRMSLoudness(samples []float32) uint8 {
+func calculateRootMeanSqaureLoudness(samples []float32) uint8 {
 	if len(samples) == 0 {
 		return 0
 	}
@@ -128,3 +131,4 @@ func calculateFrequencyBars(audioFrame []float32) []int {
 	}
 	return intBars
 }
+
