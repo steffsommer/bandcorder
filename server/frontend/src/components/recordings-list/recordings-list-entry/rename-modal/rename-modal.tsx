@@ -1,6 +1,8 @@
 import { useEffect, useRef } from "react";
 import { FiFile, FiSave } from "react-icons/fi";
 import { IoMdClose } from "react-icons/io";
+import { RenameRecording } from "../../../../../wailsjs/go/services/FileSystemStorageService";
+import { toastFailure, toastSuccess } from "../../../../services/toast-service/toast-service";
 import { Button } from "../../../button/button";
 import "./rename-modal.css";
 
@@ -26,7 +28,12 @@ export function RenameModal({ show, onClose, initialFileValue }: Props) {
   }, [show]);
 
   const handleSubmit = async () => {
-    console.log("initial: " + initialFileValue + ", now: " + inputRef.current?.value);
+    try {
+      const date = new Date().toISOString();
+      RenameRecording(initialFileValue, inputRef.current?.value ?? "", date);
+      toastSuccess("Rename successful");
+    } catch (e) { }
+    toastFailure("Rename failed");
   };
 
   return (

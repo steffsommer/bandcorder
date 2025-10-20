@@ -6,6 +6,10 @@ export function GetRecordings(arg1) {
   return window['go']['services']['FileSystemStorageService']['GetRecordings'](arg1);
 }
 
+export function RenameRecording(arg1, arg2, arg3) {
+  return window['go']['services']['FileSystemStorageService']['RenameRecording'](arg1, arg2, arg3);
+}
+
 export function Save(arg1, arg2) {
   return window['go']['services']['FileSystemStorageService']['Save'](arg1, arg2);
 }
