@@ -109,3 +109,55 @@ func TestSave_CreatesDirectoryIfNotExists(t *testing.T) {
 	assert.NoError(t, err)
 	assert.True(t, stat.IsDir())
 }
+
+func Test_FileSystemStorageService_RenameRecording_Success(t *testing.T) {
+	tmpDir := t.TempDir()
+	testTime := time.Date(2024, 1, 15, 10, 0, 0, 0, time.UTC)
+	timeProvider := &testutils.FakeTimeProvider{Time: testTime}
+	service := NewFileSystemStorageService(tmpDir, 1, 44100, timeProvider)
+	
+	testData := []float32{0.1, 0.2}
+	err := service.Save("old_name.wav", testData)
+	assert.NoError(t, err)
+	
+	err = service.RenameRecording("old_name.wav", "new_name.wav", testTime)
+	assert.NoError(t, err)
+	
+	dateDir := filepath.Join(tmpDir, "2024-01-15")
+	oldPath := filepath.Join(dateDir, "old_name.wav")
+	newPath := filepath.Join(dateDir, "new_name.wav")
+	
+	_, err = os.Stat(oldPath)
+	assert.True(t, os.IsNotExist(err))
+	
+	_, err = os.Stat(newPath)
+	assert.NoError(t, err)
+}
+
+func Test_FileSystemStorageService_RenameRecording_DateDirNotExists(t *testing.T) {
+	tmpDir := t.TempDir()
+	timeProvider := &testutils.FakeTimeProvider{Time: time.Now()}
+	service := NewFileSystemStorageService(tmpDir, 1, 44100, timeProvider)
+	
+	nonExistentDate := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
+	err := service.RenameRecording("old.wav", "new.wav", nonExistentDate)
+	
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "No recordings exist for given date")
+}
+
+func Test_FileSystemStorageService_RenameRecording_FileNotExists(t *testing.T) {
+	tmpDir := t.TempDir()
+	testTime := time.Date(2024, 1, 15, 10, 0, 0, 0, time.UTC)
+	timeProvider := &testutils.FakeTimeProvider{Time: testTime}
+	service := NewFileSystemStorageService(tmpDir, 1, 44100, timeProvider)
+	
+	testData := []float32{0.1, 0.2}
+	err := service.Save("existing.wav", testData)
+	assert.NoError(t, err)
+	
+	err = service.RenameRecording("nonexistent.wav", "new.wav", testTime)
+	
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "does not exist")
+}

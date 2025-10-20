@@ -207,3 +207,22 @@ func getWavDuration(absPath string) (uint32, error) {
 
 	return uint32(durationSeconds), nil
 }
+
+func (f *FileSystemStorageService) RenameRecording(
+	oldFileName string,
+	newFileName string,
+	date time.Time,
+) error {
+	absDateDir := f.getAbsDateDir(date)
+	if _, err := os.Stat(absDateDir); os.IsNotExist(err) {
+		return fmt.Errorf("No recordings exist for given date %s", date)
+	}
+	absFileOld := filepath.Join(absDateDir, oldFileName)
+	if _, err := os.Stat(absFileOld); os.IsNotExist(err) {
+		return fmt.Errorf("Recording file %s does not exist for date %s", oldFileName, date)
+	}
+	absFileNew := filepath.Join(absDateDir, newFileName)
+	err := os.Rename(absFileOld, absFileNew)
+	return err
+}
+
