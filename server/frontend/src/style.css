@@ -122,9 +122,6 @@ input {
   padding-inline: 8px;
 }
 
-input:focus {
-}
-
 @keyframes scaleIn {
   from {
     transform: scale(0.8);
@@ -137,5 +134,6 @@ input:focus {
 }
 
 dialog {
+  border-radius: var(--border-radius);
   animation: scaleIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
