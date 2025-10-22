@@ -8,14 +8,30 @@ import { models } from "../../../../wailsjs/go/models";
 import { TimeUtils } from "../../../utils/time";
 import { RenameModal } from "./rename-modal/rename-modal";
 import { useState } from "react";
+import { ConfirmationModal } from "../../confirmation-modal/confirmation-modal";
+import { DeleteRecording } from "../../../../wailsjs/go/services/FileSystemStorageService";
+import { toastFailure, toastSuccess } from "../../../services/toast-service/toast-service";
 
 interface Props {
   recording: models.RecordingInfo;
-  onRename: () => void;
+  onChange: () => void;
 }
 
-export const RecordingsListEntry: React.FC<Props> = ({ recording, onRename }) => {
+export const RecordingsListEntry: React.FC<Props> = ({ recording, onChange }) => {
   const [showRenameModal, setShowRenameModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  async function deleteRecording() {
+    const date = new Date().toISOString();
+    try {
+      await DeleteRecording(recording.fileName, date);
+      toastSuccess("Recording deleted");
+    } catch (e) {
+      toastFailure("Failed to delete recording");
+    }
+    onChange();
+  }
+
   return (
     <Card className="entry-card">
       <div className="row">
@@ -30,7 +46,7 @@ export const RecordingsListEntry: React.FC<Props> = ({ recording, onRename }) =>
         <Button className="list-btn edit-btn" onClick={() => setShowRenameModal(true)}>
           <FaEdit />
         </Button>
-        <Button className="list-btn">
+        <Button className="list-btn" onClick={() => setShowDeleteModal(true)}>
           <FaTrash />
         </Button>
       </div>
@@ -38,7 +54,13 @@ export const RecordingsListEntry: React.FC<Props> = ({ recording, onRename }) =>
         show={showRenameModal}
         initialFileValue={recording.fileName}
         onClose={() => setShowRenameModal(false)}
-        onRename={onRename}
+        onRename={onChange}
+      />
+      <ConfirmationModal
+        show={showDeleteModal}
+        onAccept={deleteRecording}
+        text="Do you really want to delete this recording?"
+        onClose={() => setShowDeleteModal(false)}
       />
     </Card>
   );

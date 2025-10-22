@@ -1,0 +1,60 @@
+.confirmation-dialog {
+  position: fixed;
+  background: var(--color-surface-2);
+  padding: var(--spacing);
+  margin: auto;
+  top: 0;
+  bottom: 0;
+  /* min-height is needed, because wails does not size the modal
+   * height to accomodate all components for some reason.   */
+  min-height: 200px;
+}
+
+.confirmation-heading {
+  display: flex;
+  gap: 5px;
+}
+
+.confirmation-close-icon {
+  margin-left: auto;
+}
+
+.close-btn {
+  margin-left: auto;
+}
+
+.confirmation-list {
+  display: grid;
+  grid-template-columns: max-content 40ch;
+  gap: 12px;
+  grid-auto-rows: 2rem;
+  align-items: center;
+  margin-block: 4rem;
+}
+
+.confirmation-text {
+  display: flex;
+  margin-block: var(--spacing);
+}
+
+.action {
+  margin-top: auto;
+  background: var(--color-1);
+  padding-inline: 8rem;
+  margin-inline: auto;
+  width: max-content;
+}
+
+.confirm-btn {
+  background: var(--color-1);
+}
+
+.reject-btn {
+  background: var(--color-3);
+}
+
+.confirm-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing);
+}

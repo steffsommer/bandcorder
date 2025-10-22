@@ -52,7 +52,7 @@ export const RecordingsList: React.FC<any> = () => {
                 exit={{ opacity: 0 }}
                 key={item.fileName || `recording-${index}`}
               >
-                <RecordingsListEntry recording={item} onRename={updateList} />
+                <RecordingsListEntry recording={item} onChange={updateList} />
               </motion.li>
             ))}
           </AnimatePresence>
