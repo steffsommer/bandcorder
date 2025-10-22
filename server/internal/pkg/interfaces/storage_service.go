@@ -11,4 +11,5 @@ type StorageService interface {
 	Save(fileName string, data []float32) error
 	GetRecordings(date time.Time) ([]models.RecordingInfo, error)
 	RenameRecording(oldFileName string, newFileName string, date time.Time) error
+	DeleteRecording(fileName string, date time.Time) error
 }

@@ -222,7 +222,17 @@ func (f *FileSystemStorageService) RenameRecording(
 		return fmt.Errorf("Recording file %s does not exist for date %s", oldFileName, date)
 	}
 	absFileNew := filepath.Join(absDateDir, newFileName)
-	err := os.Rename(absFileOld, absFileNew)
-	return err
+	return os.Rename(absFileOld, absFileNew)
 }
 
+func (f *FileSystemStorageService) DeleteRecording(fileName string, date time.Time) error {
+	absDateDir := f.getAbsDateDir(date)
+	if _, err := os.Stat(absDateDir); os.IsNotExist(err) {
+		return fmt.Errorf("No recordings exist for given date %s", date)
+	}
+	absFile := filepath.Join(absDateDir, fileName)
+	if _, err := os.Stat(absFile); os.IsNotExist(err) {
+		return fmt.Errorf("Recording file %s does not exist for date %s", fileName, date)
+	}
+	return os.Remove(absFile)
+}

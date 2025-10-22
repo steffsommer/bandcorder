@@ -3,6 +3,8 @@
 import {time} from '../models';
 import {models} from '../models';
 
+export function DeleteRecording(arg1:string,arg2:time.Time):Promise<void>;
+
 export function GetRecordings(arg1:time.Time):Promise<Array<models.RecordingInfo>>;
 
 export function RenameRecording(arg1:string,arg2:string,arg3:time.Time):Promise<void>;

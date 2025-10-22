@@ -10,9 +10,10 @@ interface Props {
   show?: boolean;
   onClose: () => void;
   initialFileValue: string;
+  onRename: () => void;
 }
 
-export function RenameModal({ show, onClose, initialFileValue }: Props) {
+export function RenameModal({ show, onClose, initialFileValue, onRename }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -30,10 +31,12 @@ export function RenameModal({ show, onClose, initialFileValue }: Props) {
   const handleSubmit = async () => {
     try {
       const date = new Date().toISOString();
-      RenameRecording(initialFileValue, inputRef.current?.value ?? "", date);
+      await RenameRecording(initialFileValue, inputRef.current?.value ?? "", date);
+      onRename();
       toastSuccess("Rename successful");
-    } catch (e) { }
-    toastFailure("Rename failed");
+    } catch (e) {
+      toastFailure("Rename failed");
+    }
   };
 
   return (

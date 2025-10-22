@@ -11,9 +11,10 @@ import { useState } from "react";
 
 interface Props {
   recording: models.RecordingInfo;
+  onRename: () => void;
 }
 
-export const RecordingsListEntry: React.FC<Props> = ({ recording }) => {
+export const RecordingsListEntry: React.FC<Props> = ({ recording, onRename }) => {
   const [showRenameModal, setShowRenameModal] = useState(false);
   return (
     <Card className="entry-card">
@@ -37,6 +38,7 @@ export const RecordingsListEntry: React.FC<Props> = ({ recording }) => {
         show={showRenameModal}
         initialFileValue={recording.fileName}
         onClose={() => setShowRenameModal(false)}
+        onRename={onRename}
       />
     </Card>
   );
