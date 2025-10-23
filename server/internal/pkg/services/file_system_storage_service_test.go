@@ -161,3 +161,55 @@ func Test_FileSystemStorageService_RenameRecording_FileNotExists(t *testing.T) {
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "does not exist")
 }
+
+func createTestDirStructure(t *testing.T, baseDir string, structure map[string][]string) {
+	for dir, files := range structure {
+		dirPath := filepath.Join(baseDir, dir)
+		err := os.MkdirAll(dirPath, 0755)
+		assert.NoError(t, err)
+		for _, file := range files {
+			filePath := filepath.Join(dirPath, file)
+			err := os.WriteFile(filePath, []byte("test"), 0644)
+			assert.NoError(t, err)
+		}
+	}
+}
+
+func TestRenameLastRecording(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	structure := map[string][]string{
+		"b_folder": {"b1.wav", "b2.wav"},
+		"a_folder": {"a1.wav"},
+		"c_folder": {},
+	}
+	createTestDirStructure(t, tmpDir, structure)
+
+	service := &FileSystemStorageService{baseDir: tmpDir}
+
+	err := service.RenameLastRecording("renamed.wav")
+	assert.NoError(t, err)
+
+	files, err := os.ReadDir(filepath.Join(tmpDir, "b_folder"))
+	assert.NoError(t, err)
+
+	var fileNames []string
+	for _, f := range files {
+		fileNames = append(fileNames, f.Name())
+	}
+	assert.Contains(t, fileNames, "renamed.wav")
+	assert.NotContains(t, fileNames, "b1.wav")
+}
+
+func TestRenameLastRecording_NoFiles(t *testing.T) {
+	tmpDir := t.TempDir()
+	structure := map[string][]string{
+		"empty1": {},
+		"empty2": {},
+	}
+	createTestDirStructure(t, tmpDir, structure)
+	service := &FileSystemStorageService{baseDir: tmpDir}
+	err := service.RenameLastRecording("shouldnotmatter.wav")
+	assert.Error(t, err)
+}
+

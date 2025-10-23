@@ -9,6 +9,7 @@ import (
 	"server/internal/pkg/interfaces"
 	"server/internal/pkg/models"
 	"slices"
+	"sort"
 	"strings"
 	"time"
 
@@ -235,4 +236,49 @@ func (f *FileSystemStorageService) DeleteRecording(fileName string, date time.Ti
 		return fmt.Errorf("Recording file %s does not exist for date %s", fileName, date)
 	}
 	return os.Remove(absFile)
+}
+
+func (f *FileSystemStorageService) RenameLastRecording(fileName string) error {
+	entries, err := os.ReadDir(f.baseDir)
+	if err != nil {
+		return err
+	}
+
+	var dirs []os.DirEntry
+	for _, entry := range entries {
+		if entry.IsDir() {
+			dirs = append(dirs, entry)
+		}
+	}
+
+	sort.Slice(dirs, func(i, j int) bool {
+		return dirs[i].Name() > dirs[j].Name()
+	})
+
+	for _, dir := range dirs {
+		dirPath := filepath.Join(f.baseDir, dir.Name())
+		files, err := os.ReadDir(dirPath)
+		if err != nil {
+			continue
+		}
+
+		var fileNames []string
+		for _, file := range files {
+			if !file.IsDir() {
+				fileNames = append(fileNames, file.Name())
+			}
+		}
+
+		if len(fileNames) == 0 {
+			continue
+		}
+
+		sort.Strings(fileNames)
+
+		oldPath := filepath.Join(dirPath, fileNames[0])
+		newPath := filepath.Join(dirPath, fileName)
+		return os.Rename(oldPath, newPath)
+	}
+
+	return fmt.Errorf("No recording exist")
 }

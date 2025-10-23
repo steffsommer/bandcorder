@@ -12,4 +12,5 @@ type StorageService interface {
 	GetRecordings(date time.Time) ([]models.RecordingInfo, error)
 	RenameRecording(oldFileName string, newFileName string, date time.Time) error
 	DeleteRecording(fileName string, date time.Time) error
+	RenameLastRecording(fileName string) error
 }
