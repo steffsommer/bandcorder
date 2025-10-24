@@ -67,11 +67,14 @@ func main() {
 	recordingFacade := facades.NewRecordingFacade(eventbus, recorder)
 	recordingController := controllers.NewRecordingController(recordingFacade)
 
+	fileController := controllers.NewFileController(storageService)
+
 	r := gin.Default()
 
 	r.POST("/recording/start", recordingController.HandleStart)
 	r.POST("/recording/stop", recordingController.HandleStop)
 	r.POST("/recording/abort", recordingController.HandleAbort)
+	r.POST("/files/renameLast", fileController.HandleRenameLast)
 	r.GET("/ws", websocketController.HandleWebsocketUpgrade)
 
 	modelExporter := models.ModelExporter{}

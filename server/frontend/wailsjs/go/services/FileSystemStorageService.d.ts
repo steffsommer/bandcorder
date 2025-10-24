@@ -7,6 +7,8 @@ export function DeleteRecording(arg1:string,arg2:time.Time):Promise<void>;
 
 export function GetRecordings(arg1:time.Time):Promise<Array<models.RecordingInfo>>;
 
+export function RenameLastRecording(arg1:string):Promise<void>;
+
 export function RenameRecording(arg1:string,arg2:string,arg3:time.Time):Promise<void>;
 
 export function Save(arg1:string,arg2:Array<number>):Promise<void>;
