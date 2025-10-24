@@ -4,8 +4,6 @@ import 'package:bandcorder/app_constants.dart';
 import 'package:bandcorder/services/toast_service.dart';
 import 'package:http/http.dart' as http;
 
-const requestTimeout = Duration(seconds: 3);
-
 class RecordingService {
   static final RecordingService instance = RecordingService();
   final _toastService = ToastService();
@@ -19,7 +17,7 @@ class RecordingService {
     _assertBaseUrl();
     try {
       final url = Uri.parse("$_baseUrl/recording/start");
-      final res = await http.post(url).timeout(requestTimeout);
+      final res = await http.post(url).timeout(AppConstants.requestTimeout);
       if (res.statusCode != 200) {
         _toastService.toastError("Failed to start recording");
       }
@@ -32,7 +30,7 @@ class RecordingService {
     _assertBaseUrl();
     try {
       final url = Uri.parse("$_baseUrl/recording/stop");
-      final res = await http.post(url).timeout(requestTimeout);
+      final res = await http.post(url).timeout(AppConstants.requestTimeout);
       if (res.statusCode != 200) {
         _toastService.toastError("Failed to stop recording");
       }
@@ -44,18 +42,13 @@ class RecordingService {
   Future<void> abortRecording() async {
     try {
       final url = Uri.parse("$_baseUrl/recording/abort");
-      final res = await http.post(url).timeout(requestTimeout);
+      final res = await http.post(url).timeout(AppConstants.requestTimeout);
       if (res.statusCode != 200) {
         _toastService.toastError("Failed to abort recording");
       }
     } catch (e) {
       _toastService.toastError("Failed to abort recording");
     }
-  }
-
-  Future<void> renameLastRecording() async {
-    _assertBaseUrl();
-    _toastService.toastError("Not yet implemented");
   }
 
   _assertBaseUrl() {

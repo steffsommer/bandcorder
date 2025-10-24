@@ -1,9 +1,11 @@
 import 'package:bandcorder/models/event.dart';
+import 'package:bandcorder/services/file_service.dart';
 import 'package:bandcorder/services/recording_service.dart';
 import 'package:bandcorder/widgets/confirmation_dialog.dart';
 import 'package:bandcorder/widgets/custom_button.dart';
 import 'package:bandcorder/widgets/custom_card.dart';
 import 'package:bandcorder/widgets/heading.dart';
+import 'package:bandcorder/widgets/rename_last_dialog.dart';
 import 'package:bandcorder/widgets/timer.dart';
 import 'package:flutter/material.dart';
 
@@ -21,6 +23,7 @@ class RecordScreen extends StatefulWidget {
 class RecordScreenState extends State<RecordScreen> {
   static final WebSocketService websocketService = WebSocketService.instance;
   static final RecordingService recordingService = RecordingService.instance;
+  static final FileService fileService = FileService.instance;
 
   List<void Function()> cleanupFns = [];
   String recordingName = "";
@@ -54,12 +57,12 @@ class RecordScreenState extends State<RecordScreen> {
     }
   }
 
-  Future<void> _displayLoadingWhile(Future<void> Function() fn) async {
+  Future<void> _displayLoadingWhile(Future<void> future) async {
     setState(() {
       _loading = true;
     });
     try {
-      await fn();
+      await future;
     } finally {
       setState(() {
         _loading = false;
@@ -75,7 +78,7 @@ class RecordScreenState extends State<RecordScreen> {
     if (!confirmed) {
       return;
     }
-    await _displayLoadingWhile(recordingService.abortRecording);
+    await _displayLoadingWhile(recordingService.abortRecording());
   }
 
   @override
@@ -141,7 +144,7 @@ class RecordScreenState extends State<RecordScreen> {
         icon: Icons.play_arrow,
         text: "START",
         onPressed: () {
-          _displayLoadingWhile(recordingService.startRecording);
+          _displayLoadingWhile(recordingService.startRecording());
         },
       ),
       const SizedBox(height: 30),
@@ -149,8 +152,11 @@ class RecordScreenState extends State<RecordScreen> {
         color: StyleConstants.colorYellow,
         icon: Icons.edit,
         text: "RENAME LAST",
-        onPressed: () {
-          _displayLoadingWhile(recordingService.renameLastRecording);
+        onPressed: () async {
+          var name = await showNameInputDialog(context);
+          if (name != null) {
+            _displayLoadingWhile(fileService.renameLast(name));
+          }
         },
       ),
     ];
@@ -163,7 +169,7 @@ class RecordScreenState extends State<RecordScreen> {
         icon: Icons.pause,
         text: "STOP",
         onPressed: () {
-          _displayLoadingWhile(recordingService.stopRecording);
+          _displayLoadingWhile(recordingService.stopRecording());
         },
       ),
       const SizedBox(height: 30),

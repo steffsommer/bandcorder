@@ -1,4 +1,5 @@
 import 'package:bandcorder/services/connection_cache_service.dart';
+import 'package:bandcorder/services/file_service.dart';
 import 'package:bandcorder/services/recording_service.dart';
 import 'package:bandcorder/style_constants.dart';
 import 'package:bandcorder/screens/record_screen.dart';
@@ -20,6 +21,7 @@ class ConnectScreen extends StatefulWidget {
 class ConnectScreenState extends State<ConnectScreen> {
   final _socketService = WebSocketService.instance;
   final _recordingService = RecordingService.instance;
+  final _fileService = FileService.instance;
   final _connectionCacheService = ConnectionCacheService();
   final _hostController = TextEditingController(text: '10.0.2.2');
   bool _isConnecting = false;
@@ -58,6 +60,7 @@ class ConnectScreenState extends State<ConnectScreen> {
       await _socketService.connect(_hostController.text);
       _connectionCacheService.cacheHost(_hostController.text);
       _recordingService.init(_hostController.text);
+      _fileService.init(_hostController.text);
       if (!context.mounted) {
         throw StateError("State is not mounted");
       }
