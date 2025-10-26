@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 
 Future<String?> showNameInputDialog(BuildContext context) {
   final controller = TextEditingController();
-  final nameRegex = RegExp(r'^[a-zA-Z0-9._-]+$');
+  final nameRegex = RegExp(r'^[a-zA-Z0-9_ -]+$');
+  const String fileExtension = ".wav";
 
   return showDialog<String>(
     context: context,
@@ -18,24 +19,31 @@ Future<String?> showNameInputDialog(BuildContext context) {
 
           return AlertDialog(
             title: const Heading(message: "ENTER NAME"),
-            content: TextField(
-              controller: controller,
-              onChanged: (_) => setState(() {}),
-              decoration: InputDecoration(
-                hintText: "File name",
-                errorText: showError
-                    ? "The file name contains characters that are not allowed"
-                    : null,
+            content: Row(children: [
+              Expanded(
+                  child: TextField(
+                controller: controller,
+                onChanged: (_) => setState(() {}),
+                decoration: InputDecoration(
+                  hintText: "File name",
+                  errorText:
+                      showError ? "Name contains invalid characters" : null,
+                ),
+                style: const TextStyle(fontSize: StyleConstants.textSizeBigger),
+              )),
+              const Text(
+                fileExtension,
+                style: TextStyle(fontSize: StyleConstants.textSizeBigger),
               ),
-              style: const TextStyle(fontSize: StyleConstants.textSizeBigger),
-            ),
+            ]),
             actions: [
               CustomButton(
                 color: isValid ? StyleConstants.colorGreen : Colors.grey,
                 icon: Icons.save,
                 text: "SAVE",
-                onPressed:
-                    isValid ? () => Navigator.of(context).pop(name) : null,
+                onPressed: isValid
+                    ? () => Navigator.of(context).pop(name + fileExtension)
+                    : null,
               ),
               const SizedBox(height: 15),
               CustomButton(
