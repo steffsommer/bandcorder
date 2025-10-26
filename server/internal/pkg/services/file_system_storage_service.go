@@ -143,17 +143,22 @@ func (f *FileSystemStorageService) GetRecordings(
 		if err != nil {
 			return infos, err
 		}
+		fileInfo, err := entry.Info()
+		if err != nil {
+			return infos, err
+		}
 		info := models.RecordingInfo{
 			FileName:        entry.Name(),
 			DurationSeconds: duration,
+			ModTime:         fileInfo.ModTime(),
 		}
 		infos = append(infos, info)
 	}
 	slices.SortFunc(infos, func(a, b models.RecordingInfo) int {
-		if a.FileName < b.FileName {
-			return 1
-		} else {
+		if a.ModTime.After(b.ModTime) {
 			return -1
+		} else {
+			return 1
 		}
 	})
 	return infos, nil
@@ -265,20 +270,30 @@ func (f *FileSystemStorageService) RenameLastRecording(fileName string) error {
 			continue
 		}
 
-		var fileNames []string
+		type fileInfo struct {
+			name    string
+			modTime time.Time
+		}
+		var fileInfos []fileInfo
 		for _, file := range files {
 			if !file.IsDir() {
-				fileNames = append(fileNames, file.Name())
+				info, err := file.Info()
+				if err != nil {
+					continue
+				}
+				fileInfos = append(fileInfos, fileInfo{name: file.Name(), modTime: info.ModTime()})
 			}
 		}
 
-		if len(fileNames) == 0 {
+		if len(fileInfos) == 0 {
 			continue
 		}
 
-		sort.Strings(fileNames)
+		sort.Slice(fileInfos, func(i, j int) bool {
+			return fileInfos[i].modTime.After(fileInfos[j].modTime)
+		})
 
-		oldPath := filepath.Join(dirPath, fileNames[0])
+		oldPath := filepath.Join(dirPath, fileInfos[0].name)
 		newPath := filepath.Join(dirPath, fileName)
 		err = os.Rename(oldPath, newPath)
 		ev := models.NewFileRenamedEvent()
