@@ -6,16 +6,28 @@
 }
 
 .container {
+  display: flex;
+  flex-direction: column;
+  margin-inline: var(--spacing-max);
+  min-height: 0;
+  height: 100%;
+}
+
+.recording-layout {
+  min-height: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
   height: 100%;
-  margin-inline: var(--spacing-max);
-  margin-bottom: var(--spacing-big);
-  gap: var(--spacing-max);
   min-height: 0;
+  gap: var(--spacing-max);
 }
 
-.container>* {
+.recording-layout > * {
   min-height: 0;
   min-width: 0;
+}
+
+.ip {
+  padding-top: 20px;
+  margin-left: auto;
 }
