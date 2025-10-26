@@ -1,28 +1,35 @@
-import 'package:bandcorder/services/connection_cache_service.dart';
-import 'package:bandcorder/services/file_service.dart';
-import 'package:bandcorder/services/recording_service.dart';
-import 'package:bandcorder/style_constants.dart';
+import 'package:bandcorder/routing/routes.dart';
 import 'package:bandcorder/screens/record_screen.dart';
+import 'package:bandcorder/services/connection_cache_service.dart';
+import 'package:bandcorder/services/connection_config.dart';
+import 'package:bandcorder/style_constants.dart';
 import 'package:bandcorder/widgets/custom_app_bar.dart';
 import 'package:bandcorder/widgets/custom_card.dart';
 import 'package:bandcorder/widgets/heading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
+
 import '../services/web_socket_service.dart';
 import '../widgets/custom_button.dart';
 
 class ConnectScreen extends StatefulWidget {
-  const ConnectScreen({super.key});
+  const ConnectScreen({
+    super.key,
+    required this.socketService,
+    required this.connectionCacheService,
+    required this.connectionConfig,
+  });
+
+  final WebSocketService socketService;
+  final ConnectionCacheService connectionCacheService;
+  final ConnectionConfig connectionConfig;
 
   @override
   ConnectScreenState createState() => ConnectScreenState();
 }
 
 class ConnectScreenState extends State<ConnectScreen> {
-  final _socketService = WebSocketService.instance;
-  final _recordingService = RecordingService.instance;
-  final _fileService = FileService.instance;
-  final _connectionCacheService = ConnectionCacheService();
   final _hostController = TextEditingController(text: '10.0.2.2');
   bool _isConnecting = false;
   static bool _isInitialLoad = true;
@@ -34,8 +41,8 @@ class ConnectScreenState extends State<ConnectScreen> {
   }
 
   Future<void> _initializeConnection() async {
-    await _socketService.disconnect();
-    final address = await _connectionCacheService.queryHost();
+    await widget.socketService.disconnect();
+    final address = await widget.connectionCacheService.queryHost();
     if (address != null) {
       print("Found server address in cache. Connecting right away.");
       _hostController.text = address;
@@ -57,19 +64,13 @@ class ConnectScreenState extends State<ConnectScreen> {
       _isConnecting = true;
     });
     try {
-      await _socketService.connect(_hostController.text);
-      _connectionCacheService.cacheHost(_hostController.text);
-      _recordingService.init(_hostController.text);
-      _fileService.init(_hostController.text);
+      widget.connectionConfig.host = _hostController.text;
+      await widget.socketService.connect();
+      widget.connectionCacheService.cacheHost(_hostController.text);
       if (!context.mounted) {
         throw StateError("State is not mounted");
       }
-      Navigator.push(
-        context,
-        MaterialPageRoute<void>(
-          builder: (context) => const RecordScreen(),
-        ),
-      );
+      context.go(Routes.record);
     } finally {
       setState(() {
         _isConnecting = false;

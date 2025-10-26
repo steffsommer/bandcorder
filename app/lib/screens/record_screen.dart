@@ -14,17 +14,22 @@ import '../services/web_socket_service.dart';
 import '../widgets/custom_app_bar.dart';
 
 class RecordScreen extends StatefulWidget {
-  const RecordScreen({super.key});
+  const RecordScreen({
+    super.key,
+    required this.websocketService,
+    required this.recordingService,
+    required this.fileService,
+  });
+
+  final WebSocketService websocketService;
+  final RecordingService recordingService;
+  final FileService fileService;
 
   @override
   RecordScreenState createState() => RecordScreenState();
 }
 
 class RecordScreenState extends State<RecordScreen> {
-  static final WebSocketService websocketService = WebSocketService.instance;
-  static final RecordingService recordingService = RecordingService.instance;
-  static final FileService fileService = FileService.instance;
-
   List<void Function()> cleanupFns = [];
   String recordingName = "";
   int? secondsRunning;
@@ -34,13 +39,13 @@ class RecordScreenState extends State<RecordScreen> {
   void initState() {
     super.initState();
     cleanupFns = [
-      websocketService.on<RecordingRunningEvent>((event) {
+      widget.websocketService.on<RecordingRunningEvent>((event) {
         setState(() {
           recordingName = event.fileName;
           secondsRunning = event.secondsRunning;
         });
       }),
-      websocketService.on<RecordingIdleEvent>((event) {
+      widget.websocketService.on<RecordingIdleEvent>((event) {
         setState(() {
           recordingName = "";
           secondsRunning = null;
@@ -78,7 +83,7 @@ class RecordScreenState extends State<RecordScreen> {
     if (!confirmed) {
       return;
     }
-    await _displayLoadingWhile(recordingService.abortRecording());
+    await _displayLoadingWhile(widget.recordingService.abortRecording());
   }
 
   @override
@@ -144,7 +149,7 @@ class RecordScreenState extends State<RecordScreen> {
         icon: Icons.play_arrow,
         text: "START",
         onPressed: () {
-          _displayLoadingWhile(recordingService.startRecording());
+          _displayLoadingWhile(widget.recordingService.startRecording());
         },
       ),
       const SizedBox(height: 30),
@@ -155,7 +160,7 @@ class RecordScreenState extends State<RecordScreen> {
         onPressed: () async {
           var name = await showNameInputDialog(context);
           if (name != null) {
-            _displayLoadingWhile(fileService.renameLast(name));
+            _displayLoadingWhile(widget.fileService.renameLast(name));
           }
         },
       ),
@@ -169,7 +174,7 @@ class RecordScreenState extends State<RecordScreen> {
         icon: Icons.pause,
         text: "STOP",
         onPressed: () {
-          _displayLoadingWhile(recordingService.stopRecording());
+          _displayLoadingWhile(widget.recordingService.stopRecording());
         },
       ),
       const SizedBox(height: 30),

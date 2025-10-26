@@ -1,20 +1,25 @@
+import 'package:bandcorder/config/dependencies.dart';
+import 'package:bandcorder/routing/router.dart';
 import 'package:bandcorder/style_constants.dart';
-import 'package:bandcorder/screens/connect_screen.dart';
 import 'package:flutter/material.dart';
-
-import 'globals.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: providers,
+      child: const BandcorderApp(),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class BandcorderApp extends StatelessWidget {
+  const BandcorderApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      navigatorKey: navigatorKey,
+    return MaterialApp.router(
+      routerConfig: router(),
       title: 'Bandcorder',
       theme: ThemeData(
         scaffoldBackgroundColor: StyleConstants.colorSurface1,
@@ -23,7 +28,6 @@ class MyApp extends StatelessWidget {
           foregroundColor: StyleConstants.colorSurface2,
         ),
       ),
-      home: const ConnectScreen(),
     );
   }
 }

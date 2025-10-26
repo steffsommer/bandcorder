@@ -2,13 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:bandcorder/app_constants.dart';
 import 'package:bandcorder/models/event.dart';
+import 'package:bandcorder/routing/routes.dart';
+import 'package:bandcorder/services/connection_config.dart';
 import 'package:bandcorder/services/toast_service.dart';
-import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../globals.dart';
-import '../screens/connect_screen.dart';
 
 const websocketPath = "/ws";
 const connectTimeout = Duration(seconds: 3);
@@ -18,11 +18,11 @@ class WebSocketService {
   final _eventsToCallbacks = <Type, List<Function>>{};
   final _toastService = ToastService();
   static const String _intentionalCloseReason = "Disconnect by User";
-  static final WebSocketService instance = WebSocketService._();
   WebSocket? _webSocket;
   StreamSubscription<dynamic>? _eventSubscription;
+  final ConnectionConfig _connectionConfig;
 
-  WebSocketService._();
+  WebSocketService(this._connectionConfig);
 
   /// Establishes a WebSocket connection to the specified host.
   ///
@@ -36,11 +36,12 @@ class WebSocketService {
   /// Throws:
   /// - [TimeoutException] if the server is unreachable within the timeout period
   /// - Other exceptions for connection failures
-  Future<void> connect(String host) async {
+  Future<void> connect() async {
     try {
       await disconnect();
 
-      final url = 'ws://$host:${AppConstants.serverPort}$websocketPath';
+      final url =
+          'ws://${_connectionConfig.host}:${_connectionConfig.port}$websocketPath';
       print('Connecting to $url');
 
       // Chaining .timeout() behind .connect() is not viable, because the default
@@ -93,10 +94,7 @@ class WebSocketService {
   }
 
   void _onConnectionLoss() {
-    navigatorKey.currentState?.pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => const ConnectScreen()),
-      (route) => false,
-    );
+    navigatorKey.currentContext?.go(Routes.connect);
   }
 
   /// Registers a callback for events of type [T].
