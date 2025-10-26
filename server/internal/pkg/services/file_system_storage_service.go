@@ -9,6 +9,7 @@ import (
 	"server/internal/pkg/interfaces"
 	"server/internal/pkg/models"
 	"slices"
+	"sort"
 	"strings"
 	"time"
 
@@ -42,6 +43,7 @@ type FileSystemStorageService struct {
 	channelCount int
 	sampleRate   int
 	timeProvider interfaces.TimeProvider
+	dispatcher   interfaces.EventDispatcher
 }
 
 func NewFileSystemStorageService(
@@ -49,12 +51,14 @@ func NewFileSystemStorageService(
 	channelCount int,
 	sampleRate int,
 	timeProvider interfaces.TimeProvider,
+	dispatcher interfaces.EventDispatcher,
 ) *FileSystemStorageService {
 	return &FileSystemStorageService{
 		baseDir:      dir,
 		channelCount: channelCount,
 		sampleRate:   sampleRate,
 		timeProvider: timeProvider,
+		dispatcher:   dispatcher,
 	}
 }
 
@@ -139,17 +143,22 @@ func (f *FileSystemStorageService) GetRecordings(
 		if err != nil {
 			return infos, err
 		}
+		fileInfo, err := entry.Info()
+		if err != nil {
+			return infos, err
+		}
 		info := models.RecordingInfo{
 			FileName:        entry.Name(),
 			DurationSeconds: duration,
+			ModTime:         fileInfo.ModTime(),
 		}
 		infos = append(infos, info)
 	}
 	slices.SortFunc(infos, func(a, b models.RecordingInfo) int {
-		if a.FileName < b.FileName {
-			return 1
-		} else {
+		if a.ModTime.After(b.ModTime) {
 			return -1
+		} else {
+			return 1
 		}
 	})
 	return infos, nil
@@ -206,4 +215,91 @@ func getWavDuration(absPath string) (uint32, error) {
 	durationSeconds := float64(header.Subchunk2Size) / float64(header.ByteRate)
 
 	return uint32(durationSeconds), nil
+}
+
+func (f *FileSystemStorageService) RenameRecording(
+	oldFileName string,
+	newFileName string,
+	date time.Time,
+) error {
+	absDateDir := f.getAbsDateDir(date)
+	if _, err := os.Stat(absDateDir); os.IsNotExist(err) {
+		return fmt.Errorf("No recordings exist for given date %s", date)
+	}
+	absFileOld := filepath.Join(absDateDir, oldFileName)
+	if _, err := os.Stat(absFileOld); os.IsNotExist(err) {
+		return fmt.Errorf("Recording file %s does not exist for date %s", oldFileName, date)
+	}
+	absFileNew := filepath.Join(absDateDir, newFileName)
+	return os.Rename(absFileOld, absFileNew)
+}
+
+func (f *FileSystemStorageService) DeleteRecording(fileName string, date time.Time) error {
+	absDateDir := f.getAbsDateDir(date)
+	if _, err := os.Stat(absDateDir); os.IsNotExist(err) {
+		return fmt.Errorf("No recordings exist for given date %s", date)
+	}
+	absFile := filepath.Join(absDateDir, fileName)
+	if _, err := os.Stat(absFile); os.IsNotExist(err) {
+		return fmt.Errorf("Recording file %s does not exist for date %s", fileName, date)
+	}
+	return os.Remove(absFile)
+}
+
+func (f *FileSystemStorageService) RenameLastRecording(fileName string) error {
+	entries, err := os.ReadDir(f.baseDir)
+	if err != nil {
+		return err
+	}
+
+	var dirs []os.DirEntry
+	for _, entry := range entries {
+		if entry.IsDir() {
+			dirs = append(dirs, entry)
+		}
+	}
+
+	sort.Slice(dirs, func(i, j int) bool {
+		return dirs[i].Name() > dirs[j].Name()
+	})
+
+	for _, dir := range dirs {
+		dirPath := filepath.Join(f.baseDir, dir.Name())
+		files, err := os.ReadDir(dirPath)
+		if err != nil {
+			continue
+		}
+
+		type fileInfo struct {
+			name    string
+			modTime time.Time
+		}
+		var fileInfos []fileInfo
+		for _, file := range files {
+			if !file.IsDir() {
+				info, err := file.Info()
+				if err != nil {
+					continue
+				}
+				fileInfos = append(fileInfos, fileInfo{name: file.Name(), modTime: info.ModTime()})
+			}
+		}
+
+		if len(fileInfos) == 0 {
+			continue
+		}
+
+		sort.Slice(fileInfos, func(i, j int) bool {
+			return fileInfos[i].modTime.After(fileInfos[j].modTime)
+		})
+
+		oldPath := filepath.Join(dirPath, fileInfos[0].name)
+		newPath := filepath.Join(dirPath, fileName)
+		err = os.Rename(oldPath, newPath)
+		ev := models.NewFileRenamedEvent()
+		f.dispatcher.Dispatch(ev)
+		return err
+	}
+
+	return fmt.Errorf("No recording exist")
 }

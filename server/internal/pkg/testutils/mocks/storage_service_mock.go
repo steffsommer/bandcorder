@@ -38,6 +38,63 @@ func (_m *MockStorageService) EXPECT() *MockStorageService_Expecter {
 	return &MockStorageService_Expecter{mock: &_m.Mock}
 }
 
+// DeleteRecording provides a mock function for the type MockStorageService
+func (_mock *MockStorageService) DeleteRecording(fileName string, date time.Time) error {
+	ret := _mock.Called(fileName, date)
+
+	if len(ret) == 0 {
+		panic("no return value specified for DeleteRecording")
+	}
+
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(string, time.Time) error); ok {
+		r0 = returnFunc(fileName, date)
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+// MockStorageService_DeleteRecording_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DeleteRecording'
+type MockStorageService_DeleteRecording_Call struct {
+	*mock.Call
+}
+
+// DeleteRecording is a helper method to define mock.On call
+//   - fileName string
+//   - date time.Time
+func (_e *MockStorageService_Expecter) DeleteRecording(fileName interface{}, date interface{}) *MockStorageService_DeleteRecording_Call {
+	return &MockStorageService_DeleteRecording_Call{Call: _e.mock.On("DeleteRecording", fileName, date)}
+}
+
+func (_c *MockStorageService_DeleteRecording_Call) Run(run func(fileName string, date time.Time)) *MockStorageService_DeleteRecording_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		var arg1 time.Time
+		if args[1] != nil {
+			arg1 = args[1].(time.Time)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockStorageService_DeleteRecording_Call) Return(err error) *MockStorageService_DeleteRecording_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *MockStorageService_DeleteRecording_Call) RunAndReturn(run func(fileName string, date time.Time) error) *MockStorageService_DeleteRecording_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetRecordings provides a mock function for the type MockStorageService
 func (_mock *MockStorageService) GetRecordings(date time.Time) ([]models.RecordingInfo, error) {
 	ret := _mock.Called(date)
@@ -96,6 +153,120 @@ func (_c *MockStorageService_GetRecordings_Call) Return(recordingInfos []models.
 }
 
 func (_c *MockStorageService_GetRecordings_Call) RunAndReturn(run func(date time.Time) ([]models.RecordingInfo, error)) *MockStorageService_GetRecordings_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// RenameLastRecording provides a mock function for the type MockStorageService
+func (_mock *MockStorageService) RenameLastRecording(fileName string) error {
+	ret := _mock.Called(fileName)
+
+	if len(ret) == 0 {
+		panic("no return value specified for RenameLastRecording")
+	}
+
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(string) error); ok {
+		r0 = returnFunc(fileName)
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+// MockStorageService_RenameLastRecording_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'RenameLastRecording'
+type MockStorageService_RenameLastRecording_Call struct {
+	*mock.Call
+}
+
+// RenameLastRecording is a helper method to define mock.On call
+//   - fileName string
+func (_e *MockStorageService_Expecter) RenameLastRecording(fileName interface{}) *MockStorageService_RenameLastRecording_Call {
+	return &MockStorageService_RenameLastRecording_Call{Call: _e.mock.On("RenameLastRecording", fileName)}
+}
+
+func (_c *MockStorageService_RenameLastRecording_Call) Run(run func(fileName string)) *MockStorageService_RenameLastRecording_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockStorageService_RenameLastRecording_Call) Return(err error) *MockStorageService_RenameLastRecording_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *MockStorageService_RenameLastRecording_Call) RunAndReturn(run func(fileName string) error) *MockStorageService_RenameLastRecording_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// RenameRecording provides a mock function for the type MockStorageService
+func (_mock *MockStorageService) RenameRecording(oldFileName string, newFileName string, date time.Time) error {
+	ret := _mock.Called(oldFileName, newFileName, date)
+
+	if len(ret) == 0 {
+		panic("no return value specified for RenameRecording")
+	}
+
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(string, string, time.Time) error); ok {
+		r0 = returnFunc(oldFileName, newFileName, date)
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+// MockStorageService_RenameRecording_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'RenameRecording'
+type MockStorageService_RenameRecording_Call struct {
+	*mock.Call
+}
+
+// RenameRecording is a helper method to define mock.On call
+//   - oldFileName string
+//   - newFileName string
+//   - date time.Time
+func (_e *MockStorageService_Expecter) RenameRecording(oldFileName interface{}, newFileName interface{}, date interface{}) *MockStorageService_RenameRecording_Call {
+	return &MockStorageService_RenameRecording_Call{Call: _e.mock.On("RenameRecording", oldFileName, newFileName, date)}
+}
+
+func (_c *MockStorageService_RenameRecording_Call) Run(run func(oldFileName string, newFileName string, date time.Time)) *MockStorageService_RenameRecording_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		var arg1 string
+		if args[1] != nil {
+			arg1 = args[1].(string)
+		}
+		var arg2 time.Time
+		if args[2] != nil {
+			arg2 = args[2].(time.Time)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *MockStorageService_RenameRecording_Call) Return(err error) *MockStorageService_RenameRecording_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *MockStorageService_RenameRecording_Call) RunAndReturn(run func(oldFileName string, newFileName string, date time.Time) error) *MockStorageService_RenameRecording_Call {
 	_c.Call.Return(run)
 	return _c
 }

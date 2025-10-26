@@ -4,18 +4,13 @@ import (
 	"errors"
 	"fmt"
 	"server/internal/pkg/interfaces"
+	"server/internal/pkg/utils"
 	"sync"
 	"time"
 	"unsafe"
 
 	"github.com/gen2brain/malgo"
 	"github.com/sirupsen/logrus"
-)
-
-const (
-	sampleRate = 44100
-	channels   = 1
-	bufferSize = 1024
 )
 
 // Recorder manages audio recording operations
@@ -62,12 +57,12 @@ func (r *RecorderService) Start() (interfaces.RecordingMetaData, error) {
 
 	deviceConfig := malgo.DefaultDeviceConfig(malgo.Capture)
 	deviceConfig.Capture.Format = malgo.FormatF32
-	deviceConfig.Capture.Channels = channels
-	deviceConfig.SampleRate = sampleRate
+	deviceConfig.Capture.Channels = utils.Channels
+	deviceConfig.SampleRate = utils.SampleRate
 	deviceConfig.Alsa.NoMMap = 1
 
 	onRecvFrames := func(pOutputSample, pInputSamples []byte, framecount uint32) {
-		inputBuffer := make([]float32, framecount*channels)
+		inputBuffer := make([]float32, framecount*utils.Channels)
 		// Convert bytes to float32
 		for i := range inputBuffer {
 			idx := i * 4
@@ -106,7 +101,7 @@ func (r *RecorderService) Stop() error {
 		return err
 	}
 	logrus.Infof("Recorded %d samples (%.2f seconds)\n",
-		len(r.recording), float64(len(r.recording))/float64(sampleRate))
+		len(r.recording), float64(len(r.recording))/float64(utils.SampleRate))
 	r.reset()
 	return nil
 }

@@ -8,6 +8,7 @@ const (
 	RecordingIdleEvent    EventId = "RecordingIdle"
 	RecordingRunningEvent EventId = "RecordingRunning"
 	LiveAudioDataEvent    EventId = "LiveAudioData"
+	FileRenamedEvent      EventId = "FileRenamed"
 )
 
 type EventLike interface {
@@ -47,21 +48,32 @@ func NewRecordingRunningEvent(
 	}
 }
 
-func NewRecordingIdleEvent() Event[RunningEventData] {
-	return Event[RunningEventData]{
+func NewRecordingIdleEvent() Event[any] {
+	return Event[any]{
 		EventId: RecordingIdleEvent,
 	}
 }
 
 type LiveAudioEventData struct {
 	LoudnessPercentage uint8 `json:"loudnessPercentage"`
+	FrequencyBars      []int `json:"frequencyBars"`
 }
 
-func NewLiveAudioDataEvent(loudnessPercentage uint8) Event[LiveAudioEventData] {
+func NewLiveAudioDataEvent(
+	loudnessPercentage uint8,
+	frequencyBars []int,
+) Event[LiveAudioEventData] {
 	return Event[LiveAudioEventData]{
 		EventId: LiveAudioDataEvent,
 		Data: LiveAudioEventData{
 			LoudnessPercentage: loudnessPercentage,
+			FrequencyBars:      frequencyBars,
 		},
+	}
+}
+
+func NewFileRenamedEvent() Event[any] {
+	return Event[any]{
+		EventId: FileRenamedEvent,
 	}
 }

@@ -9,28 +9,32 @@ import "./recordings-list.css";
 
 export const RecordingsList: React.FC<any> = () => {
   const [recordings, setRecordings] = useState<models.RecordingInfo[]>([]);
-  const [lastEventWasRunningEvent, setLastEventWasRunningEvent] =
-    useState<boolean>(false);
+
+  async function updateList() {
+    const date = new Date().toISOString();
+    const recordingInfos = await GetRecordings(date);
+    setRecordings(recordingInfos);
+  }
 
   useEffect(() => {
-    async function updateList() {
-      const date = new Date().toISOString();
-      const recordingInfos = await GetRecordings(date);
-      setRecordings(recordingInfos);
-    }
+    let lastEventWasRunningEvent = false;
     updateList();
     const cb1 = EventsOn(EventID.RecordingIdle, async () => {
-      if (!lastEventWasRunningEvent) {
+      if (lastEventWasRunningEvent) {
         updateList();
       }
-      setLastEventWasRunningEvent(false);
+      lastEventWasRunningEvent = false;
     });
     const cb2 = EventsOn(EventID.RecordingRunning, () => {
-      setLastEventWasRunningEvent(true);
+      lastEventWasRunningEvent = true;
+    });
+    const cb3 = EventsOn(EventID.FileRenamedEvent, () => {
+      updateList();
     });
     return () => {
       cb1();
       cb2();
+      cb3();
     };
   }, []);
 
@@ -52,7 +56,7 @@ export const RecordingsList: React.FC<any> = () => {
                 exit={{ opacity: 0 }}
                 key={item.fileName || `recording-${index}`}
               >
-                <RecordingsListEntry recording={item} />
+                <RecordingsListEntry recording={item} onChange={updateList} />
               </motion.li>
             ))}
           </AnimatePresence>
