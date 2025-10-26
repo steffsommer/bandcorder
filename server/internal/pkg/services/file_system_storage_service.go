@@ -43,6 +43,7 @@ type FileSystemStorageService struct {
 	channelCount int
 	sampleRate   int
 	timeProvider interfaces.TimeProvider
+	dispatcher   interfaces.EventDispatcher
 }
 
 func NewFileSystemStorageService(
@@ -50,12 +51,14 @@ func NewFileSystemStorageService(
 	channelCount int,
 	sampleRate int,
 	timeProvider interfaces.TimeProvider,
+	dispatcher interfaces.EventDispatcher,
 ) *FileSystemStorageService {
 	return &FileSystemStorageService{
 		baseDir:      dir,
 		channelCount: channelCount,
 		sampleRate:   sampleRate,
 		timeProvider: timeProvider,
+		dispatcher:   dispatcher,
 	}
 }
 
@@ -277,7 +280,10 @@ func (f *FileSystemStorageService) RenameLastRecording(fileName string) error {
 
 		oldPath := filepath.Join(dirPath, fileNames[0])
 		newPath := filepath.Join(dirPath, fileName)
-		return os.Rename(oldPath, newPath)
+		err = os.Rename(oldPath, newPath)
+		ev := models.NewFileRenamedEvent()
+		f.dispatcher.Dispatch(ev)
+		return err
 	}
 
 	return fmt.Errorf("No recording exist")

@@ -61,6 +61,7 @@ func main() {
 		AUDIO_CHANNEL_COUNT,
 		SAMPLE_RATE_HZ,
 		timeProvider,
+		broadcastSender,
 	)
 	processor := services.NewAudioProcessorService(broadcastSender)
 	recorder := services.NewRecorderService(storageService, processor)

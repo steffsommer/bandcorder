@@ -8,6 +8,7 @@ const (
 	RecordingIdleEvent    EventId = "RecordingIdle"
 	RecordingRunningEvent EventId = "RecordingRunning"
 	LiveAudioDataEvent    EventId = "LiveAudioData"
+	FileRenamedEvent      EventId = "FileRenamed"
 )
 
 type EventLike interface {
@@ -47,8 +48,8 @@ func NewRecordingRunningEvent(
 	}
 }
 
-func NewRecordingIdleEvent() Event[RunningEventData] {
-	return Event[RunningEventData]{
+func NewRecordingIdleEvent() Event[any] {
+	return Event[any]{
 		EventId: RecordingIdleEvent,
 	}
 }
@@ -68,5 +69,11 @@ func NewLiveAudioDataEvent(
 			LoudnessPercentage: loudnessPercentage,
 			FrequencyBars:      frequencyBars,
 		},
+	}
+}
+
+func NewFileRenamedEvent() Event[any] {
+	return Event[any]{
+		EventId: FileRenamedEvent,
 	}
 }
