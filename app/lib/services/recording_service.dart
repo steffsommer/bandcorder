@@ -7,16 +7,19 @@ import 'package:http/http.dart' as http;
 import 'connection_config.dart';
 
 class RecordingService {
-  final _toastService = ToastService();
+  final ToastService _toastService;
   final ConnectionConfig _connectionConfig;
+  final http.Client _httpClient;
 
-  RecordingService(this._connectionConfig);
+  RecordingService(
+      this._connectionConfig, this._toastService, this._httpClient);
 
   Future<void> startRecording() async {
     try {
       final url =
           Uri.parse("${_connectionConfig.getBaseUrl()}/recording/start");
-      final res = await http.post(url).timeout(AppConstants.requestTimeout);
+      final res =
+          await _httpClient.post(url).timeout(AppConstants.requestTimeout);
       if (res.statusCode != 200) {
         _toastService.toastError("Failed to start recording");
       }
@@ -28,7 +31,8 @@ class RecordingService {
   Future<void> stopRecording() async {
     try {
       final url = Uri.parse("${_connectionConfig.getBaseUrl()}/recording/stop");
-      final res = await http.post(url).timeout(AppConstants.requestTimeout);
+      final res =
+          await _httpClient.post(url).timeout(AppConstants.requestTimeout);
       if (res.statusCode != 200) {
         _toastService.toastError("Failed to stop recording");
       }
@@ -41,7 +45,8 @@ class RecordingService {
     try {
       final url =
           Uri.parse("${_connectionConfig.getBaseUrl()}/recording/abort");
-      final res = await http.post(url).timeout(AppConstants.requestTimeout);
+      final res =
+          await _httpClient.post(url).timeout(AppConstants.requestTimeout);
       if (res.statusCode != 200) {
         _toastService.toastError("Failed to abort recording");
       }

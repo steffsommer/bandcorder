@@ -15,12 +15,13 @@ List<SingleChildWidget> get providers {
     Provider(create: (context) => ConnectionConfig()),
     Provider(create: (context) => ConnectionCacheService()),
     ProxyProvider2<ConnectionConfig, ToastService, FileService>(
-      update: (context, connectionConfig, toastService, __) => FileService(
+      update: (context, connectionConfig, toastService, _) => FileService(
           connectionConfig, toastService, context.read<http.Client>()),
     ),
-    ProxyProvider<ConnectionConfig, RecordingService>(
-        update: (_, connectionConfig, __) =>
-            RecordingService(connectionConfig)),
+    ProxyProvider2<ConnectionConfig, ToastService, RecordingService>(
+        update: (context, connectionConfig, toastService, __) =>
+            RecordingService(
+                connectionConfig, toastService, context.read<http.Client>())),
     ProxyProvider<ConnectionConfig, WebSocketService>(
         update: (_, connectionConfig, __) =>
             WebSocketService(connectionConfig)),
