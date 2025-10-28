@@ -22,8 +22,8 @@ List<SingleChildWidget> get providers {
         update: (context, connectionConfig, toastService, __) =>
             RecordingService(
                 connectionConfig, toastService, context.read<http.Client>())),
-    ProxyProvider<ConnectionConfig, WebSocketService>(
-        update: (_, connectionConfig, __) =>
-            WebSocketService(connectionConfig)),
+    ProxyProvider2<ConnectionConfig, ToastService, WebSocketService>(
+        update: (_, connectionConfig, toastService, __) =>
+            WebSocketService(connectionConfig, toastService)),
   ];
 }

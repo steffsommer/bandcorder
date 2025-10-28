@@ -16,13 +16,13 @@ const pingFrequency = Duration(milliseconds: 500);
 
 class WebSocketService {
   final _eventsToCallbacks = <Type, List<Function>>{};
-  final _toastService = ToastService();
+  final ToastService _toastService;
   static const String _intentionalCloseReason = "Disconnect by User";
   WebSocket? _webSocket;
   StreamSubscription<dynamic>? _eventSubscription;
   final ConnectionConfig _connectionConfig;
 
-  WebSocketService(this._connectionConfig);
+  WebSocketService(this._connectionConfig, this._toastService);
 
   /// Establishes a WebSocket connection to the specified host.
   ///
@@ -68,7 +68,7 @@ class WebSocketService {
               cb(event);
             }
           } catch (e) {
-            // print('Failed to deserialize or process event from JSON $data');
+            print('Failed to deserialize or process event from JSON $data');
           }
         },
         onDone: () {
