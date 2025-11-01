@@ -37,6 +37,8 @@ class RecordingRunningEvent extends Event {
   final int secondsRunning;
   final String fileName;
 
+  RecordingRunningEvent({required this.secondsRunning, required this.fileName});
+
   RecordingRunningEvent.fromJson(Map<String, dynamic> eventData)
       : secondsRunning = eventData['secondsRunning'],
         fileName = eventData['fileName'] ?? '';

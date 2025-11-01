@@ -97,41 +97,40 @@ class RecordScreenState extends State<RecordScreen> {
       body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: CustomCard(
-            child: Column(
-              children: [
-                const Heading(message: "Record"),
-                const SizedBox(height: 30),
-                Timer(secondsRunning: secondsRunning),
-                SizedBox(
-                  height: 120,
-                  child: recordingName == ""
-                      ? null
-                      : Center(
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.audio_file,
-                                size: 30.0,
-                              ),
-                              Text(recordingName,
-                                  style: const TextStyle(
-                                      fontSize: StyleConstants.textSizeBigger,
-                                      fontWeight: FontWeight.bold)),
-                            ],
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const Heading(message: "Record"),
+                  const SizedBox(height: 30),
+                  Timer(secondsRunning: secondsRunning),
+                  SizedBox(
+                    height: 120,
+                    child: recordingName == ""
+                        ? null
+                        : Center(
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.audio_file,
+                                  size: 30.0,
+                                ),
+                                Text(recordingName,
+                                    style: const TextStyle(
+                                        fontSize: StyleConstants.textSizeBigger,
+                                        fontWeight: FontWeight.bold)),
+                              ],
+                            ),
                           ),
-                        ),
-                ),
-                AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 200),
-                    child: Column(
-                      key: ValueKey('${_loading}_${isRunning()}'),
-                      children: getControls(), // Combined key
-                    )),
-                // _loading
-                //     ? const CircularProgressIndicator()
-                //     : Column(children: getControls()),
-                const SizedBox(height: 30),
-              ],
+                  ),
+                  AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 200),
+                      child: Column(
+                        key: ValueKey('${_loading}_${isRunning()}'),
+                        children: getControls(),
+                      )),
+                  const SizedBox(height: 30),
+                ],
+              ),
             ),
           )),
     );
