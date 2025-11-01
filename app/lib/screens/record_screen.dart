@@ -1,16 +1,14 @@
 import 'package:bandcorder/models/event.dart';
 import 'package:bandcorder/services/file_service.dart';
 import 'package:bandcorder/services/recording_service.dart';
-import 'package:bandcorder/widgets/confirmation_dialog.dart';
 import 'package:bandcorder/widgets/custom_button.dart';
 import 'package:bandcorder/widgets/custom_card.dart';
 import 'package:bandcorder/widgets/heading.dart';
-import 'package:bandcorder/widgets/rename_last_dialog.dart';
 import 'package:bandcorder/widgets/timer.dart';
 import 'package:flutter/material.dart';
 
-import '../style_constants.dart';
 import '../services/web_socket_service.dart';
+import '../style_constants.dart';
 import '../widgets/custom_app_bar.dart';
 
 class RecordScreen extends StatefulWidget {
@@ -19,11 +17,17 @@ class RecordScreen extends StatefulWidget {
     required this.websocketService,
     required this.recordingService,
     required this.fileService,
+    required this.askUserForNewName,
+    required this.askUserForConfirmation,
   });
 
   final WebSocketService websocketService;
   final RecordingService recordingService;
   final FileService fileService;
+  final Future<String?> Function(BuildContext) askUserForNewName;
+  final Future<bool?> Function(
+      {required BuildContext context,
+      required String message}) askUserForConfirmation;
 
   @override
   RecordScreenState createState() => RecordScreenState();
@@ -76,7 +80,7 @@ class RecordScreenState extends State<RecordScreen> {
   }
 
   Future<void> _confirmAbortLoading(BuildContext context) async {
-    final confirmed = await showConfirmationDialog(
+    final confirmed = await widget.askUserForConfirmation(
             context: context,
             message: "Are you sure you want to abort the current recording?") ??
         false;
@@ -158,7 +162,7 @@ class RecordScreenState extends State<RecordScreen> {
         icon: Icons.edit,
         text: "RENAME LAST",
         onPressed: () async {
-          var name = await showNameInputDialog(context);
+          var name = await widget.askUserForNewName(context);
           if (name != null) {
             _displayLoadingWhile(widget.fileService.renameLast(name));
           }
