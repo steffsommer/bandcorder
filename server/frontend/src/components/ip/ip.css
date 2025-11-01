@@ -1,0 +1,12 @@
+.ip-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ip-logo {
+  padding: 0px 4px;
+  font-weight: bold;
+  border: 2px solid black;
+  border-radius: 4px;
+}

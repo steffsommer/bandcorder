@@ -78,6 +78,7 @@ func main() {
 	r.POST("/files/renameLast", fileController.HandleRenameLast)
 	r.GET("/ws", websocketController.HandleWebsocketUpgrade)
 
+	ipService := &services.IPService{}
 	modelExporter := models.ModelExporter{}
 	err = wails.Run(&options.App{
 		Title:  "server",
@@ -108,6 +109,7 @@ func main() {
 			recordingFacade,
 			storageService,
 			settingsService,
+			ipService,
 		},
 	})
 

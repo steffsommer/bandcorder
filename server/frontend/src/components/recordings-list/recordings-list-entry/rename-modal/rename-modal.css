@@ -31,10 +31,10 @@
   margin-left: auto;
 }
 
-.rename-list {
+.rename-input-container {
   display: grid;
   grid-template-columns: max-content 40ch;
-  gap: 12px;
+  column-gap: 12px;
   grid-auto-rows: 2rem;
   align-items: center;
   margin-block: 4rem;
@@ -46,4 +46,12 @@
   padding-inline: 8rem;
   margin-inline: auto;
   width: max-content;
+}
+
+#file-name {
+  width: 100%;
+}
+
+.validation-message {
+  grid-column: 1 / -1;
 }

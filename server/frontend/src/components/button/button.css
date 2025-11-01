@@ -20,9 +20,6 @@
 
 .button:hover {
   filter: brightness(105%);
-}
-
-.button:hover {
   scale: 1.07;
   transition: scale 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
 }
@@ -31,3 +28,16 @@
   scale: 0.95;
   transition: scale 250ms;
 }
+
+button:disabled {
+  background: lightgrey !important;
+  filter: grayscale(30%);
+}
+
+.button:hover:disabled {
+  scale: unset;
+  transition: unset;
+  filter: unset;
+}
+
+
