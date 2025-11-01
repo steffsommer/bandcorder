@@ -1,5 +1,4 @@
 import 'package:bandcorder/routing/routes.dart';
-import 'package:bandcorder/screens/record_screen.dart';
 import 'package:bandcorder/services/connection_cache_service.dart';
 import 'package:bandcorder/services/connection_config.dart';
 import 'package:bandcorder/style_constants.dart';
