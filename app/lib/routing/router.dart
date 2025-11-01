@@ -3,7 +3,7 @@ import 'package:bandcorder/routing/routes.dart';
 import 'package:bandcorder/screens/connect_screen.dart';
 import 'package:bandcorder/screens/record_screen.dart';
 import 'package:bandcorder/widgets/confirmation_dialog.dart';
-import 'package:bandcorder/widgets/rename_last_dialog.dart';
+import 'package:bandcorder/widgets/name_input_dialog.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
