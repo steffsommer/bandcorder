@@ -13,6 +13,13 @@ header {
   align-items: center;
   padding: var(--spacing);
   gap: var(--spacing);
+  user-select: none;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.logo:visited {
+  color: unset;
 }
 
 .logo-img {
@@ -29,4 +36,46 @@ header {
   background: white !important;
   width: max-content !important;
   height: 100% !important;
+}
+
+.nav-items {
+  display: flex;
+  gap: 1rem;
+  margin-right: auto;
+  margin-left: var(--spacing);
+}
+
+.nav-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spacing);
+  background: var(--color-3);
+  border-radius: var(--border-radius);
+  background: var(--color-surface-2);
+  text-decoration: none;
+  font-weight: bold;
+  box-shadow: 3px 3px 0 black;
+  border: 1px solid black !important;
+  transition-duration: 200ms;
+  font-size: 1.5rem;
+  gap: 0.4rem;
+}
+
+.nav-item:visited {
+  color: unset;
+}
+
+.nav-item:not(.active) {
+  transform: scale(0.9);
+  opacity: 0.7;
+}
+
+.nav-item:not(.active):hover {
+  transform: unset;
+  opacity: unset;
+}
+
+.nav-item.active {
+  border: 4px solid black !important;
 }
