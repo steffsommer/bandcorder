@@ -27,7 +27,7 @@ function App() {
     <div id="app">
       <Header onSettingsClick={() => setShowSettings(true)} />
       <div className="container">
-        <RouterProvider router={router} />;
+        <RouterProvider router={router} />
         <SettingsModal show={showSettings} onClose={() => setShowSettings(false)} />
         <ToastContainer autoClose={2000} />
       </div>
