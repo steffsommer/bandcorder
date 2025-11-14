@@ -2,7 +2,6 @@ header {
   display: flex;
   justify-content: space-between;
   height: 60px;
-  margin-inline: var(--spacing-max);
   margin-top: var(--spacing);
 }
 

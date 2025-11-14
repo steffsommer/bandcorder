@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "./App.css";
 import { Card } from "./components/card/card";
@@ -12,25 +12,39 @@ import MetronomePage from "./pages/metronome-page";
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <RecordingPage />,
-  },
-  {
-    path: "/metronome",
-    element: <MetronomePage />,
+    element: <Layout />,
+    children: [
+      {
+        path: "/",
+        element: <RecordingPage />,
+      },
+      {
+        path: "/metronome",
+        element: <MetronomePage />,
+      },
+    ],
   },
 ]);
 
 function App() {
-  const [showSettings, setShowSettings] = useState(false);
   return (
     <div id="app">
-      <Header onSettingsClick={() => setShowSettings(true)} />
       <div className="container">
         <RouterProvider router={router} />
-        <SettingsModal show={showSettings} onClose={() => setShowSettings(false)} />
         <ToastContainer autoClose={2000} />
       </div>
+    </div>
+  );
+}
+
+function Layout() {
+  const [showSettings, setShowSettings] = useState(false);
+  return (
+    <div className="layout">
+      <Header onSettingsClick={() => setShowSettings(true)} />
+      <Outlet />
+      <SettingsModal show={showSettings} onClose={() => setShowSettings(false)} />
+      <IP className="ip" />
     </div>
   );
 }

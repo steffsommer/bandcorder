@@ -1,10 +1,12 @@
 import styles from "./metronome-page.module.css";
+import { Start, Stop, UpdateBpm } from "../../wailsjs/go/services/MetronomeService";
 
 export default function Metronome() {
   const isPlaying = false;
   const bpm = 120;
   function toggle() {
     console.log("not yet implemented");
+    Start();
   }
 
   return (

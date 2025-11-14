@@ -69,6 +69,7 @@ func main() {
 	recordingController := controllers.NewRecordingController(recordingFacade)
 
 	fileController := controllers.NewFileController(storageService)
+	metroService := services.NewMetronomeService(86)
 
 	r := gin.Default()
 
@@ -110,6 +111,7 @@ func main() {
 			storageService,
 			settingsService,
 			ipService,
+			metroService,
 		},
 	})
 

@@ -28,6 +28,13 @@
 }
 
 .ip {
-  padding-top: 20px;
+  margin-bottom: var(--spacing);
   margin-left: auto;
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing);
+  height: 100%;
 }
