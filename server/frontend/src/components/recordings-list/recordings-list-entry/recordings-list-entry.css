@@ -8,6 +8,7 @@
 
 .note-icon-container {
   background: var(--color-surface-1);
+  --border-radius: 6px;
   border-radius: var(--border-radius) 0 0 var(--border-radius);
   padding: var(--spacing);
 }
