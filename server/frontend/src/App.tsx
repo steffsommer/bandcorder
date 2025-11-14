@@ -1,5 +1,6 @@
+import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
-import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Outlet, useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "./App.css";
 import { Card } from "./components/card/card";
@@ -39,10 +40,19 @@ function App() {
 
 function Layout() {
   const [showSettings, setShowSettings] = useState(false);
+  const location = useLocation();
   return (
     <div className="layout">
       <Header onSettingsClick={() => setShowSettings(true)} />
-      <Outlet />
+      <motion.div
+        className="full-height-flex-child"
+        key={location.pathname}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.2 }}
+      >
+        <Outlet />
+      </motion.div>
       <SettingsModal show={showSettings} onClose={() => setShowSettings(false)} />
       <IP className="ip" />
     </div>

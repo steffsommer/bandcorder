@@ -38,3 +38,8 @@
   gap: var(--spacing);
   height: 100%;
 }
+
+.full-height-flex-child {
+  height: 100%;
+  min-height: 0;
+}

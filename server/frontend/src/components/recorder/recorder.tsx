@@ -55,7 +55,7 @@ export const Recorder: React.FC = () => {
         <AnimatePresence>
           {recordingName && (
             <motion.div
-              initial={{ y: 50, opacity: 0 }}
+              initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ opacity: 0 }}
               className="current-file-info"

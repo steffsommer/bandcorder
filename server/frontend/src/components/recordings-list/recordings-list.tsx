@@ -48,7 +48,7 @@ export const RecordingsList: React.FC<any> = () => {
           <AnimatePresence>
             {recordings.map((item, index) => (
               <motion.li
-                initial={{ y: 50, opacity: 0 }}
+                initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{
                   delay: 0.03 * index,
