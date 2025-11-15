@@ -68,7 +68,8 @@ func main() {
 	recordingController := controllers.NewRecordingController(recordingFacade)
 
 	fileController := controllers.NewFileController(storageService)
-	metronomeService := services.NewMetronomeService(86, broadcastSender)
+	playbackService := services.NewAudioPlaybackService("resources")
+	metronomeService := services.NewMetronomeService(86, broadcastSender, playbackService)
 
 	r := gin.Default()
 
@@ -90,6 +91,9 @@ func main() {
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 0},
 		WindowStartState: options.Maximised,
 		OnStartup: func(ctx context.Context) {
+			if err := playbackService.Init(); err != nil {
+				panic("Failed to init playback service: " + err.Error())
+			}
 			if err := recorder.Init(); err != nil {
 				panic("Failed to init recorder service: " + err.Error())
 			}

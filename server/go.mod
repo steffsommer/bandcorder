@@ -9,6 +9,7 @@ require (
 
 require (
 	github.com/gen2brain/malgo v0.11.24
+	github.com/go-audio/wav v1.1.0
 	github.com/goccy/go-yaml v1.18.0
 	github.com/mjibson/go-dsp v0.0.0-20180508042940-11479a337f12
 	github.com/stretchr/testify v1.10.0
@@ -16,6 +17,8 @@ require (
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/go-audio/audio v1.0.0 // indirect
+	github.com/go-audio/riff v1.0.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect

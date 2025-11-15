@@ -1,26 +1,28 @@
 package services
 
 import (
-	"fmt"
 	"server/internal/pkg/interfaces"
 	"server/internal/pkg/models"
 	"time"
 )
 
 type MetronomeService struct {
-	ticker     *time.Ticker
-	bpm        int
-	beatCount  int
-	dispatcher interfaces.EventDispatcher
+	ticker          *time.Ticker
+	bpm             int
+	beatCount       int
+	dispatcher      interfaces.EventDispatcher
+	playbackService interfaces.PlaybackService
 }
 
 func NewMetronomeService(
 	initialBpm int,
 	dispatcher interfaces.EventDispatcher,
+	playbackService interfaces.PlaybackService,
 ) *MetronomeService {
 	return &MetronomeService{
-		bpm:        initialBpm,
-		dispatcher: dispatcher,
+		bpm:             initialBpm,
+		dispatcher:      dispatcher,
+		playbackService: playbackService,
 	}
 }
 
@@ -43,7 +45,7 @@ func (m *MetronomeService) beat() {
 	event := models.NewMetronomeBeatEvent(m.beatCount)
 	m.dispatcher.Dispatch(event)
 	m.beatCount++
-	fmt.Println(m.beatCount)
+	m.playbackService.Play(interfaces.MetronomeClick)
 }
 
 func (m *MetronomeService) Stop() {
