@@ -34,9 +34,13 @@ func (m *MetronomeController) HandleSwitchOnState(c *gin.Context) {
 		return
 	}
 	if dto.On {
-		m.metronome.Start()
+		err = m.metronome.Start()
 	} else {
-		m.metronome.Stop()
+		err = m.metronome.Stop()
+	}
+	if err != nil {
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
 	}
 }
 
@@ -47,5 +51,7 @@ func (m *MetronomeController) HandleBpmUpdate(c *gin.Context) {
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
-	m.metronome.UpdateBpm(int(dto.Bpm))
+	if err = m.metronome.UpdateBpm(int(dto.Bpm)); err != nil {
+		c.AbortWithStatus(http.StatusBadRequest)
+	}
 }
