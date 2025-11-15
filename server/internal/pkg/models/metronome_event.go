@@ -1,7 +1,7 @@
 package models
 
 type MetronomeBeatEventData struct {
-	BeatCount int
+	BeatCount int `json:"beatCount"`
 }
 
 func NewMetronomeBeatEvent(beatCount int) Event[MetronomeBeatEventData] {

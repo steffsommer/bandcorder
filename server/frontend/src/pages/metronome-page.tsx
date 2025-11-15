@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Start, Stop, UpdateBpm } from "../../wailsjs/go/services/MetronomeService";
 import { EventsOn } from "../../wailsjs/runtime/runtime";
-import { EventID } from "../components/events";
+import { EventID, MetronomeRunningData } from "../components/events";
 import styles from "./metronome-page.module.css";
 
 export default function Metronome() {
@@ -9,6 +9,7 @@ export default function Metronome() {
   const barCount = 8;
 
   const [on, setOn] = useState(false);
+  const [activeBar, setActiveBar] = useState(-1);
 
   function toggle() {
     if (on) {
@@ -19,11 +20,13 @@ export default function Metronome() {
   }
 
   useEffect(() => {
-    const cb1 = EventsOn(EventID.MetronomeRunningEvent, () => {
+    const cb1 = EventsOn(EventID.MetronomeRunningEvent, (data: MetronomeRunningData) => {
       setOn(true);
+      setActiveBar(data.beatCount % barCount);
     });
     const cb2 = EventsOn(EventID.MetronomeIdleEvent, () => {
       setOn(false);
+      setActiveBar(-1);
     });
     return () => {
       cb1();
@@ -36,7 +39,7 @@ export default function Metronome() {
       <div className={styles.card}>
         <div className={styles.barsContainer}>
           {[...Array(barCount)].map((_, i) => (
-            <div key={i} className={`${styles.bar} ${i === 0 ? styles.barActive : ""}`} />
+            <div key={i} className={`${styles.bar} ${i === activeBar ? styles.barActive : ""}`} />
           ))}
         </div>
 

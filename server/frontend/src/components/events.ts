@@ -11,3 +11,7 @@ export interface RunningEventData {
   fileName: string;
   secondsRunning: number;
 }
+
+export interface MetronomeRunningData {
+  beatCount: number;
+}
