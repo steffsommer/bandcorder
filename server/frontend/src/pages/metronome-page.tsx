@@ -1,19 +1,41 @@
-import styles from "./metronome-page.module.css";
+import { useEffect, useState } from "react";
 import { Start, Stop, UpdateBpm } from "../../wailsjs/go/services/MetronomeService";
+import { EventsOn } from "../../wailsjs/runtime/runtime";
+import { EventID } from "../components/events";
+import styles from "./metronome-page.module.css";
 
 export default function Metronome() {
-  const isPlaying = false;
   const bpm = 120;
+  const barCount = 8;
+
+  const [on, setOn] = useState(false);
+
   function toggle() {
-    console.log("not yet implemented");
-    Start();
+    if (on) {
+      Stop();
+    } else {
+      Start();
+    }
   }
+
+  useEffect(() => {
+    const cb1 = EventsOn(EventID.MetronomeRunningEvent, () => {
+      setOn(true);
+    });
+    const cb2 = EventsOn(EventID.MetronomeIdleEvent, () => {
+      setOn(false);
+    });
+    return () => {
+      cb1();
+      cb2();
+    };
+  }, []);
 
   return (
     <div className={styles.container}>
       <div className={styles.card}>
         <div className={styles.barsContainer}>
-          {[...Array(8)].map((_, i) => (
+          {[...Array(barCount)].map((_, i) => (
             <div key={i} className={`${styles.bar} ${i === 0 ? styles.barActive : ""}`} />
           ))}
         </div>
@@ -37,9 +59,9 @@ export default function Metronome() {
 
         <button
           onClick={toggle}
-          className={`${styles.button} ${isPlaying ? styles.buttonStop : styles.buttonStart}`}
+          className={`${styles.button} ${on ? styles.buttonStop : styles.buttonStart}`}
         >
-          {isPlaying ? "STOP" : "START"}
+          {on ? "STOP" : "START"}
         </button>
       </div>
     </div>

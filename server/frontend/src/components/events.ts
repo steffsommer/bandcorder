@@ -3,6 +3,8 @@ export enum EventID {
   RecordingRunning = "RecordingRunning",
   LiveAudioDataEvent = "LiveAudioData",
   FileRenamedEvent = "FileRenamed",
+  MetronomeIdleEvent = "MetronomeIdle",
+  MetronomeRunningEvent = "MetronomeRunning",
 }
 
 export interface RunningEventData {

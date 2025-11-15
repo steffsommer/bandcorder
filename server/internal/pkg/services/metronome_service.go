@@ -19,7 +19,8 @@ func NewMetronomeService(
 	dispatcher interfaces.EventDispatcher,
 ) *MetronomeService {
 	return &MetronomeService{
-		bpm: initialBpm,
+		bpm:        initialBpm,
+		dispatcher: dispatcher,
 	}
 }
 
@@ -29,12 +30,20 @@ func (m *MetronomeService) Start() {
 	}
 	interval := time.Minute / time.Duration(m.bpm)
 	m.ticker = time.NewTicker(interval)
-	for range m.ticker.C {
-		fmt.Println("tick")
-		event := models.NewMetronomeBeatEvent(m.beatCount)
-		m.dispatcher.Dispatch(event)
-		m.beatCount++
-	}
+
+	m.beat()
+	go func() {
+		for range m.ticker.C {
+			m.beat()
+		}
+	}()
+}
+
+func (m *MetronomeService) beat() {
+	event := models.NewMetronomeBeatEvent(m.beatCount)
+	m.dispatcher.Dispatch(event)
+	m.beatCount++
+	fmt.Println(m.beatCount)
 }
 
 func (m *MetronomeService) Stop() {
@@ -43,11 +52,14 @@ func (m *MetronomeService) Stop() {
 	}
 	m.ticker.Stop()
 	m.ticker = nil
+	m.beatCount = 0
 	event := models.NewMetronomeIdleEvent()
-	m.dispatcher.Dispatch(event)
+	go m.dispatcher.Dispatch(event)
 }
 
 func (m *MetronomeService) UpdateBpm(bpm int) {
+	m.Stop()
 	m.bpm = bpm
+	m.beatCount = 0
 	m.Start()
 }

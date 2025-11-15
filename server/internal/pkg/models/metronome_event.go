@@ -15,6 +15,6 @@ func NewMetronomeBeatEvent(beatCount int) Event[MetronomeBeatEventData] {
 
 func NewMetronomeIdleEvent() Event[any] {
 	return Event[any]{
-		EventId: RecordingIdleEvent,
+		EventId: MetronomeIdleEvent,
 	}
 }

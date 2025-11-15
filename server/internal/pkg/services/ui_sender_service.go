@@ -27,5 +27,6 @@ func (u *UiSenderService) Dispatch(event models.EventLike) {
 	if u.wailsCtx == nil {
 		panic("Wails Context has not been set")
 	}
-	runtime.EventsEmit(u.wailsCtx, string(event.GetId()), event.GetData())
+	// dispatching events in a separate Goroutine is crucial, otherwise GTK may crash
+	go runtime.EventsEmit(u.wailsCtx, string(event.GetId()), event.GetData())
 }
