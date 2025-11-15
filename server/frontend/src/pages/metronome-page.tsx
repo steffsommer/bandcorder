@@ -38,7 +38,9 @@ export default function Metronome() {
       <div className={styles.card}>
         <div className={styles.barsContainer}>
           {[...Array(barCount)].map((_, i) => (
-            <div key={i} className={`${styles.bar} ${i === activeBar ? styles.barActive : ""}`} />
+            <div key={i} className={`${styles.bar} ${i === activeBar ? styles.barActive : ""}`}>
+              {i + 1}
+            </div>
           ))}
         </div>
         <div className={styles.display}>

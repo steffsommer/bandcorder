@@ -24,6 +24,10 @@
 }
 
 .bar {
+  display: grid;
+  place-items: center;
+  font-size: 3rem;
+  font-weight: bold;
   width: 3rem;
   height: 12rem;
   border-radius: 20px;
