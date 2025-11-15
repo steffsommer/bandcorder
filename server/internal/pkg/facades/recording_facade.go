@@ -7,20 +7,23 @@ import (
 )
 
 // RecordingFacade is a proxy implementation of the recorder interface, which notifies
-// the event system about recording state changes
+// the event system about recording state changes and plays sound effects
 type RecordingFacade struct {
 	eventbus interfaces.RecordingEventBus
 	recorder interfaces.Recorder
+	player   interfaces.PlaybackService
 }
 
 // NewRecordingFacade creates a new NewRecordingFacade
 func NewRecordingFacade(
 	eventbus interfaces.RecordingEventBus,
 	recorder interfaces.Recorder,
+	player interfaces.PlaybackService,
 ) *RecordingFacade {
 	return &RecordingFacade{
 		eventbus: eventbus,
 		recorder: recorder,
+		player:   player,
 	}
 }
 
@@ -32,6 +35,7 @@ func (r *RecordingFacade) Start() (interfaces.RecordingMetaData, error) {
 		return res, err
 	}
 	r.eventbus.NotifyStarted(res)
+	r.player.Play(interfaces.SwitchOn)
 	logrus.Info("Recording started successfully")
 	return res, nil
 }
@@ -44,6 +48,7 @@ func (r *RecordingFacade) Stop() error {
 		return err
 	}
 	r.eventbus.NotifyStopped()
+	r.player.Play(interfaces.SwitchOff)
 	logrus.Info("Recording stopped successfully")
 	return err
 }
@@ -56,6 +61,7 @@ func (r *RecordingFacade) Abort() error {
 		return err
 	}
 	r.eventbus.NotifyStopped()
+	r.player.Play(interfaces.Delete)
 	logrus.Info("Recording aborted successfully")
 	return err
 }

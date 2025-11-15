@@ -62,13 +62,13 @@ func main() {
 		timeProvider,
 		broadcastSender,
 	)
+	playbackService := services.NewAudioPlaybackService("resources")
 	processor := services.NewAudioProcessorService(broadcastSender)
 	recorder := services.NewRecorderService(storageService, processor)
-	recordingFacade := facades.NewRecordingFacade(eventbus, recorder)
+	recordingFacade := facades.NewRecordingFacade(eventbus, recorder, playbackService)
 	recordingController := controllers.NewRecordingController(recordingFacade)
 
 	fileController := controllers.NewFileController(storageService)
-	playbackService := services.NewAudioPlaybackService("resources")
 	metronomeService := services.NewMetronomeService(86, broadcastSender, playbackService)
 
 	r := gin.Default()

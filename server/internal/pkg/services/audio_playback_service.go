@@ -20,13 +20,13 @@ type AudioPlaybackService struct {
 
 func NewAudioPlaybackService(resourcesPath string) *AudioPlaybackService {
 	audioPath := filepath.Join(resourcesPath, "audio_files")
-
 	return &AudioPlaybackService{
 		audioPath: audioPath,
 		fileMap: map[interfaces.AudioEffect]string{
 			interfaces.MetronomeClick: "metronome_beat.wav",
-			interfaces.RecordingStart: "metronome_beat.wav",
-			interfaces.RecordingStop:  "metronome_beat.wav",
+			interfaces.SwitchOn:       "switch_on.wav",
+			interfaces.SwitchOff:      "switch_off.wav",
+			interfaces.Delete:         "delete.wav",
 		},
 	}
 }

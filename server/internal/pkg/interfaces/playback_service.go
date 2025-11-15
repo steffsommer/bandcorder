@@ -4,8 +4,9 @@ type AudioEffect int
 
 const (
 	MetronomeClick AudioEffect = iota
-	RecordingStart
-	RecordingStop
+	SwitchOn
+	SwitchOff
+	Delete
 )
 
 type PlaybackService interface {
