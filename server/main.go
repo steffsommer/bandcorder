@@ -63,12 +63,13 @@ func main() {
 		broadcastSender,
 	)
 	playbackService := services.NewAudioPlaybackService("resources")
+	storageFacade := facades.NewFileSystemStorageFacade(playbackService, storageService)
 	processor := services.NewAudioProcessorService(broadcastSender)
-	recorder := services.NewRecorderService(storageService, processor)
+	recorder := services.NewRecorderService(storageFacade, processor)
 	recordingFacade := facades.NewRecordingFacade(eventbus, recorder, playbackService)
 	recordingController := controllers.NewRecordingController(recordingFacade)
 
-	fileController := controllers.NewFileController(storageService)
+	fileController := controllers.NewFileController(storageFacade)
 	metronomeService := services.NewMetronomeService(86, broadcastSender, playbackService)
 
 	r := gin.Default()
@@ -111,7 +112,7 @@ func main() {
 		Bind: []interface{}{
 			&modelExporter,
 			recordingFacade,
-			storageService,
+			storageFacade,
 			settingsService,
 			ipService,
 			metronomeService,

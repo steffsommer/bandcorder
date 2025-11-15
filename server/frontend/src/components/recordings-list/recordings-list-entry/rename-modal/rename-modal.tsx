@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { FiFile, FiSave } from "react-icons/fi";
 import { IoMdClose } from "react-icons/io";
-import { RenameRecording } from "../../../../../wailsjs/go/services/FileSystemStorageService";
+import { RenameRecording } from "../../../../../wailsjs/go/facades/FileSystemStorageFacade";
 import { toastFailure, toastSuccess } from "../../../../services/toast-service/toast-service";
 import { Button } from "../../../button/button";
 import "./rename-modal.css";

@@ -9,7 +9,7 @@ import { TimeUtils } from "../../../utils/time";
 import { RenameModal } from "./rename-modal/rename-modal";
 import { useState } from "react";
 import { ConfirmationModal } from "../../confirmation-modal/confirmation-modal";
-import { DeleteRecording } from "../../../../wailsjs/go/services/FileSystemStorageService";
+import { DeleteRecording } from "../../../../wailsjs/go/facades/FileSystemStorageFacade";
 import { toastFailure, toastSuccess } from "../../../services/toast-service/toast-service";
 
 interface Props {

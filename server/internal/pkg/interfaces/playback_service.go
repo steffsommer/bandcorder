@@ -7,6 +7,7 @@ const (
 	SwitchOn
 	SwitchOff
 	Delete
+	Success
 )
 
 type PlaybackService interface {

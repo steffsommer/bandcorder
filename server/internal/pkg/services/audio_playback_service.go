@@ -27,6 +27,7 @@ func NewAudioPlaybackService(resourcesPath string) *AudioPlaybackService {
 			interfaces.SwitchOn:       "switch_on.wav",
 			interfaces.SwitchOff:      "switch_off.wav",
 			interfaces.Delete:         "delete.wav",
+			interfaces.Success:        "success.wav",
 		},
 	}
 }

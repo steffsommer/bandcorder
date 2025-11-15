@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import React, { useEffect, useState } from "react";
 import { models } from "../../../wailsjs/go/models";
-import { GetRecordings } from "../../../wailsjs/go/services/FileSystemStorageService";
+import { GetRecordings } from "../../../wailsjs/go/facades/FileSystemStorageFacade";
 import { EventsOn } from "../../../wailsjs/runtime/runtime";
 import { EventID } from "../events";
 import { RecordingsListEntry } from "./recordings-list-entry/recordings-list-entry";
