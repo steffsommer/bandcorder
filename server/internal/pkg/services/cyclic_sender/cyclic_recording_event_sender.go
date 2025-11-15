@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-type CyclicSender struct {
+type CyclicRecordingEventSender struct {
 	dispatcher interfaces.EventDispatcher
 	metaData   *interfaces.RecordingMetaData
 }
@@ -14,13 +14,13 @@ type CyclicSender struct {
 // interval time after which state updates are sent to clients
 const interval = 100 * time.Millisecond
 
-func NewCyclicSender(dispatcher interfaces.EventDispatcher) *CyclicSender {
-	return &CyclicSender{
+func NewCyclicRecordingEventSender(dispatcher interfaces.EventDispatcher) *CyclicRecordingEventSender {
+	return &CyclicRecordingEventSender{
 		dispatcher: dispatcher,
 	}
 }
 
-func (n *CyclicSender) StartSendingPeriodicUpdates() {
+func (n *CyclicRecordingEventSender) StartSendingPeriodicUpdates() {
 	n.NotifyStopped()
 	go func() {
 		for {
@@ -30,17 +30,17 @@ func (n *CyclicSender) StartSendingPeriodicUpdates() {
 	}()
 }
 
-func (n *CyclicSender) NotifyStarted(res interfaces.RecordingMetaData) {
+func (n *CyclicRecordingEventSender) NotifyStarted(res interfaces.RecordingMetaData) {
 	n.metaData = &res
 	n.dispatch()
 }
 
-func (n *CyclicSender) NotifyStopped() {
+func (n *CyclicRecordingEventSender) NotifyStopped() {
 	n.metaData = nil
 	n.dispatch()
 }
 
-func (n *CyclicSender) dispatch() {
+func (n *CyclicRecordingEventSender) dispatch() {
 	var event models.EventLike
 	if n.metaData == nil {
 		event = models.NewRecordingIdleEvent()

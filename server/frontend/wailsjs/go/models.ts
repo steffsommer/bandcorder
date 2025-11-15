@@ -85,12 +85,12 @@ export namespace models {
 		    return a;
 		}
 	}
-	export class RunningEventData {
+	export class RecordingRunningEventData {
 	    fileName: string;
 	    secondsRunning: number;
 	
 	    static createFrom(source: any = {}) {
-	        return new RunningEventData(source);
+	        return new RecordingRunningEventData(source);
 	    }
 	
 	    constructor(source: any = {}) {

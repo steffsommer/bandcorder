@@ -53,7 +53,7 @@ func main() {
 		},
 	)
 
-	eventbus := cyclic_sender.NewCyclicSender(broadcastSender)
+	eventbus := cyclic_sender.NewCyclicRecordingEventSender(broadcastSender)
 	timeProvider := services.NewRealTimeProvider()
 
 	storageService := services.NewFileSystemStorageService(
