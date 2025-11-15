@@ -5,9 +5,8 @@ import { EventID, MetronomeRunningData } from "../components/events";
 import styles from "./metronome-page.module.css";
 
 export default function Metronome() {
-  const bpm = 120;
-  const barCount = 8;
-
+  const [bpm, setBpm] = useState(120);
+  const barCount = 4;
   const [on, setOn] = useState(false);
   const [activeBar, setActiveBar] = useState(-1);
 
@@ -42,11 +41,9 @@ export default function Metronome() {
             <div key={i} className={`${styles.bar} ${i === activeBar ? styles.barActive : ""}`} />
           ))}
         </div>
-
         <div className={styles.display}>
-          <div className={styles.bpmValue}>80</div>
+          <div className={styles.bpmValue}>{bpm}</div>
         </div>
-
         <div className={styles.sliderContainer}>
           <input
             type="range"
@@ -57,9 +54,11 @@ export default function Metronome() {
             style={{
               background: `linear-gradient(to right, #FCD34D ${((bpm - 40) / 200) * 100}%, white ${((bpm - 40) / 200) * 100}%)`,
             }}
+            onChange={(e) => setBpm(Number(e.target.value))}
+            onMouseUp={(e) => UpdateBpm(Number((e.target as HTMLInputElement).value))}
+            onTouchEnd={(e) => UpdateBpm(Number((e.target as HTMLInputElement).value))}
           />
         </div>
-
         <button
           onClick={toggle}
           className={`${styles.button} ${on ? styles.buttonStop : styles.buttonStart}`}
