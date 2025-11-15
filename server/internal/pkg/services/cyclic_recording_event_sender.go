@@ -1,4 +1,4 @@
-package cyclic_sender
+package services
 
 import (
 	"server/internal/pkg/interfaces"

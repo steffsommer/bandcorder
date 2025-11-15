@@ -11,7 +11,6 @@ import (
 	"server/internal/pkg/interfaces"
 	"server/internal/pkg/models"
 	"server/internal/pkg/services"
-	"server/internal/pkg/services/cyclic_sender"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -53,7 +52,7 @@ func main() {
 		},
 	)
 
-	eventbus := cyclic_sender.NewCyclicRecordingEventSender(broadcastSender)
+	eventbus := services.NewCyclicRecordingEventSender(broadcastSender)
 	timeProvider := services.NewRealTimeProvider()
 
 	storageService := services.NewFileSystemStorageService(
