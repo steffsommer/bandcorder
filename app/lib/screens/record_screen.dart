@@ -3,7 +3,6 @@ import 'package:bandcorder/services/file_service.dart';
 import 'package:bandcorder/services/recording_service.dart';
 import 'package:bandcorder/widgets/custom_button.dart';
 import 'package:bandcorder/widgets/custom_card.dart';
-import 'package:bandcorder/widgets/heading.dart';
 import 'package:bandcorder/widgets/timer.dart';
 import 'package:flutter/material.dart';
 
@@ -92,48 +91,88 @@ class RecordScreenState extends State<RecordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const CustomAppBar(),
-      body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: CustomCard(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  const Heading(message: "Record"),
-                  const SizedBox(height: 30),
-                  Timer(secondsRunning: secondsRunning),
-                  SizedBox(
-                    height: 120,
-                    child: recordingName == ""
-                        ? null
-                        : Center(
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.audio_file,
-                                  size: 30.0,
-                                ),
-                                Text(recordingName,
-                                    style: const TextStyle(
-                                        fontSize: StyleConstants.textSizeBigger,
-                                        fontWeight: FontWeight.bold)),
-                              ],
-                            ),
-                          ),
+    return DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          appBar: const CustomAppBar(
+              bottom: TabBar(
+                  labelStyle: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
-                  AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 200),
-                      child: Column(
-                        key: ValueKey('${_loading}_${isRunning()}'),
-                        children: getControls(),
-                      )),
-                  const SizedBox(height: 30),
-                ],
-              ),
-            ),
-          )),
-    );
+                  labelColor: Colors.black,
+                  unselectedLabelColor: Colors.grey,
+                  indicator: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: StyleConstants.colorGreen,
+                        width: 4,
+                      ),
+                    ),
+                  ),
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  tabs: [
+                Tab(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.mic),
+                      SizedBox(width: 8),
+                      Text('RECORD'),
+                    ],
+                  ),
+                ),
+                Tab(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.electric_meter_rounded),
+                      SizedBox(width: 8),
+                      Text('METRONOME'),
+                    ],
+                  ),
+                ),
+              ])),
+          body: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: CustomCard(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 30),
+                      Timer(secondsRunning: secondsRunning),
+                      SizedBox(
+                        height: 120,
+                        child: recordingName == ""
+                            ? null
+                            : Center(
+                                child: Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.audio_file,
+                                      size: 30.0,
+                                    ),
+                                    Text(recordingName,
+                                        style: const TextStyle(
+                                            fontSize:
+                                                StyleConstants.textSizeBigger,
+                                            fontWeight: FontWeight.bold)),
+                                  ],
+                                ),
+                              ),
+                      ),
+                      AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 200),
+                          child: Column(
+                            key: ValueKey('${_loading}_${isRunning()}'),
+                            children: getControls(),
+                          )),
+                      const SizedBox(height: 30),
+                    ],
+                  ),
+                ),
+              )),
+        ));
   }
 
   List<Widget> getControls() {
