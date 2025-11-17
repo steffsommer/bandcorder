@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:bandcorder/models/event.dart';
-import 'package:bandcorder/screens/record_screen.dart';
+import 'package:bandcorder/screens/remote_controls_scaffold.dart';
 import 'package:bandcorder/services/file_service.dart';
 import 'package:bandcorder/services/recording_service.dart';
 import 'package:bandcorder/services/web_socket_service.dart';
@@ -43,7 +43,7 @@ void main() {
         askUserForConfirmation,
   }) {
     return MaterialApp(
-      home: RecordScreen(
+      home: RemoteControlsScaffold(
         websocketService: mockWebSocketService,
         recordingService: mockRecordingService,
         fileService: mockFileService,

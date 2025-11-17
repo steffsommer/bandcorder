@@ -9,8 +9,8 @@ import 'package:flutter/material.dart';
 import '../services/web_socket_service.dart';
 import '../style_constants.dart';
 
-class RecordingControls extends StatefulWidget {
-  const RecordingControls({
+class RecordingControlsSubScreen extends StatefulWidget {
+  const RecordingControlsSubScreen({
     super.key,
     required this.websocketService,
     required this.recordingService,
@@ -28,10 +28,10 @@ class RecordingControls extends StatefulWidget {
       required String message}) askUserForConfirmation;
 
   @override
-  RecordingControlsState createState() => RecordingControlsState();
+  RecordingControlsSubScreenState createState() => RecordingControlsSubScreenState();
 }
 
-class RecordingControlsState extends State<RecordingControls> {
+class RecordingControlsSubScreenState extends State<RecordingControlsSubScreen> {
   List<void Function()> cleanupFns = [];
   String recordingName = "";
   int? secondsRunning;

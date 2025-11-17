@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 
 import '../services/web_socket_service.dart';
 
-class MetronomeControls extends StatefulWidget {
-  const MetronomeControls({
+class MetronomeControlsSubScreen extends StatefulWidget {
+  const MetronomeControlsSubScreen({
     super.key,
     required this.websocketService,
   });
@@ -13,10 +13,12 @@ class MetronomeControls extends StatefulWidget {
   final WebSocketService websocketService;
 
   @override
-  MetronomeControlsState createState() => MetronomeControlsState();
+  MetronomeControlsSubScreenState createState() =>
+      MetronomeControlsSubScreenState();
 }
 
-class MetronomeControlsState extends State<MetronomeControls> {
+class MetronomeControlsSubScreenState
+    extends State<MetronomeControlsSubScreen> {
   List<void Function()> cleanupFns = [];
   String recordingName = "";
   int? secondsRunning;
@@ -64,5 +66,4 @@ class MetronomeControlsState extends State<MetronomeControls> {
       ),
     );
   }
-
 }
