@@ -50,6 +50,7 @@ GoRouter router() => GoRouter(
                   builder: (context, state) {
                     return MetronomeControlsSubScreen(
                       websocketService: context.read(),
+                      metronomeService: context.read(),
                     );
                   })
             ])

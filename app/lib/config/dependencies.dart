@@ -1,6 +1,7 @@
 import 'package:bandcorder/services/connection_cache_service.dart';
 import 'package:bandcorder/services/connection_config.dart';
 import 'package:bandcorder/services/file_service.dart';
+import 'package:bandcorder/services/metronome_service.dart';
 import 'package:bandcorder/services/recording_service.dart';
 import 'package:bandcorder/services/toast_service.dart';
 import 'package:bandcorder/services/web_socket_service.dart';
@@ -25,5 +26,9 @@ List<SingleChildWidget> get providers {
     ProxyProvider2<ConnectionConfig, ToastService, WebSocketService>(
         update: (_, connectionConfig, toastService, __) =>
             WebSocketService(connectionConfig, toastService)),
+    ProxyProvider2<ConnectionConfig, ToastService, MetronomeService>(
+        update: (context, connectionConfig, toastService, __) =>
+            MetronomeService(
+                connectionConfig, toastService, context.read<http.Client>())),
   ];
 }
