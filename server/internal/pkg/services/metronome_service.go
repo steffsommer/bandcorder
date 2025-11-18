@@ -36,8 +36,8 @@ func NewMetronomeService(
 }
 
 func (m *MetronomeService) Start() error {
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
+	// m.mutex.Lock()
+	// defer m.mutex.Unlock()
 	if m.ticker != nil {
 		return errors.New("Metronome is already running")
 	}
@@ -61,8 +61,8 @@ func (m *MetronomeService) beat() {
 }
 
 func (m *MetronomeService) Stop() error {
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
+	// m.mutex.Lock()
+	// defer m.mutex.Unlock()
 	if m.ticker == nil {
 		return errors.New("Metronome is not running")
 	}
@@ -75,8 +75,8 @@ func (m *MetronomeService) Stop() error {
 }
 
 func (m *MetronomeService) UpdateBpm(bpm int) error {
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
+	// m.mutex.Lock()
+	// defer m.mutex.Unlock()
 	if bpm < minBpm || bpm > maxBpm {
 		return fmt.Errorf("BPM must be in the range %d-%d", minBpm, maxBpm)
 	}

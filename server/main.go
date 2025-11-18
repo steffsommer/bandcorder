@@ -72,11 +72,18 @@ func main() {
 	fileController := controllers.NewFileController(storageFacade)
 	metronomeService := services.NewMetronomeService(86, broadcastSender, playbackService)
 
+	metronomeController := controllers.NewMetronomeController(metronomeService)
+
 	r := gin.Default()
 
 	r.POST("/recording/start", recordingController.HandleStart)
 	r.POST("/recording/stop", recordingController.HandleStop)
 	r.POST("/recording/abort", recordingController.HandleAbort)
+
+	r.POST("/metronome/start", metronomeController.HandleStart)
+	r.POST("/metronome/stop", metronomeController.HandleStop)
+	r.POST("/metronome/updateBpm", metronomeController.HandleUpdateBpm)
+
 	r.POST("/files/renameLast", fileController.HandleRenameLast)
 	r.GET("/ws", websocketController.HandleWebsocketUpgrade)
 

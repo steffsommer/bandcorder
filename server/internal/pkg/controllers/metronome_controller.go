@@ -9,11 +9,7 @@ import (
 )
 
 type UpdateBpmDto struct {
-	Bpm uint8
-}
-
-type OnOffStateDto struct {
-	On bool
+	Bpm uint8 `json:"bpm"`
 }
 
 type MetronomeController struct {
@@ -26,25 +22,21 @@ func NewMetronomeController(metronome interfaces.Metronome) *MetronomeController
 	}
 }
 
-func (m *MetronomeController) HandleSwitchOnState(c *gin.Context) {
-	var dto OnOffStateDto
-	err := json.NewDecoder(c.Request.Body).Decode(&dto)
-	if err != nil {
-		c.AbortWithStatus(http.StatusBadRequest)
-		return
-	}
-	if dto.On {
-		err = m.metronome.Start()
-	} else {
-		err = m.metronome.Stop()
-	}
-	if err != nil {
+func (m *MetronomeController) HandleStart(c *gin.Context) {
+	if err := m.metronome.Start(); err != nil {
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 }
 
-func (m *MetronomeController) HandleBpmUpdate(c *gin.Context) {
+func (m *MetronomeController) HandleStop(c *gin.Context) {
+	if err := m.metronome.Stop(); err != nil {
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+}
+
+func (m *MetronomeController) HandleUpdateBpm(c *gin.Context) {
 	var dto UpdateBpmDto
 	err := json.NewDecoder(c.Request.Body).Decode(&dto)
 	if err != nil {
