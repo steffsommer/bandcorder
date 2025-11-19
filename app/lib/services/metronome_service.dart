@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:bandcorder/models/metronome_state.dart';
 import 'package:bandcorder/services/connection_config.dart';
 import 'package:bandcorder/services/toast_service.dart';
 import 'package:http/http.dart' as http;
@@ -27,7 +28,6 @@ class MetronomeService {
         _toastService.toastError("Failed to start metronome");
         return;
       }
-      _toastService.toastSuccess("Metronome started");
     } catch (e) {
       _toastService.toastError("Failed to start metronome");
     }
@@ -42,7 +42,6 @@ class MetronomeService {
         _toastService.toastError("Failed to stop metronome");
         return;
       }
-      _toastService.toastSuccess("Metronome stopped");
     } catch (e) {
       _toastService.toastError("Failed to stop metronome");
     }
@@ -60,9 +59,25 @@ class MetronomeService {
         _toastService.toastError("Failed to update bpm");
         return;
       }
-      _toastService.toastSuccess("BPM updated");
     } catch (e) {
-      _toastService.toastError("FAiled to update bpm");
+      _toastService.toastError("Failed to update bpm");
+    }
+  }
+
+  Future<MetronomeState> getState() async {
+    try {
+      final url =
+          Uri.parse("${_connectionConfig.getBaseUrl()}/metronome/state");
+      final res =
+          await _httpClient.get(url).timeout(AppConstants.requestTimeout);
+      if (res.statusCode != 200) {
+        throw ArgumentError("Failed to decode metronome state");
+      }
+      final json = jsonDecode(res.body);
+      return MetronomeState.fromJson(json);
+    } catch (e) {
+      _toastService.toastError("Failed to query metronome state");
+      throw ArgumentError("Failed to decode metronome state");
     }
   }
 }

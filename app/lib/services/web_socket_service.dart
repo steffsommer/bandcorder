@@ -68,7 +68,7 @@ class WebSocketService {
               cb(event);
             }
           } catch (e) {
-            print('Failed to deserialize or process event from JSON $data');
+            // print('Failed to deserialize or process event from JSON $data');
           }
         },
         onDone: () {
@@ -135,6 +135,8 @@ class WebSocketService {
         return RecordingIdleEvent();
       case EventId.recordingRunning:
         return RecordingRunningEvent.fromJson(eventData);
+      case EventId.metronomeStateChange:
+        return MetronomeStateChangeEvent.fromJson(eventData);
     }
   }
 }

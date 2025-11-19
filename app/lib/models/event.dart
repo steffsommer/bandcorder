@@ -1,6 +1,7 @@
 enum EventId {
   recordingIdle("RecordingIdle"),
-  recordingRunning("RecordingRunning");
+  recordingRunning("RecordingRunning"),
+  metronomeStateChange("MetronomeStateChange");
 
   const EventId(this.value);
 
@@ -45,3 +46,14 @@ class RecordingRunningEvent extends Event {
 }
 
 class RecordingIdleEvent extends Event {}
+
+class MetronomeStateChangeEvent extends Event {
+  final bool isRunning;
+  final int bpm;
+
+  MetronomeStateChangeEvent({required this.isRunning, required this.bpm});
+
+  MetronomeStateChangeEvent.fromJson(Map<String, dynamic> eventData)
+      : isRunning = eventData['isRunning'],
+        bpm = eventData['bpm'];
+}

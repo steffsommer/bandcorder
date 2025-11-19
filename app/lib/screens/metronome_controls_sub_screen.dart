@@ -24,19 +24,29 @@ class MetronomeControlsSubScreen extends StatefulWidget {
 class MetronomeControlsSubScreenState
     extends State<MetronomeControlsSubScreen> {
   List<void Function()> cleanupFns = [];
-  double _currentBpm = 120.0;
-  bool _isMetronomeOn = false;
+  int _bpm = 120;
+  bool _isRunning = false;
 
   @override
   void initState() {
     super.initState();
+    _loadState();
     cleanupFns = [
-      widget.websocketService.on<RecordingRunningEvent>((event) {
+      widget.websocketService.on<MetronomeStateChangeEvent>((event) {
         setState(() {
-          // TODO: implement metronome logic
+          _bpm = event.bpm;
+          _isRunning = event.isRunning;
         });
       }),
     ];
+  }
+
+  Future<void> _loadState() async {
+    final response = await widget.metronomeService.getState();
+    setState(() {
+      _bpm = response.bpm;
+      _isRunning = response.isRunning;
+    });
   }
 
   @override
@@ -48,14 +58,11 @@ class MetronomeControlsSubScreenState
   }
 
   void _handleButtonPress() async {
-    if (_isMetronomeOn) {
+    if (_isRunning) {
       await widget.metronomeService.stop();
     } else {
       await widget.metronomeService.start();
     }
-    setState(() {
-      _isMetronomeOn = !_isMetronomeOn;
-    });
   }
 
   @override
@@ -67,7 +74,7 @@ class MetronomeControlsSubScreenState
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              '${_currentBpm.round()} BPM',
+              '${_bpm.round()} BPM',
               style: const TextStyle(
                 fontSize: StyleConstants.textSizeBiggest * 1.5,
                 fontWeight: FontWeight.bold,
@@ -75,12 +82,12 @@ class MetronomeControlsSubScreenState
             ),
             const SizedBox(height: StyleConstants.spacing * 2),
             Slider(
-              value: _currentBpm,
+              value: _bpm.toDouble(),
               min: 40,
               max: 240,
               onChanged: (value) {
                 setState(() {
-                  _currentBpm = value;
+                  _bpm = value.toInt();
                 });
               },
               onChangeEnd: (value) {
@@ -89,11 +96,11 @@ class MetronomeControlsSubScreenState
             ),
             const SizedBox(height: StyleConstants.spacing * 2),
             CustomButton(
-              color: _isMetronomeOn
+              color: _isRunning
                   ? StyleConstants.colorPurple
                   : StyleConstants.colorGreen,
-              icon: _isMetronomeOn ? Icons.stop : Icons.play_arrow,
-              text: _isMetronomeOn ? 'STOP' : 'START',
+              icon: _isRunning ? Icons.stop : Icons.play_arrow,
+              text: _isRunning ? 'STOP' : 'START',
               onPressed: _handleButtonPress,
             ),
           ],
