@@ -36,6 +36,11 @@ func (m *MetronomeController) HandleStop(c *gin.Context) {
 	}
 }
 
+func (m *MetronomeController) HandleGetState(c *gin.Context) {
+	state := m.metronome.GetState()
+	c.JSON(http.StatusOK, &state)
+}
+
 func (m *MetronomeController) HandleUpdateBpm(c *gin.Context) {
 	var dto UpdateBpmDto
 	err := json.NewDecoder(c.Request.Body).Decode(&dto)

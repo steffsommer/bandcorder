@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Start, Stop, UpdateBpm } from "../../wailsjs/go/services/MetronomeService";
+import { models } from "../../wailsjs/go/models";
+import { Start, Stop, UpdateBpm, GetState } from "../../wailsjs/go/services/MetronomeService";
 import { EventsOn } from "../../wailsjs/runtime/runtime";
-import { EventID, MetronomeRunningData } from "../components/events";
+import { EventID } from "../components/events";
 import styles from "./metronome-page.module.css";
 
 export default function Metronome() {
@@ -19,14 +20,21 @@ export default function Metronome() {
   }
 
   useEffect(() => {
-    const cb1 = EventsOn(EventID.MetronomeRunningEvent, (data: MetronomeRunningData) => {
-      setOn(true);
+    GetState().then((state) => {
+      setOn(state.isRunning);
+      setBpm(state.bpm);
+    });
+    const cb1 = EventsOn(EventID.MetronomeBeatEvent, (data: models.MetronomeBeatEventData) => {
       setActiveBar(data.beatCount % barCount);
     });
-    const cb2 = EventsOn(EventID.MetronomeIdleEvent, () => {
-      setOn(false);
-      setActiveBar(-1);
-    });
+    const cb2 = EventsOn(
+      EventID.MetronomeStateChangeEvent,
+      (data: models.MetronomeStateEventData) => {
+        setOn(data.isRunning);
+        setBpm(data.bpm);
+        setActiveBar(-1);
+      },
+    );
     return () => {
       cb1();
       cb2();

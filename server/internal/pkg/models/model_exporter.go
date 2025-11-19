@@ -10,5 +10,7 @@ type ModelExporter struct{}
 func (m ModelExporter) NoOp(
 	_ RecordingRunningEventData,
 	_ LiveAudioEventData,
+	_ MetronomeStateEventData,
+	_ MetronomeBeatEventData,
 ) {
 }

@@ -83,6 +83,7 @@ func main() {
 	r.POST("/metronome/start", metronomeController.HandleStart)
 	r.POST("/metronome/stop", metronomeController.HandleStop)
 	r.POST("/metronome/updateBpm", metronomeController.HandleUpdateBpm)
+	r.GET("/metronome/state", metronomeController.HandleGetState)
 
 	r.POST("/files/renameLast", fileController.HandleRenameLast)
 	r.GET("/ws", websocketController.HandleWebsocketUpgrade)

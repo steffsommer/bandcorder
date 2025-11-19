@@ -51,6 +51,32 @@ export namespace models {
 	        this.frequencyBars = source["frequencyBars"];
 	    }
 	}
+	export class MetronomeBeatEventData {
+	    beatCount: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new MetronomeBeatEventData(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.beatCount = source["beatCount"];
+	    }
+	}
+	export class MetronomeStateEventData {
+	    isRunning: boolean;
+	    bpm: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new MetronomeStateEventData(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.isRunning = source["isRunning"];
+	        this.bpm = source["bpm"];
+	    }
+	}
 	export class RecordingInfo {
 	    fileName: string;
 	    durationSeconds: number;

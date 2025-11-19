@@ -3,15 +3,11 @@ export enum EventID {
   RecordingRunning = "RecordingRunning",
   LiveAudioDataEvent = "LiveAudioData",
   FileRenamedEvent = "FileRenamed",
-  MetronomeIdleEvent = "MetronomeIdle",
-  MetronomeRunningEvent = "MetronomeRunning",
+  MetronomeStateChangeEvent = "MetronomeStateChange",
+  MetronomeBeatEvent = "MetronomeBeat",
 }
 
 export interface RunningEventData {
   fileName: string;
   secondsRunning: number;
-}
-
-export interface MetronomeRunningData {
-  beatCount: number;
 }

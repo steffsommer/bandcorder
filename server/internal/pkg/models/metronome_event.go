@@ -6,15 +6,24 @@ type MetronomeBeatEventData struct {
 
 func NewMetronomeBeatEvent(beatCount int) Event[MetronomeBeatEventData] {
 	return Event[MetronomeBeatEventData]{
-		EventId: MetronomeRunningEvent,
+		EventId: MetronomeBeatEvent,
 		Data: MetronomeBeatEventData{
 			BeatCount: beatCount,
 		},
 	}
 }
 
-func NewMetronomeIdleEvent() Event[any] {
-	return Event[any]{
-		EventId: MetronomeIdleEvent,
+type MetronomeStateEventData struct {
+	IsRunning bool `json:"isRunning"`
+	Bpm       int  `json:"bpm"`
+}
+
+func NewMetronomeStateChangeEvent(isRunning bool, bpm int) Event[MetronomeStateEventData] {
+	return Event[MetronomeStateEventData]{
+		EventId: MetronomeStateChangeEvent,
+		Data: MetronomeStateEventData{
+			IsRunning: isRunning,
+			Bpm:       bpm,
+		},
 	}
 }
