@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"server/internal/pkg/interfaces"
+	"sync"
 
 	"github.com/gen2brain/malgo"
 	"github.com/go-audio/wav"
@@ -76,21 +77,14 @@ func (a *AudioPlaybackService) playFile(filepath string) {
 
 	sampleIndex := 0
 	done := make(chan struct{})
-	finished := false
+	var finished sync.Once
 
 	onSendFrames := func(pOutputSample, pInputSamples []byte, framecount uint32) {
-		if finished {
-			return
-		}
-
 		samplesNeeded := int(framecount) * int(decoder.NumChans)
 		samplesLeft := len(samples) - sampleIndex
 
 		if samplesLeft <= 0 {
-			if !finished {
-				finished = true
-				close(done)
-			}
+			finished.Do(func() { close(done) })
 			return
 		}
 
@@ -123,6 +117,7 @@ func (a *AudioPlaybackService) playFile(filepath string) {
 	device.Stop()
 	device.Uninit()
 }
+
 func (a *AudioPlaybackService) Close() error {
 	if a.ctx != nil {
 		a.ctx.Uninit()
