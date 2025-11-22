@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:bandcorder/models/event.dart';
-import 'package:bandcorder/screens/remote_controls_scaffold.dart';
+import 'package:bandcorder/screens/recording_controls_sub_screen.dart';
 import 'package:bandcorder/services/file_service.dart';
 import 'package:bandcorder/services/recording_service.dart';
 import 'package:bandcorder/services/web_socket_service.dart';
@@ -10,7 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'record_screen_test.mocks.dart';
+import 'recording_controls_sub_screen_test.mocks.dart';
 
 @GenerateMocks([WebSocketService, RecordingService, FileService])
 void main() {
@@ -39,24 +39,25 @@ void main() {
   Widget createWidget({
     Future<String?> Function(BuildContext)? askUserForNewName,
     Future<bool?> Function(
-            {required BuildContext context, required String message})?
-        askUserForConfirmation,
+        {required BuildContext context, required String message})?
+    askUserForConfirmation,
   }) {
     return MaterialApp(
-      home: RemoteControlsScaffold(
-        websocketService: mockWebSocketService,
-        recordingService: mockRecordingService,
-        fileService: mockFileService,
-        askUserForNewName: askUserForNewName ?? (_) async => null,
-        askUserForConfirmation: askUserForConfirmation ??
-            ({required context, required message}) async => false,
+      home: Scaffold(
+        body: RecordingControlsSubScreen(
+          websocketService: mockWebSocketService,
+          recordingService: mockRecordingService,
+          fileService: mockFileService,
+          askUserForNewName: askUserForNewName ?? (_) async => null,
+          askUserForConfirmation: askUserForConfirmation ??
+                  ({required context, required message}) async => false,
+        ),
       ),
     );
   }
 
   testWidgets('displays idle controls by default', (tester) async {
     await tester.pumpWidget(createWidget());
-    expect(find.text('Record'), findsOneWidget);
     expect(find.text('START'), findsOneWidget);
     expect(find.text('RENAME LAST'), findsOneWidget);
   });
@@ -75,18 +76,18 @@ void main() {
   });
 
   testWidgets('displays running controls when recording starts',
-      (tester) async {
-    await tester.pumpWidget(createWidget());
-    await tester.pump();
+          (tester) async {
+        await tester.pumpWidget(createWidget());
+        await tester.pump();
 
-    onRunningEvent(
-        RecordingRunningEvent(fileName: 'test.wav', secondsRunning: 10));
-    await tester.pump();
+        onRunningEvent(
+            RecordingRunningEvent(fileName: 'test.wav', secondsRunning: 10));
+        await tester.pump();
 
-    expect(find.text('STOP'), findsOneWidget);
-    expect(find.text('ABORT'), findsOneWidget);
-    expect(find.text('test.wav'), findsOneWidget);
-  });
+        expect(find.text('STOP'), findsOneWidget);
+        expect(find.text('ABORT'), findsOneWidget);
+        expect(find.text('test.wav'), findsOneWidget);
+      });
 
   testWidgets('stops recording when STOP pressed', (tester) async {
     when(mockRecordingService.stopRecording()).thenAnswer((_) async => {});
@@ -147,7 +148,7 @@ void main() {
     when(mockRecordingService.abortRecording()).thenAnswer((_) async => {});
     await tester.pumpWidget(createWidget(
       askUserForConfirmation: ({required context, required message}) async =>
-          true,
+      true,
     ));
     await tester.pump();
 
@@ -170,9 +171,9 @@ void main() {
       askUserForNewName: (_) async => 'new_name.wav',
     ));
 
-    var startBtn = find.text('RENAME LAST');
-    await tester.ensureVisible(startBtn);
-    await tester.tap(startBtn);
+    var renameBtn = find.text('RENAME LAST');
+    await tester.ensureVisible(renameBtn);
+    await tester.tap(renameBtn);
     await tester.pump();
 
     verify(mockFileService.renameLast('new_name.wav')).called(1);
