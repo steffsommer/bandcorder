@@ -11,13 +11,25 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var (
+	recorder        *mocks.MockRecorder
+	eventBus        *mocks.MockRecordingEventBus
+	playbackService *mocks.MockPlaybackService
+)
+
+func setup(t *testing.T) *RecordingFacade {
+	recorder = mocks.NewMockRecorder(t)
+	eventBus = mocks.NewMockRecordingEventBus(t)
+	playbackService = mocks.NewMockPlaybackService(t)
+	return NewRecordingFacade(eventBus, recorder, playbackService)
+}
+
 func TestRecordingFacade_Start_Success(t *testing.T) {
-	rec := mocks.NewMockRecorder(t)
-	bus := mocks.NewMockRecordingEventBus(t)
+	facade := setup(t)
 	meta := getTestRecordingMetaData()
-	rec.EXPECT().Start().Return(meta, nil)
-	bus.EXPECT().NotifyStarted(meta).Return()
-	facade := NewRecordingFacade(bus, rec)
+	recorder.EXPECT().Start().Return(meta, nil)
+	eventBus.EXPECT().NotifyStarted(meta).Return()
+	playbackService.EXPECT().Play(interfaces.SwitchOn)
 
 	res, err := facade.Start()
 
@@ -26,11 +38,9 @@ func TestRecordingFacade_Start_Success(t *testing.T) {
 }
 
 func TestRecordingFacade_Start_Error(t *testing.T) {
-	rec := mocks.NewMockRecorder(t)
-	bus := mocks.NewMockRecordingEventBus(t)
 	meta := getTestRecordingMetaData()
-	rec.EXPECT().Start().Return(meta, errors.New("start failed"))
-	facade := NewRecordingFacade(bus, rec)
+	facade := setup(t)
+	recorder.EXPECT().Start().Return(meta, errors.New("start failed"))
 
 	res, err := facade.Start()
 
@@ -39,11 +49,10 @@ func TestRecordingFacade_Start_Error(t *testing.T) {
 }
 
 func TestRecordingFacade_Stop_Success(t *testing.T) {
-	rec := mocks.NewMockRecorder(t)
-	bus := mocks.NewMockRecordingEventBus(t)
-	rec.EXPECT().Stop().Return(nil)
-	bus.EXPECT().NotifyStopped().Return()
-	facade := NewRecordingFacade(bus, rec)
+	facade := setup(t)
+	recorder.EXPECT().Stop().Return(nil)
+	eventBus.EXPECT().NotifyStopped().Return()
+	playbackService.EXPECT().Play(interfaces.SwitchOff)
 
 	err := facade.Stop()
 
@@ -51,10 +60,8 @@ func TestRecordingFacade_Stop_Success(t *testing.T) {
 }
 
 func TestRecordingFacade_Stop_Error(t *testing.T) {
-	rec := mocks.NewMockRecorder(t)
-	bus := mocks.NewMockRecordingEventBus(t)
-	rec.EXPECT().Stop().Return(errors.New("stop failed"))
-	facade := NewRecordingFacade(bus, rec)
+	facade := setup(t)
+	recorder.EXPECT().Stop().Return(errors.New("stop failed"))
 
 	err := facade.Stop()
 
@@ -62,11 +69,10 @@ func TestRecordingFacade_Stop_Error(t *testing.T) {
 }
 
 func TestRecordingFacade_Abort_Success(t *testing.T) {
-	rec := mocks.NewMockRecorder(t)
-	bus := mocks.NewMockRecordingEventBus(t)
-	rec.EXPECT().Abort().Return(nil)
-	bus.EXPECT().NotifyStopped().Return()
-	facade := NewRecordingFacade(bus, rec)
+	facade := setup(t)
+	recorder.EXPECT().Abort().Return(nil)
+	eventBus.EXPECT().NotifyStopped().Return()
+	playbackService.EXPECT().Play(interfaces.Delete)
 
 	err := facade.Abort()
 
@@ -74,10 +80,8 @@ func TestRecordingFacade_Abort_Success(t *testing.T) {
 }
 
 func TestRecordingFacade_Abort_Error(t *testing.T) {
-	rec := mocks.NewMockRecorder(t)
-	bus := mocks.NewMockRecordingEventBus(t)
-	rec.EXPECT().Abort().Return(errors.New("fail"))
-	facade := NewRecordingFacade(bus, rec)
+	facade := setup(t)
+	recorder.EXPECT().Abort().Return(errors.New("fail"))
 
 	err := facade.Abort()
 
@@ -85,10 +89,8 @@ func TestRecordingFacade_Abort_Error(t *testing.T) {
 }
 
 func TestRecordingFacade_GetMic(t *testing.T) {
-	rec := mocks.NewMockRecorder(t)
-	bus := mocks.NewMockRecordingEventBus(t)
-	rec.EXPECT().GetMic().Return("mic1", nil)
-	facade := NewRecordingFacade(bus, rec)
+	facade := setup(t)
+	recorder.EXPECT().GetMic().Return("mic1", nil)
 
 	mic, err := facade.GetMic()
 
