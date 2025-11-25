@@ -9,6 +9,7 @@ const (
 	FileRenamedEvent          EventId = "FileRenamed"
 	MetronomeBeatEvent        EventId = "MetronomeBeat"
 	MetronomeStateChangeEvent EventId = "MetronomeStateChange"
+	SettingsUpdatedEvent      EventId = "SettingsUpdated"
 )
 
 type EventLike interface {

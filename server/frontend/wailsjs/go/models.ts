@@ -125,11 +125,6 @@ export namespace models {
 	        this.secondsRunning = source["secondsRunning"];
 	    }
 	}
-
-}
-
-export namespace services {
-	
 	export class Settings {
 	    RecordingsDirectory: string;
 	

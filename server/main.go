@@ -40,7 +40,7 @@ func main() {
 	settingsFilePath := filepath.Join(configDir, SETTINGS_FOLDER_NAME, SETTINGS_FILE_NAME)
 
 	// NewApp creates a new App application struct
-	settingsService := services.NewSettingsService(settingsFilePath, func(s services.Settings) {
+	settingsService := services.NewSettingsService(settingsFilePath, func(s models.Settings) {
 		if storageService == nil {
 			logrus.Warn("Settings service write occured before storage service instantiation. Possibly the latest recordings directory differs")
 			return

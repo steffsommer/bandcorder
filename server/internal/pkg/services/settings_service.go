@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"server/internal/pkg/models"
 
 	"github.com/goccy/go-yaml"
 	"github.com/sirupsen/logrus"
@@ -12,18 +13,14 @@ import (
 const fileName = "config.yml"
 const configFolder = "bandcorder"
 
-type Settings struct {
-	RecordingsDirectory string
-}
-
 // SettingsService reads and writes the application settings to a YAML file
 type SettingsService struct {
 	filePath string
-	onUpdate func(s Settings)
+	onUpdate func(s models.Settings)
 }
 
 // NewSettingsService creates a new SettingsService
-func NewSettingsService(filePath string, onUpdate func(s Settings)) *SettingsService {
+func NewSettingsService(filePath string, onUpdate func(s models.Settings)) *SettingsService {
 	return &SettingsService{
 		filePath: filePath,
 		onUpdate: onUpdate,
@@ -32,39 +29,39 @@ func NewSettingsService(filePath string, onUpdate func(s Settings)) *SettingsSer
 
 // Load loads the application settings from disk. If the settings file does not exist,
 // a new one with the default settings will be created.
-func (s *SettingsService) Load() (Settings, error) {
+func (s *SettingsService) Load() (models.Settings, error) {
 	defaults, err := s.getDefaults()
 	if err != nil {
-		return Settings{}, err
+		return models.Settings{}, err
 	}
 	s.createFileIfMissing(defaults)
 	rawSettings, err := os.ReadFile(s.filePath)
 	if err != nil {
 		logrus.WithError(err).Errorf("Failed to read config file %s", s.filePath)
-		return Settings{}, err
+		return models.Settings{}, err
 	}
-	var userSettings Settings
+	var userSettings models.Settings
 	err = yaml.Unmarshal(rawSettings, &userSettings)
 	if err != nil {
 		logrus.WithError(err).Error("Config file has an invalid format")
-		return Settings{}, err
+		return models.Settings{}, err
 	}
 	settings := s.merge(defaults, userSettings)
 	return settings, nil
 }
 
-func (s *SettingsService) getDefaults() (Settings, error) {
+func (s *SettingsService) getDefaults() (models.Settings, error) {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		logrus.WithError(err).Error("Failed to determine user home directory")
-		return Settings{}, err
+		return models.Settings{}, err
 	}
-	return Settings{
+	return models.Settings{
 		RecordingsDirectory: filepath.Join(homeDir, "Documents", "Recordings"),
 	}, nil
 }
 
-func (s *SettingsService) merge(defaults, userSettings Settings) Settings {
+func (s *SettingsService) merge(defaults, userSettings models.Settings) models.Settings {
 	if userSettings.RecordingsDirectory != "" {
 		defaults.RecordingsDirectory = userSettings.RecordingsDirectory
 	}
@@ -72,7 +69,7 @@ func (s *SettingsService) merge(defaults, userSettings Settings) Settings {
 }
 
 // Saves saves the settings to disk
-func (s *SettingsService) Save(settings Settings) error {
+func (s *SettingsService) Save(settings models.Settings) error {
 	defaults, err := s.getDefaults()
 	if err != nil {
 		return err
@@ -89,7 +86,7 @@ func (s *SettingsService) Save(settings Settings) error {
 	return err
 }
 
-func (s *SettingsService) createFileIfMissing(settings Settings) error {
+func (s *SettingsService) createFileIfMissing(settings models.Settings) error {
 	if _, err := os.Stat(s.filePath); os.IsNotExist(err) {
 		os.MkdirAll(filepath.Dir(s.filePath), 0755)
 		file, err := os.Create(s.filePath)

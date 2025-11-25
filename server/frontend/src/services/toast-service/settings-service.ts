@@ -1,8 +1,8 @@
-import { services } from "../../../wailsjs/go/models";
+import { models } from "../../../wailsjs/go/models";
 import { Load, Save } from "../../../wailsjs/go/services/SettingsService";
 import { toastFailure, toastSuccess } from "./toast-service";
 
-export async function loadSettings(): Promise<services.Settings> {
+export async function loadSettings(): Promise<models.Settings> {
   try {
     const settings = await Load();
     return settings;
@@ -12,7 +12,7 @@ export async function loadSettings(): Promise<services.Settings> {
   }
 }
 
-export async function saveSettings(settings: services.Settings): Promise<void> {
+export async function saveSettings(settings: models.Settings): Promise<void> {
   try {
     await Save(settings);
     toastSuccess("Settings updated successfully");

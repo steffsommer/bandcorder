@@ -5,6 +5,7 @@ export enum EventID {
   FileRenamedEvent = "FileRenamed",
   MetronomeStateChangeEvent = "MetronomeStateChange",
   MetronomeBeatEvent = "MetronomeBeat",
+  SettingsUpdated = "SettingsUpdated",
 }
 
 export interface RunningEventData {

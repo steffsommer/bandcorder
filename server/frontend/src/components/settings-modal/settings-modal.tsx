@@ -3,11 +3,8 @@ import { FiSave, FiSettings } from "react-icons/fi";
 import { IoMdClose } from "react-icons/io";
 import "./settings-modal.css";
 import { Button } from "../button/button";
-import { services } from "../../../wailsjs/go/models";
-import {
-  loadSettings,
-  saveSettings,
-} from "../../services/toast-service/settings-service";
+import { loadSettings, saveSettings } from "../../services/toast-service/settings-service";
+import { models } from "../../../wailsjs/go/models";
 
 interface Props {
   show?: boolean;
@@ -16,7 +13,7 @@ interface Props {
 
 export function SettingsModal({ show, onClose }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const [settings, setSettings] = useState<services.Settings>({
+  const [settings, setSettings] = useState<models.Settings>({
     RecordingsDirectory: "",
   });
 
@@ -33,8 +30,8 @@ export function SettingsModal({ show, onClose }: Props) {
     }
   }, [show]);
 
-  const updateValue = (name: keyof services.Settings, value: string) => {
-    const updated: services.Settings = {
+  const updateValue = (name: keyof models.Settings, value: string) => {
+    const updated: models.Settings = {
       ...settings,
       [name]: value,
     };
@@ -51,11 +48,7 @@ export function SettingsModal({ show, onClose }: Props) {
         <h2 className="settings-heading">
           <FiSettings />
           <span>Settings</span>
-          <button
-            type="button"
-            className="close-btn"
-            onClick={() => dialogRef?.current?.close()}
-          >
+          <button type="button" className="close-btn" onClick={() => dialogRef?.current?.close()}>
             <IoMdClose className="settings-close-icon" />
           </button>
         </h2>

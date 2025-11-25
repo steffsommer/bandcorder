@@ -3,6 +3,7 @@ package services
 import (
 	"os"
 	"path/filepath"
+	"server/internal/pkg/models"
 	"testing"
 
 	"github.com/goccy/go-yaml"
@@ -17,7 +18,7 @@ func Test_CreateDefaultSettingsFile_OnLoad(t *testing.T) {
 	assert.NoError(t, err)
 	content, err := os.ReadFile(tempFilePath)
 	assert.Nil(t, err)
-	var settings Settings
+	var settings models.Settings
 	err = yaml.Unmarshal(content, &settings)
 	assert.Nil(t, err)
 	assert.NotEmpty(t, settings.RecordingsDirectory)
@@ -26,7 +27,7 @@ func Test_CreateDefaultSettingsFile_OnLoad(t *testing.T) {
 func Test_Succeed_Loading(t *testing.T) {
 	tempFile := createTempFile(t)
 	service := NewSettingsService(tempFile, noOpSettingsConsumer)
-	settings := Settings{
+	settings := models.Settings{
 		RecordingsDirectory: "/tmp/recordings",
 	}
 	settingsYaml, _ := yaml.Marshal(&settings)
@@ -41,10 +42,10 @@ func Test_CallsOnUpdateCallback(t *testing.T) {
 	tempDir := createTempDir(t)
 	tempFilePath := filepath.Join(tempDir, "config.yaml")
 	cbCalled := false
-	settings := Settings{
+	settings := models.Settings{
 		RecordingsDirectory: "/some/dir",
 	}
-	updateCallback := func(s Settings) {
+	updateCallback := func(s models.Settings) {
 		assert.Equal(t, settings, s)
 		cbCalled = true
 	}
@@ -57,7 +58,7 @@ func Test_CallsOnUpdateCallback(t *testing.T) {
 func Test_SaveSettings(t *testing.T) {
 	tempDir := createTempDir(t)
 	tempFilePath := filepath.Join(tempDir, "config.yaml")
-	settings := Settings{
+	settings := models.Settings{
 		RecordingsDirectory: "/some/dir",
 	}
 	service := NewSettingsService(tempFilePath, noOpSettingsConsumer)
@@ -88,4 +89,4 @@ func createTempDir(t *testing.T) string {
 	return tempDir
 }
 
-func noOpSettingsConsumer(s Settings) {}
+func noOpSettingsConsumer(s models.Settings) {}
