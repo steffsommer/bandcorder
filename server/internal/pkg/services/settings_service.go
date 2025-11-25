@@ -19,12 +19,14 @@ type Settings struct {
 // SettingsService reads and writes the application settings to a YAML file
 type SettingsService struct {
 	filePath string
+	onUpdate func(s Settings)
 }
 
 // NewSettingsService creates a new SettingsService
-func NewSettingsService(filePath string) *SettingsService {
+func NewSettingsService(filePath string, onUpdate func(s Settings)) *SettingsService {
 	return &SettingsService{
 		filePath: filePath,
+		onUpdate: onUpdate,
 	}
 }
 
@@ -80,7 +82,11 @@ func (s *SettingsService) Save(settings Settings) error {
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(s.filePath, yamlBytes, 0755)
+	err = os.WriteFile(s.filePath, yamlBytes, 0755)
+	if err == nil {
+		s.onUpdate(merged)
+	}
+	return err
 }
 
 func (s *SettingsService) createFileIfMissing(settings Settings) error {

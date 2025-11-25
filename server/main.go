@@ -31,6 +31,8 @@ var assets embed.FS
 
 func main() {
 
+	var storageService *services.FileSystemStorageService
+
 	configDir, err := os.UserConfigDir()
 	if err != nil {
 		panic("Failed to determine user config directory: " + err.Error())
@@ -38,7 +40,13 @@ func main() {
 	settingsFilePath := filepath.Join(configDir, SETTINGS_FOLDER_NAME, SETTINGS_FILE_NAME)
 
 	// NewApp creates a new App application struct
-	settingsService := services.NewSettingsService(settingsFilePath)
+	settingsService := services.NewSettingsService(settingsFilePath, func(s services.Settings) {
+		if storageService == nil {
+			logrus.Warn("Settings service write occured before storage service instantiation. Possibly the latest recordings directory differs")
+			return
+		}
+		storageService.UpdateBaseDir(s.RecordingsDirectory)
+	})
 	settings, err := settingsService.Load()
 	if err != nil {
 		logrus.Fatalf("Failed to load settings: %s", err.Error())
@@ -55,7 +63,7 @@ func main() {
 	eventbus := services.NewCyclicRecordingEventSender(broadcastSender)
 	timeProvider := services.NewRealTimeProvider()
 
-	storageService := services.NewFileSystemStorageService(
+	storageService = services.NewFileSystemStorageService(
 		settings.RecordingsDirectory,
 		AUDIO_CHANNEL_COUNT,
 		SAMPLE_RATE_HZ,

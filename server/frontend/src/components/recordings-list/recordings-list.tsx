@@ -31,6 +31,9 @@ export const RecordingsList: React.FC<any> = () => {
     const cb3 = EventsOn(EventID.FileRenamedEvent, () => {
       updateList();
     });
+    const cb4 = EventsOn(EventID.RecordingIdle, () => {
+      updateList();
+    });
     return () => {
       cb1();
       cb2();

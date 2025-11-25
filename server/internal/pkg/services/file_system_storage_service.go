@@ -11,6 +11,7 @@ import (
 	"slices"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -44,6 +45,7 @@ type FileSystemStorageService struct {
 	sampleRate   int
 	timeProvider interfaces.TimeProvider
 	dispatcher   interfaces.EventDispatcher
+	mutex        sync.Mutex
 }
 
 func NewFileSystemStorageService(
@@ -63,6 +65,8 @@ func NewFileSystemStorageService(
 }
 
 func (f *FileSystemStorageService) Save(fileName string, data []float32) error {
+	f.mutex.Lock()
+	defer f.mutex.Unlock()
 	targetDir, err := f.getTargetDirCreateIfNeeded()
 	if err != nil {
 		return err
@@ -123,6 +127,8 @@ func (f *FileSystemStorageService) getAbsDateDir(date time.Time) string {
 func (f *FileSystemStorageService) GetRecordings(
 	date time.Time,
 ) ([]models.RecordingInfo, error) {
+	f.mutex.Lock()
+	defer f.mutex.Unlock()
 	infos := make([]models.RecordingInfo, 0)
 	absDir := f.getAbsDateDir(date)
 	if _, err := os.Stat(absDir); os.IsNotExist(err) {
@@ -222,6 +228,8 @@ func (f *FileSystemStorageService) RenameRecording(
 	newFileName string,
 	date time.Time,
 ) error {
+	f.mutex.Lock()
+	defer f.mutex.Unlock()
 	absDateDir := f.getAbsDateDir(date)
 	if _, err := os.Stat(absDateDir); os.IsNotExist(err) {
 		return fmt.Errorf("No recordings exist for given date %s", date)
@@ -235,6 +243,8 @@ func (f *FileSystemStorageService) RenameRecording(
 }
 
 func (f *FileSystemStorageService) DeleteRecording(fileName string, date time.Time) error {
+	f.mutex.Lock()
+	defer f.mutex.Unlock()
 	absDateDir := f.getAbsDateDir(date)
 	if _, err := os.Stat(absDateDir); os.IsNotExist(err) {
 		return fmt.Errorf("No recordings exist for given date %s", date)
@@ -247,6 +257,8 @@ func (f *FileSystemStorageService) DeleteRecording(fileName string, date time.Ti
 }
 
 func (f *FileSystemStorageService) RenameLastRecording(fileName string) error {
+	f.mutex.Lock()
+	defer f.mutex.Unlock()
 	entries, err := os.ReadDir(f.baseDir)
 	if err != nil {
 		return err
@@ -302,4 +314,10 @@ func (f *FileSystemStorageService) RenameLastRecording(fileName string) error {
 	}
 
 	return fmt.Errorf("No recording exist")
+}
+
+func (f *FileSystemStorageService) UpdateBaseDir(baseDir string) {
+	f.mutex.Lock()
+	f.baseDir = baseDir
+	f.mutex.Unlock()
 }

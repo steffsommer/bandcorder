@@ -1,7 +1,6 @@
 package services
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -13,7 +12,7 @@ import (
 func Test_CreateDefaultSettingsFile_OnLoad(t *testing.T) {
 	tempDir := createTempDir(t)
 	tempFilePath := filepath.Join(tempDir, "config.yaml")
-	service := NewSettingsService(tempFilePath)
+	service := NewSettingsService(tempFilePath, noOpSettingsConsumer)
 	_, err := service.Load()
 	assert.NoError(t, err)
 	content, err := os.ReadFile(tempFilePath)
@@ -26,8 +25,7 @@ func Test_CreateDefaultSettingsFile_OnLoad(t *testing.T) {
 
 func Test_Succeed_Loading(t *testing.T) {
 	tempFile := createTempFile(t)
-	fmt.Println(tempFile)
-	service := NewSettingsService(tempFile)
+	service := NewSettingsService(tempFile, noOpSettingsConsumer)
 	settings := Settings{
 		RecordingsDirectory: "/tmp/recordings",
 	}
@@ -37,6 +35,37 @@ func Test_Succeed_Loading(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, settings.RecordingsDirectory, loadedSettings.RecordingsDirectory)
 	os.ReadFile(tempFile)
+}
+
+func Test_CallsOnUpdateCallback(t *testing.T) {
+	tempDir := createTempDir(t)
+	tempFilePath := filepath.Join(tempDir, "config.yaml")
+	cbCalled := false
+	settings := Settings{
+		RecordingsDirectory: "/some/dir",
+	}
+	updateCallback := func(s Settings) {
+		assert.Equal(t, settings, s)
+		cbCalled = true
+	}
+	service := NewSettingsService(tempFilePath, updateCallback)
+	err := service.Save(settings)
+	assert.NoError(t, err)
+	assert.True(t, cbCalled)
+}
+
+func Test_SaveSettings(t *testing.T) {
+	tempDir := createTempDir(t)
+	tempFilePath := filepath.Join(tempDir, "config.yaml")
+	settings := Settings{
+		RecordingsDirectory: "/some/dir",
+	}
+	service := NewSettingsService(tempFilePath, noOpSettingsConsumer)
+	err := service.Save(settings)
+	assert.NoError(t, err)
+	loadedSettings, err := service.Load()
+	assert.NoError(t, err)
+	assert.Equal(t, settings, loadedSettings)
 }
 
 func createTempFile(t *testing.T) string {
@@ -58,3 +87,5 @@ func createTempDir(t *testing.T) string {
 	t.Cleanup(func() { os.Remove(tempDir) })
 	return tempDir
 }
+
+func noOpSettingsConsumer(s Settings) {}
