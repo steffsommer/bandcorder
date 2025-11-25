@@ -62,7 +62,7 @@ func main() {
 		timeProvider,
 		broadcastSender,
 	)
-	playbackService := services.NewAudioPlaybackService("resources")
+	playbackService := services.NewAudioPlaybackService()
 	storageFacade := facades.NewFileSystemStorageFacade(playbackService, storageService)
 	processor := services.NewAudioProcessorService(broadcastSender)
 	recorder := services.NewRecorderService(storageFacade, processor)

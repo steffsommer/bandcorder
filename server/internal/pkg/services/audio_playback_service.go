@@ -3,9 +3,8 @@ package services
 import (
 	"bytes"
 	"encoding/binary"
-	"os"
-	"path/filepath"
 	"server/internal/pkg/interfaces"
+	"server/resources"
 	"sync"
 
 	"github.com/gen2brain/malgo"
@@ -14,15 +13,12 @@ import (
 )
 
 type AudioPlaybackService struct {
-	audioPath string
-	fileMap   map[interfaces.AudioEffect]string
-	ctx       *malgo.AllocatedContext
+	fileMap map[interfaces.AudioEffect]string
+	ctx     *malgo.AllocatedContext
 }
 
-func NewAudioPlaybackService(resourcesPath string) *AudioPlaybackService {
-	audioPath := filepath.Join(resourcesPath, "audio_files")
+func NewAudioPlaybackService() *AudioPlaybackService {
 	return &AudioPlaybackService{
-		audioPath: audioPath,
 		fileMap: map[interfaces.AudioEffect]string{
 			interfaces.MetronomeClick: "metronome_beat.wav",
 			interfaces.SwitchOn:       "switch_on.wav",
@@ -44,12 +40,11 @@ func (a *AudioPlaybackService) Init() error {
 
 func (a *AudioPlaybackService) Play(effect interfaces.AudioEffect) {
 	filename := a.fileMap[effect]
-	fullPath := filepath.Join(a.audioPath, filename)
-	go a.playFile(fullPath)
+	go a.playFile(filename)
 }
 
-func (a *AudioPlaybackService) playFile(filepath string) {
-	fileBytes, err := os.ReadFile(filepath)
+func (a *AudioPlaybackService) playFile(filename string) {
+	fileBytes, err := resources.AudioFiles.ReadFile("audio_files/" + filename)
 	if err != nil {
 		logrus.Errorf("Failed to read audio file: %s", err)
 		return
@@ -57,7 +52,6 @@ func (a *AudioPlaybackService) playFile(filepath string) {
 
 	fileBytesReader := bytes.NewReader(fileBytes)
 	decoder := wav.NewDecoder(fileBytesReader)
-
 	buf, err := decoder.FullPCMBuffer()
 	if err != nil {
 		logrus.Errorf("Failed to decode audio: %s", err)
