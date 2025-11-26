@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"server/internal/pkg/models"
+	"server/internal/pkg/testutils/mocks"
 	"testing"
 
 	"github.com/goccy/go-yaml"
@@ -13,7 +14,8 @@ import (
 func Test_CreateDefaultSettingsFile_OnLoad(t *testing.T) {
 	tempDir := createTempDir(t)
 	tempFilePath := filepath.Join(tempDir, "config.yaml")
-	service := NewSettingsService(tempFilePath, noOpSettingsConsumer)
+	dispatcher := mocks.NewMockEventDispatcher(t)
+	service := NewSettingsService(tempFilePath, dispatcher)
 	_, err := service.Load()
 	assert.NoError(t, err)
 	content, err := os.ReadFile(tempFilePath)
@@ -26,7 +28,8 @@ func Test_CreateDefaultSettingsFile_OnLoad(t *testing.T) {
 
 func Test_Succeed_Loading(t *testing.T) {
 	tempFile := createTempFile(t)
-	service := NewSettingsService(tempFile, noOpSettingsConsumer)
+	dispatcher := mocks.NewMockEventDispatcher(t)
+	service := NewSettingsService(tempFile, dispatcher)
 	settings := models.Settings{
 		RecordingsDirectory: "/tmp/recordings",
 	}
@@ -41,18 +44,14 @@ func Test_Succeed_Loading(t *testing.T) {
 func Test_CallsOnUpdateCallback(t *testing.T) {
 	tempDir := createTempDir(t)
 	tempFilePath := filepath.Join(tempDir, "config.yaml")
-	cbCalled := false
 	settings := models.Settings{
 		RecordingsDirectory: "/some/dir",
 	}
-	updateCallback := func(s models.Settings) {
-		assert.Equal(t, settings, s)
-		cbCalled = true
-	}
-	service := NewSettingsService(tempFilePath, updateCallback)
+	dispatcher := mocks.NewMockEventDispatcher(t)
+	service := NewSettingsService(tempFilePath, dispatcher)
+	dispatcher.EXPECT().Dispatch(models.NewSettingsUpdatedEvent(settings))
 	err := service.Save(settings)
 	assert.NoError(t, err)
-	assert.True(t, cbCalled)
 }
 
 func Test_SaveSettings(t *testing.T) {
@@ -61,7 +60,9 @@ func Test_SaveSettings(t *testing.T) {
 	settings := models.Settings{
 		RecordingsDirectory: "/some/dir",
 	}
-	service := NewSettingsService(tempFilePath, noOpSettingsConsumer)
+	dispatcher := mocks.NewMockEventDispatcher(t)
+	service := NewSettingsService(tempFilePath, dispatcher)
+	dispatcher.EXPECT().Dispatch(models.NewSettingsUpdatedEvent(settings))
 	err := service.Save(settings)
 	assert.NoError(t, err)
 	loadedSettings, err := service.Load()

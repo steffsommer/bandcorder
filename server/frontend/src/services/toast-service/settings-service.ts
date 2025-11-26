@@ -17,7 +17,7 @@ export async function saveSettings(settings: models.Settings): Promise<void> {
     await Save(settings);
     toastSuccess("Settings updated successfully");
   } catch (e) {
-    toastFailure("Failed to save settings");
+    toastFailure("Recordings directory does not exist");
     throw e;
   }
 }

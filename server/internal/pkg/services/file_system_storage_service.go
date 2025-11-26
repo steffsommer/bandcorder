@@ -44,7 +44,7 @@ type FileSystemStorageService struct {
 	channelCount int
 	sampleRate   int
 	timeProvider interfaces.TimeProvider
-	dispatcher   interfaces.EventDispatcher
+	eventBus     interfaces.EventBus
 	mutex        sync.Mutex
 }
 
@@ -54,14 +54,27 @@ func NewFileSystemStorageService(
 	sampleRate int,
 	timeProvider interfaces.TimeProvider,
 	dispatcher interfaces.EventDispatcher,
+	eventBus interfaces.EventBus,
 ) *FileSystemStorageService {
 	return &FileSystemStorageService{
 		baseDir:      dir,
 		channelCount: channelCount,
 		sampleRate:   sampleRate,
 		timeProvider: timeProvider,
-		dispatcher:   dispatcher,
+		eventBus:     eventBus,
 	}
+}
+
+func (f *FileSystemStorageService) InitSubscriptions() {
+	f.eventBus.OnEvent(models.SettingsUpdatedEvent, func(data any) {
+		settings, ok := data.(models.Settings)
+		if !ok {
+			logrus.Warn("Received settings updated event with unexpected data")
+			return
+		}
+		logrus.Info("live-update for recordings directory")
+		f.updateBaseDir(settings.RecordingsDirectory)
+	})
 }
 
 func (f *FileSystemStorageService) Save(fileName string, data []float32) error {
@@ -309,14 +322,14 @@ func (f *FileSystemStorageService) RenameLastRecording(fileName string) error {
 		newPath := filepath.Join(dirPath, fileName)
 		err = os.Rename(oldPath, newPath)
 		ev := models.NewFileRenamedEvent()
-		f.dispatcher.Dispatch(ev)
+		f.eventBus.Dispatch(ev)
 		return err
 	}
 
 	return fmt.Errorf("No recording exist")
 }
 
-func (f *FileSystemStorageService) UpdateBaseDir(baseDir string) {
+func (f *FileSystemStorageService) updateBaseDir(baseDir string) {
 	f.mutex.Lock()
 	f.baseDir = baseDir
 	f.mutex.Unlock()

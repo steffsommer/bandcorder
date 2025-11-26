@@ -1,10 +1,13 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
+	"server/internal/pkg/interfaces"
 	"server/internal/pkg/models"
+	"server/internal/pkg/utils"
 
 	"github.com/goccy/go-yaml"
 	"github.com/sirupsen/logrus"
@@ -15,15 +18,15 @@ const configFolder = "bandcorder"
 
 // SettingsService reads and writes the application settings to a YAML file
 type SettingsService struct {
-	filePath string
-	onUpdate func(s models.Settings)
+	filePath   string
+	dispatcher interfaces.EventDispatcher
 }
 
 // NewSettingsService creates a new SettingsService
-func NewSettingsService(filePath string, onUpdate func(s models.Settings)) *SettingsService {
+func NewSettingsService(filePath string, dispatcher interfaces.EventDispatcher) *SettingsService {
 	return &SettingsService{
-		filePath: filePath,
-		onUpdate: onUpdate,
+		filePath:   filePath,
+		dispatcher: dispatcher,
 	}
 }
 
@@ -70,6 +73,9 @@ func (s *SettingsService) merge(defaults, userSettings models.Settings) models.S
 
 // Saves saves the settings to disk
 func (s *SettingsService) Save(settings models.Settings) error {
+	if !settingsValid(settings) {
+		return errors.New("Settings invalid")
+	}
 	defaults, err := s.getDefaults()
 	if err != nil {
 		return err
@@ -81,7 +87,9 @@ func (s *SettingsService) Save(settings models.Settings) error {
 	}
 	err = os.WriteFile(s.filePath, yamlBytes, 0755)
 	if err == nil {
-		s.onUpdate(merged)
+		logrus.Info("Sending Settings update event")
+		ev := models.NewSettingsUpdatedEvent(merged)
+		s.dispatcher.Dispatch(ev)
 	}
 	return err
 }
@@ -104,4 +112,8 @@ func (s *SettingsService) createFileIfMissing(settings models.Settings) error {
 		}
 	}
 	return nil
+}
+
+func settingsValid(settings models.Settings) bool {
+	return utils.IsWritableDirectory(settings.RecordingsDirectory)
 }

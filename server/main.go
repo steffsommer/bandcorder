@@ -39,20 +39,8 @@ func main() {
 	}
 	settingsFilePath := filepath.Join(configDir, SETTINGS_FOLDER_NAME, SETTINGS_FILE_NAME)
 
-	// NewApp creates a new App application struct
-	settingsService := services.NewSettingsService(settingsFilePath, func(s models.Settings) {
-		if storageService == nil {
-			logrus.Warn("Settings service write occured before storage service instantiation. Possibly the latest recordings directory differs")
-			return
-		}
-		storageService.UpdateBaseDir(s.RecordingsDirectory)
-	})
-	settings, err := settingsService.Load()
-	if err != nil {
-		logrus.Fatalf("Failed to load settings: %s", err.Error())
-	}
 	websocketController := controllers.NewWebsocketController()
-	uiSenderService := services.NewUiSenderService()
+	uiSenderService := services.NewUiEventBus()
 	broadcastSender := services.NewBroadcastSender(
 		[]interfaces.EventDispatcher{
 			websocketController,
@@ -60,7 +48,14 @@ func main() {
 		},
 	)
 
-	eventbus := services.NewCyclicRecordingEventSender(broadcastSender)
+	// NewApp creates a new App application struct
+	settingsService := services.NewSettingsService(settingsFilePath, uiSenderService)
+	settings, err := settingsService.Load()
+	if err != nil {
+		logrus.Fatalf("Failed to load settings: %s", err.Error())
+	}
+
+	cyclicSender := services.NewCyclicRecordingEventSender(broadcastSender)
 	timeProvider := services.NewRealTimeProvider()
 
 	storageService = services.NewFileSystemStorageService(
@@ -69,12 +64,13 @@ func main() {
 		SAMPLE_RATE_HZ,
 		timeProvider,
 		broadcastSender,
+		uiSenderService,
 	)
 	playbackService := services.NewAudioPlaybackService()
 	storageFacade := facades.NewFileSystemStorageFacade(playbackService, storageService)
 	processor := services.NewAudioProcessorService(broadcastSender)
 	recorder := services.NewRecorderService(storageFacade, processor)
-	recordingFacade := facades.NewRecordingFacade(eventbus, recorder, playbackService)
+	recordingFacade := facades.NewRecordingFacade(cyclicSender, recorder, playbackService)
 	recordingController := controllers.NewRecordingController(recordingFacade)
 
 	fileController := controllers.NewFileController(storageFacade)
@@ -115,7 +111,8 @@ func main() {
 				panic("Failed to init recorder service: " + err.Error())
 			}
 			uiSenderService.Init(ctx)
-			eventbus.StartSendingPeriodicUpdates()
+			storageService.InitSubscriptions()
+			cyclicSender.StartSendingPeriodicUpdates()
 			go func() {
 				log.Printf("Server starting on localhost:%d\n", API_PORT)
 
