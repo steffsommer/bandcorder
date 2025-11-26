@@ -24,7 +24,7 @@ func setup(t *testing.T) *RecordingFacade {
 	return NewRecordingFacade(eventBus, recorder, playbackService)
 }
 
-func Test_RecordingFacade_Start_Success(t *testing.T) {
+func Test_Start_Success(t *testing.T) {
 	facade := setup(t)
 	meta := getTestRecordingMetaData()
 	recorder.EXPECT().Start().Return(meta, nil)
@@ -37,7 +37,7 @@ func Test_RecordingFacade_Start_Success(t *testing.T) {
 	assert.Equal(t, meta, res)
 }
 
-func Test_RecordingFacade_Start_Error(t *testing.T) {
+func Test_Start_Error(t *testing.T) {
 	meta := getTestRecordingMetaData()
 	facade := setup(t)
 	recorder.EXPECT().Start().Return(meta, errors.New("start failed"))
@@ -48,7 +48,7 @@ func Test_RecordingFacade_Start_Error(t *testing.T) {
 	assert.Equal(t, meta, res)
 }
 
-func Test_RecordingFacade_Stop_Success(t *testing.T) {
+func Test_Stop_Success(t *testing.T) {
 	facade := setup(t)
 	recorder.EXPECT().Stop().Return(nil)
 	eventBus.EXPECT().NotifyStopped().Return()
@@ -59,7 +59,7 @@ func Test_RecordingFacade_Stop_Success(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func Test_RecordingFacade_Stop_Error(t *testing.T) {
+func Test_Stop_Error(t *testing.T) {
 	facade := setup(t)
 	recorder.EXPECT().Stop().Return(errors.New("stop failed"))
 
@@ -68,7 +68,7 @@ func Test_RecordingFacade_Stop_Error(t *testing.T) {
 	assert.Error(t, err)
 }
 
-func Test_RecordingFacade_Abort_Success(t *testing.T) {
+func Test_Abort_Success(t *testing.T) {
 	facade := setup(t)
 	recorder.EXPECT().Abort().Return(nil)
 	eventBus.EXPECT().NotifyStopped().Return()
@@ -79,7 +79,7 @@ func Test_RecordingFacade_Abort_Success(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func Test_RecordingFacade_Abort_Error(t *testing.T) {
+func Test_Abort_Error(t *testing.T) {
 	facade := setup(t)
 	recorder.EXPECT().Abort().Return(errors.New("fail"))
 
@@ -88,7 +88,7 @@ func Test_RecordingFacade_Abort_Error(t *testing.T) {
 	assert.Error(t, err)
 }
 
-func Test_RecordingFacade_GetMic(t *testing.T) {
+func Test_GetMic(t *testing.T) {
 	facade := setup(t)
 	recorder.EXPECT().GetMic().Return("mic1", nil)
 

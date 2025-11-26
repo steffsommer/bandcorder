@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_FileSystemStorageService_SaveRecordingsAndGetFromTwoDays(t *testing.T) {
+func Test_SaveRecordingsAndGetFromTwoDays(t *testing.T) {
 	tmpDir := t.TempDir()
 	channelCount := 1
 	sampleRate := 44100
@@ -43,7 +43,7 @@ func Test_FileSystemStorageService_SaveRecordingsAndGetFromTwoDays(t *testing.T)
 	assert.Equal(t, uint32(1), otherDayInfos[0].DurationSeconds)
 }
 
-func Test_FileSystemStorageService_GetRecordings_Empty(t *testing.T) {
+func Test_GetRecordings_Empty(t *testing.T) {
 	tmpDir := t.TempDir()
 	timeProvider := testutils.FakeTimeProvider{Time: time.Now()}
 	service := NewFileSystemStorageService(tmpDir, 1, 44100, &timeProvider, nil)
@@ -53,7 +53,7 @@ func Test_FileSystemStorageService_GetRecordings_Empty(t *testing.T) {
 	assert.Empty(t, recordingInfos)
 }
 
-func Test_FileSystemStorageService_GetRecordings_OrderedByModTimeDesc(t *testing.T) {
+func Test_GetRecordings_OrderedByModTimeDesc(t *testing.T) {
 	tmpDir := t.TempDir()
 	testTime := time.Date(2024, 1, 15, 10, 0, 0, 0, time.UTC)
 	timeProvider := &testutils.FakeTimeProvider{Time: testTime}
@@ -124,7 +124,7 @@ func Test_Save_CreatesDirectoryIfNotExists(t *testing.T) {
 	assert.True(t, stat.IsDir())
 }
 
-func Test_FileSystemStorageService_RenameRecording_Success(t *testing.T) {
+func Test_RenameRecording_Success(t *testing.T) {
 	tmpDir := t.TempDir()
 	testTime := time.Date(2024, 1, 15, 10, 0, 0, 0, time.UTC)
 	timeProvider := &testutils.FakeTimeProvider{Time: testTime}
@@ -148,7 +148,7 @@ func Test_FileSystemStorageService_RenameRecording_Success(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func Test_FileSystemStorageService_RenameRecording_DateDirNotExists(t *testing.T) {
+func Test_RenameRecording_DateDirNotExists(t *testing.T) {
 	tmpDir := t.TempDir()
 	timeProvider := &testutils.FakeTimeProvider{Time: time.Now()}
 	service := NewFileSystemStorageService(tmpDir, 1, 44100, timeProvider, nil)
@@ -160,7 +160,7 @@ func Test_FileSystemStorageService_RenameRecording_DateDirNotExists(t *testing.T
 	assert.Contains(t, err.Error(), "No recordings exist for given date")
 }
 
-func Test_FileSystemStorageService_RenameRecording_FileNotExists(t *testing.T) {
+func Test_RenameRecording_FileNotExists(t *testing.T) {
 	tmpDir := t.TempDir()
 	testTime := time.Date(2024, 1, 15, 10, 0, 0, 0, time.UTC)
 	timeProvider := &testutils.FakeTimeProvider{Time: testTime}
@@ -176,7 +176,7 @@ func Test_FileSystemStorageService_RenameRecording_FileNotExists(t *testing.T) {
 	assert.Contains(t, err.Error(), "does not exist")
 }
 
-func Test_FileSystemStorageService_DeleteRecording_Success(t *testing.T) {
+func Test_DeleteRecording_Success(t *testing.T) {
 	tmpDir := t.TempDir()
 	testTime := time.Date(2024, 1, 15, 10, 0, 0, 0, time.UTC)
 	timeProvider := &testutils.FakeTimeProvider{Time: testTime}
@@ -193,7 +193,7 @@ func Test_FileSystemStorageService_DeleteRecording_Success(t *testing.T) {
 	assert.True(t, os.IsNotExist(err))
 }
 
-func Test_FileSystemStorageService_DeleteRecording_DateDirNotExists(t *testing.T) {
+func Test_DeleteRecording_DateDirNotExists(t *testing.T) {
 	tmpDir := t.TempDir()
 	timeProvider := &testutils.FakeTimeProvider{Time: time.Now()}
 	service := NewFileSystemStorageService(tmpDir, 1, 44100, timeProvider, nil)
@@ -205,7 +205,7 @@ func Test_FileSystemStorageService_DeleteRecording_DateDirNotExists(t *testing.T
 	assert.Contains(t, err.Error(), "No recordings exist for given date")
 }
 
-func Test_FileSystemStorageService_DeleteRecording_FileNotExists(t *testing.T) {
+func Test_DeleteRecording_FileNotExists(t *testing.T) {
 	tmpDir := t.TempDir()
 	testTime := time.Date(2024, 1, 15, 10, 0, 0, 0, time.UTC)
 	timeProvider := &testutils.FakeTimeProvider{Time: testTime}
@@ -274,4 +274,27 @@ func Test_RenameLastRecording_NoFiles(t *testing.T) {
 	service := &FileSystemStorageService{baseDir: tmpDir}
 	err := service.RenameLastRecording("shouldnotmatter.wav")
 	assert.Error(t, err)
+}
+
+func Test_UpdatesRecordingDirectory_OnSettingsChange(t *testing.T) {
+	tempDir1 := t.TempDir()
+	testTime := time.Date(2024, 1, 15, 10, 0, 0, 0, time.UTC)
+	eventBus := &ManualMockEventBus{}
+	timeProvider := &testutils.FakeTimeProvider{Time: testTime}
+	service := NewFileSystemStorageService(tempDir1, 1, 44100, timeProvider, eventBus)
+	assert.Equal(t, tempDir1, service.baseDir)
+}
+
+type ManualMockEventBus struct {
+	callbacks []func(any)
+}
+
+func (m *ManualMockEventBus) Dispatch(event models.EventLike) {
+	for _, cb := range m.callbacks {
+		cb(event)
+	}
+}
+
+func (m *ManualMockEventBus) OnEvent(eventId models.EventId, cb func(any)) {
+	m.callbacks = append(m.callbacks, cb)
 }
