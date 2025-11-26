@@ -106,7 +106,7 @@ func Test_CreatesWavFile_Correctly(t *testing.T) {
 	assert.Equal(t, testData, audioData)
 }
 
-func TestSave_CreatesDirectoryIfNotExists(t *testing.T) {
+func Test_Save_CreatesDirectoryIfNotExists(t *testing.T) {
 	tmpDir := t.TempDir()
 	testTime := time.Date(2024, 3, 20, 14, 30, 0, 0, time.UTC)
 	timeProvider := &testutils.FakeTimeProvider{Time: testTime}
@@ -234,7 +234,7 @@ func createTestDirStructure(t *testing.T, baseDir string, structure map[string][
 	}
 }
 
-func TestRenameLastRecording(t *testing.T) {
+func Test_RenameLastRecording(t *testing.T) {
 	tmpDir := t.TempDir()
 
 	structure := map[string][]string{
@@ -264,7 +264,7 @@ func TestRenameLastRecording(t *testing.T) {
 	assert.Contains(t, fileNames, "old2.wav")
 }
 
-func TestRenameLastRecording_NoFiles(t *testing.T) {
+func Test_RenameLastRecording_NoFiles(t *testing.T) {
 	tmpDir := t.TempDir()
 	structure := map[string][]string{
 		"2024-01-01": {},
