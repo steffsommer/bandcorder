@@ -41,11 +41,11 @@ func Test_Succeed_Loading(t *testing.T) {
 	os.ReadFile(tempFile)
 }
 
-func Test_CallsOnUpdateCallback(t *testing.T) {
+func Test_DispatchesEvent_OnSettingsUpdate(t *testing.T) {
 	tempDir := createTempDir(t)
 	tempFilePath := filepath.Join(tempDir, "config.yaml")
 	settings := models.Settings{
-		RecordingsDirectory: "/some/dir",
+		RecordingsDirectory: os.TempDir(),
 	}
 	dispatcher := mocks.NewMockEventDispatcher(t)
 	service := NewSettingsService(tempFilePath, dispatcher)
@@ -54,11 +54,23 @@ func Test_CallsOnUpdateCallback(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func Test_SaveSettings(t *testing.T) {
+func Test_Fails_SavingSettings_WhenRecordingDirectoryDoesNotExist(t *testing.T) {
 	tempDir := createTempDir(t)
 	tempFilePath := filepath.Join(tempDir, "config.yaml")
 	settings := models.Settings{
 		RecordingsDirectory: "/some/dir",
+	}
+	dispatcher := mocks.NewMockEventDispatcher(t)
+	service := NewSettingsService(tempFilePath, dispatcher)
+	err := service.Save(settings)
+	assert.Error(t, err)
+}
+
+func Test_SaveSettings(t *testing.T) {
+	tempDir := createTempDir(t)
+	tempFilePath := filepath.Join(tempDir, "config.yaml")
+	settings := models.Settings{
+		RecordingsDirectory: os.TempDir(),
 	}
 	dispatcher := mocks.NewMockEventDispatcher(t)
 	service := NewSettingsService(tempFilePath, dispatcher)

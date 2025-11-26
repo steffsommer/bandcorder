@@ -53,7 +53,6 @@ func NewFileSystemStorageService(
 	channelCount int,
 	sampleRate int,
 	timeProvider interfaces.TimeProvider,
-	dispatcher interfaces.EventDispatcher,
 	eventBus interfaces.EventBus,
 ) *FileSystemStorageService {
 	return &FileSystemStorageService{

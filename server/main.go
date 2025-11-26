@@ -63,7 +63,6 @@ func main() {
 		AUDIO_CHANNEL_COUNT,
 		SAMPLE_RATE_HZ,
 		timeProvider,
-		broadcastSender,
 		uiSenderService,
 	)
 	playbackService := services.NewAudioPlaybackService()
