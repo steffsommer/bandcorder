@@ -15,6 +15,10 @@
   --border: 4px solid black;
 }
 
+#root {
+  height: 100%;
+}
+
 html {
   background-color: var(--color-surface-1);
   height: 100%;
@@ -22,6 +26,8 @@ html {
 }
 
 body {
+  zoom: reset;
+  -webkit-text-size-adjust: 100%;
   height: 100%;
   margin: 0;
   font-family:
@@ -161,4 +167,46 @@ dialog {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+/* Keep UI at the same scaling, even if UI scaling is enabled.
+ * The UI is already quite big, it makes no sense to scale it
+ * further */
+
+@media screen and (-webkit-min-device-pixel-ratio: 1.25) {
+  body {
+    zoom: 0.8;
+  }
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 1.5) {
+  body {
+    zoom: 0.67;
+  }
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 1.75) {
+  body {
+    zoom: 0.57;
+  }
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 2) {
+  body {
+    zoom: 0.5;
+  }
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 2.25) {
+  body {
+    zoom: 0.44;
+  }
+}
+
+/* Keep a minimal size for SVGs so they don't get too small to get rendered
+ * for very large scaling */
+svg {
+  --w: 28px;
+  min-width: var(--w);
+  min-height: var(--w);
 }
