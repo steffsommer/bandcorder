@@ -66,7 +66,7 @@ void main() {
 
       await service.stopRecording();
 
-      verify(mockToast.toastError('Failed to stop recording')).called(1);
+      verify(mockToast.toastError('Error stopping recording')).called(1);
     });
 
     test('shows error toast on exception', () async {
@@ -74,7 +74,7 @@ void main() {
 
       await service.stopRecording();
 
-      verify(mockToast.toastError('Failed to stop recording')).called(1);
+      verify(mockToast.toastError('Error stopping recording')).called(1);
     });
   });
 

@@ -34,10 +34,10 @@ class RecordingService {
       final res =
           await _httpClient.post(url).timeout(AppConstants.requestTimeout);
       if (res.statusCode != 200) {
-        _toastService.toastError("Failed to stop recording");
+        _toastService.toastError("Error stopping recording");
       }
     } catch (e) {
-      _toastService.toastError("Failed to stop recording");
+      _toastService.toastError("Error stopping recording");
     }
   }
 

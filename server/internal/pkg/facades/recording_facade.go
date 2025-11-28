@@ -44,7 +44,7 @@ func (r *RecordingFacade) Start() (interfaces.RecordingMetaData, error) {
 func (r *RecordingFacade) Stop() error {
 	err := r.recorder.Stop()
 	if err != nil {
-		logrus.Errorf("Failed to stop recording: %s", err.Error())
+		logrus.Errorf("Error while stopping recording: %s", err.Error())
 		return err
 	}
 	r.eventbus.NotifyStopped()

@@ -96,13 +96,13 @@ func (r *RecorderService) Stop() error {
 	if !r.isRunning() {
 		return errors.New("No recording is running")
 	}
+	defer r.reset()
 	r.device.Uninit()
 	if err := r.storageSerivce.Save(r.fileName, r.recording); err != nil {
 		return err
 	}
 	logrus.Infof("Recorded %d samples (%.2f seconds)\n",
 		len(r.recording), float64(len(r.recording))/float64(utils.SampleRate))
-	r.reset()
 	return nil
 }
 

@@ -285,6 +285,17 @@ func Test_UpdatesRecordingDirectory_OnSettingsChange(t *testing.T) {
 	assert.Equal(t, tempDir1, service.baseDir)
 }
 
+func Test_FailsSave_WhenRecordingDirectoryDoesNotExist(t *testing.T) {
+	tempDir := filepath.Join(os.TempDir(), "non_existing_dir")
+	testTime := time.Date(2024, 1, 15, 10, 0, 0, 0, time.UTC)
+	eventBus := &ManualMockEventBus{}
+	timeProvider := &testutils.FakeTimeProvider{Time: testTime}
+	service := NewFileSystemStorageService(tempDir, 1, 44100, timeProvider, eventBus)
+	err := service.Save("first.wav", []float32{0.1})
+	assert.Error(t, err)
+	assert.ErrorContains(t, err, "not exist")
+}
+
 type ManualMockEventBus struct {
 	callbacks []func(any)
 }

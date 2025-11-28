@@ -3,7 +3,9 @@ package services
 import (
 	"bufio"
 	"encoding/binary"
+	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"server/internal/pkg/interfaces"
@@ -79,6 +81,9 @@ func (f *FileSystemStorageService) InitSubscriptions() {
 func (f *FileSystemStorageService) Save(fileName string, data []float32) error {
 	f.mutex.Lock()
 	defer f.mutex.Unlock()
+	if !f.baseDirExists() {
+		return fmt.Errorf("Recordings directory %s does not exist", f.baseDir)
+	}
 	targetDir, err := f.getTargetDirCreateIfNeeded()
 	if err != nil {
 		return err
@@ -332,4 +337,9 @@ func (f *FileSystemStorageService) updateBaseDir(baseDir string) {
 	f.mutex.Lock()
 	f.baseDir = baseDir
 	f.mutex.Unlock()
+}
+
+func (f *FileSystemStorageService) baseDirExists() bool {
+	_, err := os.Stat(f.baseDir)
+	return !errors.Is(err, fs.ErrNotExist)
 }
