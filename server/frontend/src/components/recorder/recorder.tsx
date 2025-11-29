@@ -4,6 +4,7 @@ import { FaFile, FaPause, FaPlay, FaSquareFull } from "react-icons/fa";
 import { FiMic } from "react-icons/fi";
 import { Abort, GetMic, Start, Stop } from "../../../wailsjs/go/services/RecordingService";
 import { EventsOn } from "../../../wailsjs/runtime/runtime.js";
+import { toastFailure } from "../../services/toast-service/toast-service";
 import { Button } from "../button/button";
 import { Card } from "../card/card";
 import { EventID, RunningEventData } from "../events.js";
@@ -22,6 +23,30 @@ export const Recorder: React.FC = () => {
       setMic(micStr);
     } catch (e) {
       console.log("Failed to get microphone: " + e);
+    }
+  };
+
+  const start = async () => {
+    try {
+      await Start();
+    } catch (e) {
+      toastFailure(String(e));
+    }
+  };
+
+  const stop = async () => {
+    try {
+      await Stop();
+    } catch (e) {
+      toastFailure(String(e));
+    }
+  };
+
+  const abort = async () => {
+    try {
+      await Abort();
+    } catch (e) {
+      toastFailure(String(e));
     }
   };
 
@@ -72,13 +97,13 @@ export const Recorder: React.FC = () => {
         <VolumeBar />
       </Card>
       <div className="controls">
-        <Button onClick={Start} className="recorder-btn icon-large play-btn">
+        <Button onClick={start} className="recorder-btn icon-large play-btn">
           <FaPlay />
         </Button>
-        <Button onClick={Stop} className="recorder-btn icon-large pause-btn">
+        <Button onClick={stop} className="recorder-btn icon-large pause-btn">
           <FaPause />
         </Button>
-        <Button onClick={Abort} className="recorder-btn icon-large abort-btn">
+        <Button onClick={abort} className="recorder-btn icon-large abort-btn">
           <FaSquareFull />
         </Button>
       </div>
