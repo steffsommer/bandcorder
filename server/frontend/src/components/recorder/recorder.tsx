@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { FaFile, FaPause, FaPlay, FaSquareFull } from "react-icons/fa";
+import { FaFile, FaPlay, FaSquareFull, FaTrash } from "react-icons/fa";
 import { FiMic } from "react-icons/fi";
 import { Abort, GetMic, Start, Stop } from "../../../wailsjs/go/services/RecordingService";
 import { EventsOn } from "../../../wailsjs/runtime/runtime.js";
@@ -101,10 +101,10 @@ export const Recorder: React.FC = () => {
           <FaPlay />
         </Button>
         <Button onClick={stop} className="recorder-btn icon-large pause-btn">
-          <FaPause />
+          <FaSquareFull />
         </Button>
         <Button onClick={abort} className="recorder-btn icon-large abort-btn">
-          <FaSquareFull />
+          <FaTrash />
         </Button>
       </div>
     </div>
