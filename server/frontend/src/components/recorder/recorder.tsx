@@ -67,6 +67,8 @@ export const Recorder: React.FC = () => {
     updateMic();
   });
 
+  const isRunning = () => recordingName !== "";
+
   return (
     <div className="recorder">
       <h2 className="heading">Recorder</h2>
@@ -97,13 +99,13 @@ export const Recorder: React.FC = () => {
         <VolumeBar />
       </Card>
       <div className="controls">
-        <Button onClick={start} className="recorder-btn icon-large play-btn">
+        <Button onClick={start} disabled={isRunning()} className="recorder-btn icon-large play-btn">
           <FaPlay />
         </Button>
-        <Button onClick={stop} className="recorder-btn icon-large pause-btn">
+        <Button onClick={stop} disabled={!isRunning()} className="recorder-btn icon-large pause-btn">
           <FaSquareFull />
         </Button>
-        <Button onClick={abort} className="recorder-btn icon-large abort-btn">
+        <Button onClick={abort} disabled={!isRunning()} className="recorder-btn icon-large abort-btn">
           <FaTrash />
         </Button>
       </div>
