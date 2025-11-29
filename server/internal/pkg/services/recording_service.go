@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"server/internal/pkg/interfaces"
+	"server/internal/pkg/models"
 	"server/internal/pkg/utils"
 	"sync"
 	"time"
@@ -14,9 +15,10 @@ import (
 )
 
 // Recorder manages audio recording operations
-type RecorderService struct {
+type RecordingService struct {
 	storageSerivce interfaces.StorageService
 	audioProcessor interfaces.AudioProcessor
+	eventBus       interfaces.EventBus
 	ctx            *malgo.AllocatedContext
 	device         *malgo.Device
 	recording      []float32
@@ -26,19 +28,21 @@ type RecorderService struct {
 }
 
 // NewRecordingFacade creates a new RecorderService. It uses the default input device
-func NewRecorderService(
+func NewRecordingService(
 	storageService interfaces.StorageService,
 	audioProcessor interfaces.AudioProcessor,
-) *RecorderService {
-	return &RecorderService{
+	eventBus interfaces.EventBus,
+) *RecordingService {
+	return &RecordingService{
 		done:           make(chan bool),
 		recording:      make([]float32, 0, 1000),
 		storageSerivce: storageService,
 		audioProcessor: audioProcessor,
+		eventBus:       eventBus,
 	}
 }
 
-func (r *RecorderService) Init() error {
+func (r *RecordingService) Init() error {
 	ctx, err := malgo.InitContext(nil, malgo.ContextConfig{}, nil)
 	if err != nil {
 		return err
@@ -47,12 +51,12 @@ func (r *RecorderService) Init() error {
 	return nil
 }
 
-func (r *RecorderService) Start() (interfaces.RecordingMetaData, error) {
+func (r *RecordingService) Start() error {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
 
 	if r.isRunning() {
-		return interfaces.RecordingMetaData{}, errors.New("Recording is already running")
+		return errors.New("Recording is already running")
 	}
 
 	deviceConfig := malgo.DefaultDeviceConfig(malgo.Capture)
@@ -77,26 +81,27 @@ func (r *RecorderService) Start() (interfaces.RecordingMetaData, error) {
 		Data: onRecvFrames,
 	})
 	if err != nil {
-		return interfaces.RecordingMetaData{}, fmt.Errorf("Failed to initialize device: %w", err)
+		return fmt.Errorf("Failed to initialize device: %w", err)
 	}
 	if err := device.Start(); err != nil {
-		return interfaces.RecordingMetaData{}, fmt.Errorf("Failed to start device: %w", err)
+		return fmt.Errorf("Failed to start device: %w", err)
 	}
 	r.device = device
 	r.fileName = fmt.Sprintf("recording-%s.wav", time.Now().Format("15-04-05"))
-	return interfaces.RecordingMetaData{
-		FileName: r.fileName,
-		Started:  time.Now(),
-	}, nil
+	ev := models.NewRecordingStartedEvent(r.fileName, time.Now())
+	r.eventBus.Dispatch(ev)
+	return nil
 }
 
-func (r *RecorderService) Stop() error {
+func (r *RecordingService) Stop() error {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
 	if !r.isRunning() {
 		return errors.New("No recording is running")
 	}
 	defer r.reset()
+	ev := models.NewRecordingStoppedEvent()
+	defer r.eventBus.Dispatch(ev)
 	r.device.Uninit()
 	if err := r.storageSerivce.Save(r.fileName, r.recording); err != nil {
 		return err
@@ -106,7 +111,7 @@ func (r *RecorderService) Stop() error {
 	return nil
 }
 
-func (r *RecorderService) Abort() error {
+func (r *RecordingService) Abort() error {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
 
@@ -116,19 +121,21 @@ func (r *RecorderService) Abort() error {
 
 	r.device.Uninit()
 	r.reset()
+	ev := models.NewRecordingAbortedEvent()
+	r.eventBus.Dispatch(ev)
 	return nil
 }
 
-func (r *RecorderService) reset() {
+func (r *RecordingService) reset() {
 	r.fileName = ""
 	r.recording = nil
 }
 
-func (r *RecorderService) isRunning() bool {
+func (r *RecordingService) isRunning() bool {
 	return r.fileName != ""
 }
 
-func (r *RecorderService) GetMic() (string, error) {
+func (r *RecordingService) GetMic() (string, error) {
 	infos, err := r.ctx.Devices(malgo.Capture)
 	if err != nil {
 		return "", err

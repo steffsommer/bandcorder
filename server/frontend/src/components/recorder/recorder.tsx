@@ -2,12 +2,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { FaFile, FaPause, FaPlay, FaSquareFull } from "react-icons/fa";
 import { FiMic } from "react-icons/fi";
-import {
-  Abort,
-  GetMic,
-  Start,
-  Stop,
-} from "../../../wailsjs/go/facades/RecordingFacade.js";
+import { Abort, GetMic, Start, Stop } from "../../../wailsjs/go/services/RecordingService";
 import { EventsOn } from "../../../wailsjs/runtime/runtime.js";
 import { Button } from "../button/button";
 import { Card } from "../card/card";

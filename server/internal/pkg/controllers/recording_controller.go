@@ -23,7 +23,7 @@ func NewRecordingController(
 // HandleStart starts a new recording
 // Returns 200 OK on success, 500 Internal Server Error on failure
 func (r RecordingController) HandleStart(c *gin.Context) {
-	_, err := r.recorder.Start()
+	err := r.recorder.Start()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -52,4 +52,3 @@ func (r RecordingController) HandleAbort(c *gin.Context) {
 	}
 	c.Writer.WriteHeader(http.StatusOK)
 }
-

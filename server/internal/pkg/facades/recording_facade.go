@@ -28,16 +28,15 @@ func NewRecordingFacade(
 }
 
 // Start starts a new recording and notifies the event bus
-func (r *RecordingFacade) Start() (interfaces.RecordingMetaData, error) {
-	res, err := r.recorder.Start()
+func (r *RecordingFacade) Start() error {
+	err := r.recorder.Start()
 	if err != nil {
 		logrus.Errorf("Failed to start recording: %s", err.Error())
-		return res, err
+		return err
 	}
-	r.eventbus.NotifyStarted(res)
 	r.player.Play(interfaces.SwitchOn)
 	logrus.Info("Recording started successfully")
-	return res, nil
+	return nil
 }
 
 // Stop stops the current recording and notifies the event bus

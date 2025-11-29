@@ -7,6 +7,48 @@ type RecordingRunningEventData struct {
 	SecondsRunning uint32 `json:"secondsRunning"`
 }
 
+type RecordingStartedEventData struct {
+	FileName string
+	Started  time.Time
+}
+
+func NewRecordingStartedEvent(
+	fileName string,
+	started time.Time,
+) Event[RecordingStartedEventData] {
+	return Event[RecordingStartedEventData]{
+		EventId: RecordingStartedEvent,
+		Data: RecordingStartedEventData{
+			FileName: fileName,
+			Started:  started,
+		},
+	}
+}
+
+func NewRecordingStoppedEvent() Event[any] {
+	return Event[any]{
+		EventId: RecordingStoppedEvent,
+	}
+}
+
+func NewRecordingAbortedEvent() Event[any] {
+	return Event[any]{
+		EventId: RecordingAbortedEvent,
+	}
+}
+
+func NewRecordingDeletedEvent() Event[any] {
+	return Event[any]{
+		EventId: RecordingDeletedEvent,
+	}
+}
+
+func NewRecordingRenamedEvent() Event[any] {
+	return Event[any]{
+		EventId: RecordingRenamedEvent,
+	}
+}
+
 func NewRecordingRunningEvent(
 	fileName string,
 	started time.Time,

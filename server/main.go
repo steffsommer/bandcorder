@@ -40,22 +40,22 @@ func main() {
 	settingsFilePath := filepath.Join(configDir, SETTINGS_FOLDER_NAME, SETTINGS_FILE_NAME)
 
 	websocketController := controllers.NewWebsocketController()
-	uiSenderService := services.NewUiEventBus()
+	uiEventBus := services.NewUiEventBus()
 	broadcastSender := services.NewBroadcastSender(
 		[]interfaces.EventDispatcher{
 			websocketController,
-			uiSenderService,
+			uiEventBus,
 		},
 	)
 
 	// NewApp creates a new App application struct
-	settingsService := services.NewSettingsService(settingsFilePath, uiSenderService)
+	settingsService := services.NewSettingsService(settingsFilePath, uiEventBus)
 	settings, err := settingsService.Load()
 	if err != nil {
 		logrus.Fatalf("Failed to load settings: %s", err.Error())
 	}
 
-	cyclicSender := services.NewCyclicRecordingEventSender(broadcastSender)
+	cyclicSender := services.NewCyclicRecordingEventSender(uiEventBus, broadcastSender)
 	timeProvider := services.NewRealTimeProvider()
 
 	storageService = services.NewFileSystemStorageService(
@@ -63,17 +63,16 @@ func main() {
 		AUDIO_CHANNEL_COUNT,
 		SAMPLE_RATE_HZ,
 		timeProvider,
-		uiSenderService,
+		uiEventBus,
 	)
 	playbackService := services.NewAudioPlaybackService()
 	storageFacade := facades.NewFileSystemStorageFacade(playbackService, storageService)
 	processor := services.NewAudioProcessorService(broadcastSender)
-	recorder := services.NewRecorderService(storageFacade, processor)
-	recordingFacade := facades.NewRecordingFacade(cyclicSender, recorder, playbackService)
-	recordingController := controllers.NewRecordingController(recordingFacade)
-
+	recordingService := services.NewRecordingService(storageFacade, processor, uiEventBus)
+	recordingController := controllers.NewRecordingController(recordingService)
 	fileController := controllers.NewFileController(storageFacade)
-	metronomeService := services.NewMetronomeService(86, broadcastSender, playbackService)
+	metronomeService := services.NewMetronomeService(90, broadcastSender)
+	soundEffectPlayer := services.NewSoundEffectPlayer(uiEventBus, playbackService)
 
 	metronomeController := controllers.NewMetronomeController(metronomeService)
 
@@ -106,12 +105,20 @@ func main() {
 			if err := playbackService.Init(); err != nil {
 				panic("Failed to init playback service: " + err.Error())
 			}
-			if err := recorder.Init(); err != nil {
+			if err := recordingService.Init(); err != nil {
 				panic("Failed to init recorder service: " + err.Error())
 			}
-			uiSenderService.Init(ctx)
+			uiEventBus.Init(ctx)
 			storageService.InitSubscriptions()
 			cyclicSender.StartSendingPeriodicUpdates()
+			soundEffectPlayer.Init(map[models.EventId]interfaces.AudioEffect{
+				models.RecordingStartedEvent: interfaces.SwitchOn,
+				models.RecordingStoppedEvent: interfaces.SwitchOff,
+				models.RecordingAbortedEvent: interfaces.Delete,
+				models.RecordingDeletedEvent: interfaces.Delete,
+				models.RecordingRenamedEvent: interfaces.Success,
+				models.MetronomeBeatEvent:    interfaces.MetronomeClick,
+			})
 			go func() {
 				log.Printf("Server starting on localhost:%d\n", API_PORT)
 
@@ -123,7 +130,7 @@ func main() {
 		},
 		Bind: []interface{}{
 			&modelExporter,
-			recordingFacade,
+			recordingService,
 			storageFacade,
 			settingsService,
 			ipService,

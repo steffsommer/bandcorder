@@ -3,13 +3,21 @@ package models
 type EventId string
 
 const (
-	RecordingIdleEvent        EventId = "RecordingIdle"
-	RecordingRunningEvent     EventId = "RecordingRunning"
-	LiveAudioDataEvent        EventId = "LiveAudioData"
-	FileRenamedEvent          EventId = "FileRenamed"
+	// recording events
+	RecordingStartedEvent EventId = "RecordingStarted"
+	RecordingStoppedEvent EventId = "RecordingStopped"
+	RecordingAbortedEvent EventId = "RecordingAborted"
+	RecordingDeletedEvent EventId = "RecordingDeleted"
+	RecordingRenamedEvent EventId = "FileRenamed"
+	// continously broadcasted recording events
+	RecordingIdleEvent    EventId = "RecordingIdle"
+	RecordingRunningEvent EventId = "RecordingRunning"
+	// metronome events
 	MetronomeBeatEvent        EventId = "MetronomeBeat"
 	MetronomeStateChangeEvent EventId = "MetronomeStateChange"
-	SettingsUpdatedEvent      EventId = "SettingsUpdated"
+	// misc
+	LiveAudioDataEvent   EventId = "LiveAudioData"
+	SettingsUpdatedEvent EventId = "SettingsUpdated"
 )
 
 type EventLike interface {

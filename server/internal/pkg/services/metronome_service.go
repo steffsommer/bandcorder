@@ -16,23 +16,20 @@ const (
 )
 
 type MetronomeService struct {
-	ticker          *time.Ticker
-	bpm             int
-	beatCount       int
-	dispatcher      interfaces.EventDispatcher
-	playbackService interfaces.PlaybackService
-	mutex           sync.Mutex
+	ticker     *time.Ticker
+	bpm        int
+	beatCount  int
+	dispatcher interfaces.EventDispatcher
+	mutex      sync.Mutex
 }
 
 func NewMetronomeService(
 	initialBpm int,
 	dispatcher interfaces.EventDispatcher,
-	playbackService interfaces.PlaybackService,
 ) *MetronomeService {
 	return &MetronomeService{
-		bpm:             initialBpm,
-		dispatcher:      dispatcher,
-		playbackService: playbackService,
+		bpm:        initialBpm,
+		dispatcher: dispatcher,
 	}
 }
 
@@ -54,8 +51,8 @@ func (m *MetronomeService) beat() {
 	m.beatCount = (m.beatCount + 1) % (math.MaxInt - 1)
 	event := models.NewMetronomeBeatEvent(beatCount)
 	m.dispatcher.Dispatch(event)
-	m.playbackService.Play(interfaces.MetronomeClick)
 }
+
 func (m *MetronomeService) Stop() error {
 	m.mutex.Lock()
 	if m.ticker == nil {

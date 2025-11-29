@@ -7,21 +7,43 @@ import (
 )
 
 type CyclicRecordingEventSender struct {
-	dispatcher interfaces.EventDispatcher
-	metaData   *interfaces.RecordingMetaData
+	eventBus         interfaces.EventBus
+	targetDispatcher interfaces.EventDispatcher
+	startedData      *models.RecordingStartedEventData
 }
 
 // interval time after which state updates are sent to clients
 const interval = 100 * time.Millisecond
 
-func NewCyclicRecordingEventSender(dispatcher interfaces.EventDispatcher) *CyclicRecordingEventSender {
+// Continously broadcast information about the current recording to all clients.
+// Alleviates the need for time synchronization
+func NewCyclicRecordingEventSender(
+	sourceBus interfaces.EventBus,
+	targetDispatcher interfaces.EventDispatcher,
+) *CyclicRecordingEventSender {
 	return &CyclicRecordingEventSender{
-		dispatcher: dispatcher,
+		eventBus:         sourceBus,
+		targetDispatcher: targetDispatcher,
 	}
 }
 
 func (n *CyclicRecordingEventSender) StartSendingPeriodicUpdates() {
-	n.NotifyStopped()
+	n.eventBus.OnEvent(models.RecordingStartedEvent, func(data any) {
+		startedData, ok := data.(models.RecordingStartedEventData)
+		if !ok {
+			return
+		}
+		n.startedData = &startedData
+		n.dispatch()
+	})
+	n.eventBus.OnEvent(models.RecordingStoppedEvent, func(_ any) {
+		n.startedData = nil
+		n.dispatch()
+	})
+	n.eventBus.OnEvent(models.RecordingAbortedEvent, func(_ any) {
+		n.startedData = nil
+		n.dispatch()
+	})
 	go func() {
 		for {
 			n.dispatch()
@@ -30,22 +52,12 @@ func (n *CyclicRecordingEventSender) StartSendingPeriodicUpdates() {
 	}()
 }
 
-func (n *CyclicRecordingEventSender) NotifyStarted(res interfaces.RecordingMetaData) {
-	n.metaData = &res
-	n.dispatch()
-}
-
-func (n *CyclicRecordingEventSender) NotifyStopped() {
-	n.metaData = nil
-	n.dispatch()
-}
-
 func (n *CyclicRecordingEventSender) dispatch() {
 	var event models.EventLike
-	if n.metaData == nil {
+	if n.startedData == nil {
 		event = models.NewRecordingIdleEvent()
 	} else {
-		event = models.NewRecordingRunningEvent(n.metaData.FileName, n.metaData.Started)
+		event = models.NewRecordingRunningEvent(n.startedData.FileName, n.startedData.Started)
 	}
-	n.dispatcher.Dispatch(event)
+	n.targetDispatcher.Dispatch(event)
 }

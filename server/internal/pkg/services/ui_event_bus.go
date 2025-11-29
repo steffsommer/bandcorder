@@ -29,11 +29,14 @@ func (u *UiEventBus) Init(appCtx context.Context) {
 }
 
 func (u *UiEventBus) Dispatch(event models.EventLike) {
+	// if event.GetId() != models.LiveAudioDataEvent {
+	// 	logrus.Info("Event dispatched: %+v", event)
+	// }
 	if u.wailsCtx == nil {
 		panic("Wails Context has not been set")
 	}
 
-	go runtime.EventsEmit(u.wailsCtx, string(event.GetId()), event.GetData())
+	runtime.EventsEmit(u.wailsCtx, string(event.GetId()), event.GetData())
 
 	u.mu.RLock()
 	callbacks := u.subscribers[event.GetId()]

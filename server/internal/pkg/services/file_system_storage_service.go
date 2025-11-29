@@ -325,7 +325,7 @@ func (f *FileSystemStorageService) RenameLastRecording(fileName string) error {
 		oldPath := filepath.Join(dirPath, fileInfos[0].name)
 		newPath := filepath.Join(dirPath, fileName)
 		err = os.Rename(oldPath, newPath)
-		ev := models.NewFileRenamedEvent()
+		ev := models.NewRecordingRenamedEvent()
 		f.eventBus.Dispatch(ev)
 		return err
 	}

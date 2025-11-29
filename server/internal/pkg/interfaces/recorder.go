@@ -10,7 +10,7 @@ type RecordingMetaData struct {
 // Recorder manages audio recording operations
 type Recorder interface {
 	// Start begins a new recording session and returns its metadata
-	Start() (RecordingMetaData, error)
+	Start() error
 
 	// Stop ends the current recording session and saves the file
 	Stop() error

@@ -11,8 +11,7 @@ class RecordingService {
   final ConnectionConfig _connectionConfig;
   final http.Client _httpClient;
 
-  RecordingService(
-      this._connectionConfig, this._toastService, this._httpClient);
+  RecordingService( this._connectionConfig, this._toastService, this._httpClient);
 
   Future<void> startRecording() async {
     try {

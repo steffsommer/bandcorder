@@ -44,7 +44,7 @@ export function FrequencyChart() {
 
   function draw() {
     if (!canvasRef.current) {
-      throw new Error("Failed to draw. Canvas Ref is falsy")
+      return
     }
     const ctx = canvasRef.current?.getContext("2d");
     if (!ctx) {

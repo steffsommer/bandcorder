@@ -247,7 +247,7 @@ func Test_RenameLastRecording(t *testing.T) {
 	timeProvider := testutils.FakeTimeProvider{Time: time.Now()}
 	eventBus := mocks.NewMockEventBus(t)
 	service := NewFileSystemStorageService(tmpDir, 1, 44100, &timeProvider, eventBus)
-	eventBus.EXPECT().Dispatch(models.NewFileRenamedEvent())
+	eventBus.EXPECT().Dispatch(models.NewRecordingRenamedEvent())
 
 	err := service.RenameLastRecording("renamed.wav")
 	assert.NoError(t, err)
