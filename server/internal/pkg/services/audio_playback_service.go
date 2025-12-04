@@ -14,7 +14,6 @@ import (
 
 type AudioPlaybackService struct {
 	fileMap map[interfaces.AudioEffect]string
-	ctx     *malgo.AllocatedContext
 }
 
 func NewAudioPlaybackService() *AudioPlaybackService {
@@ -30,11 +29,6 @@ func NewAudioPlaybackService() *AudioPlaybackService {
 }
 
 func (a *AudioPlaybackService) Init() error {
-	ctx, err := malgo.InitContext(nil, malgo.ContextConfig{}, nil)
-	if err != nil {
-		return err
-	}
-	a.ctx = ctx
 	return nil
 }
 
@@ -57,6 +51,13 @@ func (a *AudioPlaybackService) playFile(filename string) {
 		logrus.Errorf("Failed to decode audio: %s", err)
 		return
 	}
+
+	ctx, err := malgo.InitContext(nil, malgo.ContextConfig{}, nil)
+	if err != nil {
+		logrus.Errorf("Failed to init context: %s", err)
+		return
+	}
+	defer ctx.Uninit()
 
 	deviceConfig := malgo.DefaultDeviceConfig(malgo.Playback)
 	deviceConfig.Playback.Format = malgo.FormatS16
@@ -93,7 +94,7 @@ func (a *AudioPlaybackService) playFile(filename string) {
 		}
 	}
 
-	device, err := malgo.InitDevice(a.ctx.Context, deviceConfig, malgo.DeviceCallbacks{
+	device, err := malgo.InitDevice(ctx.Context, deviceConfig, malgo.DeviceCallbacks{
 		Data: onSendFrames,
 	})
 	if err != nil {
@@ -113,8 +114,5 @@ func (a *AudioPlaybackService) playFile(filename string) {
 }
 
 func (a *AudioPlaybackService) Close() error {
-	if a.ctx != nil {
-		a.ctx.Uninit()
-	}
 	return nil
 }
