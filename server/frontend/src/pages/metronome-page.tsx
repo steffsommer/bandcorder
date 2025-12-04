@@ -32,7 +32,9 @@ export default function Metronome() {
       (data: models.MetronomeStateEventData) => {
         setOn(data.isRunning);
         setBpm(data.bpm);
-        setActiveBar(-1);
+        if (!data.isRunning) {
+          setActiveBar(-1);
+        }
       },
     );
     return () => {
