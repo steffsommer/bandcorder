@@ -4,9 +4,14 @@ on:
   push:
     branches:
       - main
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
 
 jobs:
-  test-server:
+  test-desktop-app:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -14,14 +19,14 @@ jobs:
         shell: bash
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
 
       # Additional apt source is needed for libwebkit2gtk-4.0-dev
       - name: Install dependencies
         run: |
           echo 'deb http://gb.archive.ubuntu.com/ubuntu jammy main' | sudo tee -a /etc/apt/sources.list
           sudo apt update -y
-          sudo apt install -y libgtk-3-dev libglib2.0-dev libwebkit2gtk-4.0-dev
+          sudo apt install -y libgtk-3-dev libglib2.0-dev libwebkit2gtk-4.0-dev gcc-mingw-w64-x86-64
 
       - name: Set up Go
         uses: actions/setup-go@v4
@@ -32,24 +37,62 @@ jobs:
         run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
 
       - name: Build
-        run: wails build
+        run: make build-windows
 
       - name: Run tests
         run: make tests
 
-  test-app:
+      - name: Upload Bandcorder.exe artifact
+        if: github.ref_type == 'tag'
+        uses: actions/upload-artifact@v4
+        with:
+          name: desktop-app
+          path: server/build/bin/Bandcorder.exe
+
+  test-mobile-app:
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: app
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
+
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: "stable"
+
       - name: Install dependencies
         run: flutter pub get
+
       - name: Run tests
         run: flutter test
+
+      - name: Build Release APK
+        run: flutter build apk
+
+      - name: Upload Bandcorder.apk artifact
+        if: github.ref_type == 'tag'
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-app
+          path: app/build/app/outputs/flutter-apk/app-release.apk
+
+  release:
+    if: github.ref_type == 'tag'
+    needs: [test-desktop-app, test-mobile-app]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Rename APK
+        run: mv mobile-app/app-release.apk mobile-app/Bandcorder.apk
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            desktop-app/Bandcorder.exe
+            mobile-app/Bandcorder.apk
