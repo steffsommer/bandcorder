@@ -2,6 +2,8 @@
   "$schema":  "https://raw.githubusercontent.com/jetify-com/devbox/0.16.0/.schema/devbox.schema.json",
   "packages": [
     "go@1.23",
+    "nodejs@22",
+    "flutter338@latest",
     "pkg-config",
     "gtk3",
     "webkitgtk_4_1",

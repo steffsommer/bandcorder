@@ -1,6 +1,54 @@
 {
   "lockfile_version": "1",
   "packages": {
+    "flutter338@latest": {
+      "last_modified": "2026-08-12T11:28:58Z",
+      "resolved": "github:NixOS/nixpkgs/044bfe75bfe4c7bbe043dc17b5e42ea823b84a09#flutter338",
+      "source": "devbox-search",
+      "version": "3.38.10-sdk-links",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/qsz9xlfnkkp6985c62z0qak4xzqq2xhx-flutter-wrapped-3.38.10-sdk-links",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/qsz9xlfnkkp6985c62z0qak4xzqq2xhx-flutter-wrapped-3.38.10-sdk-links"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/ahf2832w9xwpbrigyjflrcfpacfny7q2-flutter-wrapped-3.38.10-sdk-links",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/ahf2832w9xwpbrigyjflrcfpacfny7q2-flutter-wrapped-3.38.10-sdk-links"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/w0k3lrjigz5ccmmymr3aw6vm3gajk9sa-flutter-wrapped-3.38.10-sdk-links",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/w0k3lrjigz5ccmmymr3aw6vm3gajk9sa-flutter-wrapped-3.38.10-sdk-links"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/3v01v7sl53n1m14gx6b8vdsq01zxp3m6-flutter-wrapped-3.38.10-sdk-links",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/3v01v7sl53n1m14gx6b8vdsq01zxp3m6-flutter-wrapped-3.38.10-sdk-links"
+        }
+      }
+    },
     "github:NixOS/nixpkgs/nixos-24.05#pkgsCross.mingwW64.buildPackages.gcc": {
       "last_modified": "2024-12-30T13:00:28Z",
       "resolved": "github:NixOS/nixpkgs/b134951a4c9f3c995fd7be05f3243f8ecd65d798?lastModified=1735563628&narHash=sha256-OnSAY7XDSx7CtDoqNh8jwVwh4xNL%2F2HaJxGjryLWzX8%3D#pkgsCross.mingwW64.buildPackages.gcc"
@@ -64,6 +112,45 @@
     "mesa": {
       "resolved": "github:NixOS/nixpkgs/c27cdad491a991b11ed731760aa2ef8db0cb0410?narHash=sha256-PYZq1qzCJXC2zGI0mH07vrZBsw6DRBAOX0jN1pPtqOQ%3D#mesa",
       "source": "nixpkg"
+    },
+    "nodejs@22": {
+      "last_modified": "2026-08-12T11:28:58Z",
+      "plugin_version": "0.0.2",
+      "resolved": "github:NixOS/nixpkgs/044bfe75bfe4c7bbe043dc17b5e42ea823b84a09#nodejs_22",
+      "source": "devbox-search",
+      "version": "22.23.2",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/ns9a9c245s35mxq4arv4pyf3jvb2dh0i-nodejs-22.23.2",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/ns9a9c245s35mxq4arv4pyf3jvb2dh0i-nodejs-22.23.2"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/3xbw25h18j51wl7xd28ini307d07wfrh-nodejs-22.23.2",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/3xbw25h18j51wl7xd28ini307d07wfrh-nodejs-22.23.2"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/hyw97nxddgxfc6ag6db87rnawss2pw1a-nodejs-22.23.2",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/hyw97nxddgxfc6ag6db87rnawss2pw1a-nodejs-22.23.2"
+        }
+      }
     },
     "pkg-config": {
       "resolved": "github:NixOS/nixpkgs/c27cdad491a991b11ed731760aa2ef8db0cb0410?narHash=sha256-PYZq1qzCJXC2zGI0mH07vrZBsw6DRBAOX0jN1pPtqOQ%3D#pkg-config",
