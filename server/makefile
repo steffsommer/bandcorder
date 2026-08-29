@@ -10,7 +10,7 @@ build-windows:
 	@CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc wails build -platform windows/amd64
 
 livereload:
-	@wails dev
+	@wails dev -tags webkit2_41
 
 tests:
 	@go test ./...
